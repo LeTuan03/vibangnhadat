@@ -1,6 +1,6 @@
 import React from 'react';
-import { FaPhone, FaEnvelope, FaArrowRight } from 'react-icons/fa';
-import { companyInfo, contactInfo } from '../data/content';
+import { FaPhone, FaArrowRight, FaShieldAlt, FaHeadset, FaClock, FaTrophy } from 'react-icons/fa';
+import { companyInfo, contactInfo, statistics } from '../data/content';
 import { scrollToElement, createPhoneLink } from '../utils/helpers';
 import './Hero.css';
 
@@ -22,9 +22,9 @@ const Hero: React.FC = () => {
                     <div className="hero-cta animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
                         <button
                             className="btn btn-primary btn-lg"
-                            onClick={() => scrollToElement('services')}
+                            onClick={() => scrollToElement('booking')}
                         >
-                            Dịch vụ của chúng tôi <FaArrowRight />
+                            Đặt lịch tư vấn miễn phí <FaArrowRight />
                         </button>
                         <a
                             href={createPhoneLink(contactInfo.phone)}
@@ -33,15 +33,37 @@ const Hero: React.FC = () => {
                             <FaPhone /> {contactInfo.phone}
                         </a>
                     </div>
-                    <div className="hero-features animate-fadeInUp" style={{ animationDelay: '0.5s' }}>
-                        <div className="hero-feature">
-                            <FaPhone className="feature-icon" />
-                            <span>Tư vấn 24/7</span>
+
+                    {/* USP - Lợi thế cạnh tranh */}
+                    <div className="hero-usps animate-fadeInUp" style={{ animationDelay: '0.5s' }}>
+                        <div className="hero-usp">
+                            <FaShieldAlt className="usp-icon" />
+                            <span>Bảo mật tuyệt đối</span>
                         </div>
-                        <div className="hero-feature">
-                            <FaEnvelope className="feature-icon" />
-                            <span>Phản hồi nhanh</span>
+                        <div className="hero-usp">
+                            <FaClock className="usp-icon" />
+                            <span>Dịch vụ nhanh chóng</span>
                         </div>
+                        <div className="hero-usp">
+                            <FaHeadset className="usp-icon" />
+                            <span>Hỗ trợ 24/7</span>
+                        </div>
+                        <div className="hero-usp">
+                            <FaTrophy className="usp-icon" />
+                            <span>Đội ngũ chuyên gia</span>
+                        </div>
+                    </div>
+
+                    {/* Thống kê tin cậy */}
+                    <div className="hero-stats animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
+                        {statistics.map((stat) => (
+                            <div key={stat.id} className="hero-stat">
+                                <div className="stat-value">
+                                    {stat.value}{stat.suffix}
+                                </div>
+                                <div className="stat-label">{stat.label}</div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

@@ -103,6 +103,7 @@ button {
   --spacing-2xl: 3rem;     /* 48px */
   --spacing-3xl: 4rem;     /* 64px */
   --spacing-4xl: 6rem;     /* 96px */
+  --spacing-7xl: 7rem;     /* 96px */
   
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -317,7 +318,7 @@ button {
 .section-title {
   font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
+  /* color: var(--color-primary); */
   margin-bottom: var(--spacing-md);
   text-align: center;
 }

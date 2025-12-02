@@ -85,14 +85,16 @@
 .viban-modal {
     background: white;
     border-radius: var(--radius-2xl);
-    max-width: 700px;
+    /* max-width: 700px; */
     width: 100%;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
     animation: fadeInUp 0.3s ease-out;
 }
-
+.viban-modal::-webkit-scrollbar {
+    width: 0;
+}
 .modal-header {
     background: var(--gradient-primary);
     color: white;

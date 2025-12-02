@@ -5,7 +5,7 @@ export const navigationItems: NavItem[] = [
     {
         id: 'home',
         label: 'Trang Chủ',
-        href: '#home',
+        href: '/',
     },
     {
         id: 'about',
@@ -28,139 +28,74 @@ export const navigationItems: NavItem[] = [
                 id: 'svc-business',
                 label: 'Luật Doanh nghiệp',
                 href: '#',
-                children: [
-                    { id: 'svc-business-law', label: 'Pháp luật', href: '#service-doanh-nghiep-phap-luat' },
-                    { id: 'svc-business-proc', label: 'Thủ tục pháp lý', href: '#service-doanh-nghiep-thu-tuc' },
-                    { id: 'svc-business-adv', label: 'Tư vấn', href: '#service-doanh-nghiep-tu-van' },
-                    { id: 'svc-business-rep', label: 'Đại diện ủy quyền', href: '#service-doanh-nghiep-dai-dien' },
-                ],
             },
             {
                 id: 'svc-land',
                 label: 'Luật Đất đai',
                 href: '#',
-                children: [
-                    { id: 'svc-land-law', label: 'Pháp luật', href: '#service-dat-dai-phap-luat' },
-                    { id: 'svc-land-proc', label: 'Thủ tục pháp lý', href: '#service-dat-dai-thu-tuc' },
-                    { id: 'svc-land-adv', label: 'Tư vấn', href: '#service-dat-dai-tu-van' },
-                    { id: 'svc-land-rep', label: 'Đại diện ủy quyền', href: '#service-dat-dai-dai-dien' },
-                ],
             },
             {
                 id: 'svc-criminal',
                 label: 'Luật Hình sự',
                 href: '#',
-                children: [
-                    { id: 'svc-criminal-law', label: 'Pháp luật', href: '#service-hinh-su-phap-luat' },
-                    { id: 'svc-criminal-proc', label: 'Thủ tục', href: '#service-hinh-su-thu-tuc' },
-                    { id: 'svc-criminal-adv', label: 'Luật sư bào chữa', href: '#service-hinh-su-bao-chua' },
-                    { id: 'svc-criminal-qa', label: 'Hỏi đáp – Tư vấn', href: '#service-hinh-su-hoi-dap' },
-                ],
             },
             {
                 id: 'svc-family',
                 label: 'Hôn nhân – Gia đình',
                 href: '#',
-                children: [
-                    { id: 'svc-family-law', label: 'Pháp luật', href: '#service-hon-nhan-phap-luat' },
-                    { id: 'svc-family-proc', label: 'Thủ tục', href: '#service-hon-nhan-thu-tuc' },
-                    { id: 'svc-family-adv', label: 'Tư vấn', href: '#service-hon-nhan-tu-van' },
-                    { id: 'svc-family-rep', label: 'Đại diện ủy quyền', href: '#service-hon-nhan-dai-dien' },
-                ],
             },
             {
                 id: 'svc-debt',
                 label: 'Thu hồi nợ',
                 href: '#',
-                children: [
-                    { id: 'svc-debt-law', label: 'Pháp luật', href: '#service-thu-hoi-no-phap-luat' },
-                    { id: 'svc-debt-proc', label: 'Thủ tục', href: '#service-thu-hoi-no-thu-tuc' },
-                    { id: 'svc-debt-adv', label: 'Tư vấn', href: '#service-thu-hoi-no-tu-van' },
-                    { id: 'svc-debt-rep', label: 'Đại diện ủy quyền', href: '#service-thu-hoi-no-dai-dien' },
-                ],
             },
             {
                 id: 'svc-arbitration',
                 label: 'Trọng tài thương mại',
                 href: '#',
-                children: [
-                    { id: 'svc-arb-law', label: 'Pháp luật', href: '#service-trong-tai-phap-luat' },
-                    { id: 'svc-arb-proc', label: 'Thủ tục', href: '#service-trong-tai-thu-tuc' },
-                    { id: 'svc-arb-adv', label: 'Tư vấn', href: '#service-trong-tai-tu-van' },
-                    { id: 'svc-arb-rep', label: 'Đại diện', href: '#service-trong-tai-dai-dien' },
-                ],
             },
             {
                 id: 'svc-traffic',
                 label: 'Luật Giao thông',
                 href: '#',
-                children: [
-                    { id: 'svc-traffic-law', label: 'Pháp luật', href: '#service-giao-thong-phap-luat' },
-                    { id: 'svc-traffic-proc', label: 'Thủ tục', href: '#service-giao-thong-thu-tuc' },
-                    { id: 'svc-traffic-adv', label: 'Tư vấn', href: '#service-giao-thong-tu-van' },
-                ],
             },
             {
                 id: 'svc-immigration',
                 label: 'Luật Di trú',
                 href: '#',
-                children: [
-                    { id: 'svc-imm-law', label: 'Pháp luật', href: '#service-di-tru-phap-luat' },
-                    { id: 'svc-imm-proc', label: 'Thủ tục', href: '#service-di-tru-thu-tuc' },
-                    { id: 'svc-imm-adv', label: 'Tư vấn', href: '#service-di-tru-tu-van' },
-                ],
             },
             {
                 id: 'svc-ip',
                 label: 'Sở hữu trí tuệ',
                 href: '#',
-                children: [
-                    { id: 'svc-ip-law', label: 'Pháp luật', href: '#service-shtt-phap-luat' },
-                    { id: 'svc-ip-proc', label: 'Thủ tục', href: '#service-shtt-thu-tuc' },
-                    { id: 'svc-ip-adv', label: 'Tư vấn', href: '#service-shtt-tu-van' },
-                ],
             },
         ],
     },
     {
         id: 'qa',
         label: 'Hỏi Đáp',
-        href: '#qa',
-    },
-    {
-        id: 'faq',
-        label: 'Câu hỏi thường gặp',
-        href: '#faq',
-    },
-    {
-        id: 'news',
-        label: 'Tin Tức',
-        href: '#news',
+        href: '/qa',
         children: [
-            { id: 'news-press', label: 'Tin báo chí', href: '#news-press' },
-            { id: 'news-legal', label: 'Tin pháp luật', href: '#news-legal' },
-            { id: 'news-general', label: 'Tin tổng hợp', href: '#news-general' },
+            { id: 'qa-home', label: 'Tất cả câu hỏi', href: '/qa' },
+            { id: 'qa-business', label: 'Luật Doanh nghiệp', href: '/qa' },
+            { id: 'qa-family', label: 'Luật Hôn nhân & Gia đình', href: '/qa' },
+            { id: 'qa-criminal', label: 'Luật Hình sự', href: '/qa' },
         ],
     },
     {
-        id: 'laws',
-        label: 'Văn bản pháp luật',
-        href: '#laws',
+        id: 'news',
+        label: 'Tin Tức & Blog',
+        href: '/blog',
+        children: [
+            { id: 'news-blog', label: 'Thư viện bài viết', href: '/blog' },
+            { id: 'news-legal-docs', label: 'Văn bản pháp luật', href: '/documents' },
+            { id: 'news-press', label: 'Tin báo chí', href: '/blog' },
+        ],
     },
     {
         id: 'contact',
         label: 'Liên Hệ',
         href: '#contact',
-    },
-    {
-        id: 'booking',
-        label: 'Đặt lịch',
-        href: '#booking',
-    },
-    {
-        id: 'careers',
-        label: 'Tuyển dụng',
-        href: '#careers',
     },
 ];
 
@@ -242,44 +177,6 @@ export const services: Service[] = [
             'Minh bạch, công khai',
         ],
     },
-    // {
-    //     id: 'service-5',
-    //     title: 'Tư vấn Pháp lý',
-    //     description: 'Cung cấp tư vấn pháp lý chuyên sâu về các vấn đề liên quan đến dân sự và thi hành án.',
-    //     icon: 'FaGraduationCap',
-    //     details: [
-    //         'Tư vấn về vi bằng và lập vi bằng',
-    //         'Tư vấn về thi hành án dân sự',
-    //         'Tư vấn về hợp đồng giao dịch',
-    //         'Soạn thảo và rà soát văn bản pháp lý',
-    //         'Tư vấn về quyền lợi hợp pháp',
-    //     ],
-    //     benefits: [
-    //         'Nắm rõ quyền lợi từ pháp luật',
-    //         'Giảm rủi ro pháp lý',
-    //         'Đảm bảo giao dịch hợp pháp',
-    //         'Hỗ trợ chuyên sâu từ chuyên gia',
-    //     ],
-    // },
-    // {
-    //     id: 'service-6',
-    //     title: 'Soạn thảo Văn bản',
-    //     description: 'Soạn thảo các văn bản pháp lý theo yêu cầu của khách hàng với đúng quy định pháp luật.',
-    //     icon: 'FaFileAlt',
-    //     details: [
-    //         'Soạn thảo hợp đồng dân sự',
-    //         'Soạn thảo hợp đồng thương mại',
-    //         'Soạn thảo di chúc, tương thác',
-    //         'Soạn thảo giấy ủy quyền',
-    //         'Rà soát, sửa chữa văn bản pháp lý',
-    //     ],
-    //     benefits: [
-    //         'Đúng quy cách pháp lý',
-    //         'Bảo vệ quyền lợi các bên',
-    //         'Giảm tranh chấp sau này',
-    //         'Chuyên nghiệp, an toàn',
-    //     ],
-    // },
 ];
 
 // Team Members
@@ -641,3 +538,209 @@ export const companyInfo = {
         'Tôn trọng quyền lợi hợp pháp của mọi bên',
     ],
 };
+
+// Service Areas (Lĩnh vực hành nghề) - for grid display
+export interface ServiceArea {
+    id: string;
+    title: string;
+    image: string;
+    description: string;
+}
+
+export const serviceAreas: ServiceArea[] = [
+    {
+        id: 'area-1',
+        title: 'Tư Vấn Luật Đất Đai Chuyên Sâu: Giải Pháp Pháp Lý Toàn Diện',
+        image: '/images/service-land-law.jpg',
+        description: 'Dịch vụ tư vấn đất đai chuyên sâu',
+    },
+    {
+        id: 'area-2',
+        title: 'Dịch vụ quản lý và thu hồi nợ',
+        image: '/images/service-debt-recovery.jpg',
+        description: 'Giải pháp toàn diện cho thu hồi nợ',
+    },
+    {
+        id: 'area-3',
+        title: 'Dịch vụ tư vấn đầu tư',
+        image: '/images/service-investment.jpg',
+        description: 'Hỗ trợ tư vấn đầu tư kinh doanh',
+    },
+    {
+        id: 'area-4',
+        title: 'Dịch vụ mua bán, sáp nhập, tái cơ cấu doanh nghiệp',
+        image: '/images/service-ma.jpg',
+        description: 'M&A và tái cơ cấu doanh nghiệp',
+    },
+    {
+        id: 'area-5',
+        title: 'Dịch vụ đăng ký doanh nghiệp',
+        image: '/images/service-registration.jpg',
+        description: 'Thủ tục đăng ký doanh nghiệp',
+    },
+    {
+        id: 'area-6',
+        title: 'Dịch vụ giấy phép con',
+        image: '/images/service-license.jpg',
+        description: 'Cấp giấy phép con kinh doanh',
+    },
+    {
+        id: 'area-7',
+        title: 'Dịch vụ sở hữu trí tuệ',
+        image: '/images/service-ip.jpg',
+        description: 'Bảo vệ sở hữu trí tuệ',
+    },
+    {
+        id: 'area-8',
+        title: 'Dịch vụ pháp lý thường xuyên',
+        image: '/images/service-legal-services.jpg',
+        description: 'Tư vấn pháp lý thường xuyên',
+    },
+];
+
+// Family Law Q&A
+export interface FamilyLawQA {
+    id: string;
+    question: string;
+    image: string;
+    shortDescription: string;
+}
+
+export const familyLawQAs: FamilyLawQA[] = [
+    {
+        id: 'faq-family-1',
+        question: 'Các quy định pháp lý nào bảo vệ quyền lợi con cái, tài sản sau khi ly hôn?',
+        image: '/images/family-qa-1.jpg',
+        shortDescription: 'Quy định pháp lý bảo vệ con cái và tài sản',
+    },
+    {
+        id: 'faq-family-2',
+        question: 'Thủ tục ly hôn phương mới nhất: Điều kiện, Hộ số và Thời gian giải quyết',
+        image: '/images/family-qa-2.jpg',
+        shortDescription: 'Thủ tục ly hôn theo quy định mới nhất',
+    },
+    {
+        id: 'faq-family-3',
+        question: 'Thủ Tục Đăng Ký Kết Hôn Có Yêu Tố Nước Ngoài 2025: Cần Chuẩn Bị Pháp Lý & Quy Trình Chi Tiết',
+        image: '/images/family-qa-3.jpg',
+        shortDescription: 'Đăng ký kết hôn có yếu tố nước ngoài',
+    },
+    {
+        id: 'faq-family-4',
+        question: 'Chính phủ Đề Xuất Bổ Sung 3 Trường Hợp Cụ Thể để Nhà nước Thu Hồi Đất Vi Lợi Ích Quốc Gia và Phát Triển Kinh Tế - Xã Hội',
+        image: '/images/family-qa-4.jpg',
+        shortDescription: 'Chính phủ đề xuất về thu hồi đất',
+    },
+    {
+        id: 'faq-family-5',
+        question: 'LỰ HÔN ĐƠN PHƯƠNG CẦN NHỮNG GIẤY TỜ, THỦ TỤC GÌ?',
+        image: '/images/family-qa-5.jpg',
+        shortDescription: 'Ly hôn đơn phương: thủ tục và giấy tờ',
+    },
+    {
+        id: 'faq-family-6',
+        question: 'Thay đổi họ cho con riêng',
+        image: '/images/family-qa-6.jpg',
+        shortDescription: 'Thay đổi họ cho con riêng - hướng dẫn',
+    },
+];
+
+// Gallery (Images & Videos)
+export interface GalleryItem {
+    id: string;
+    title: string;
+    type: 'image' | 'video';
+    thumbnail: string;
+    videoId?: string;
+    description: string;
+}
+
+export const galleryItems: GalleryItem[] = [
+    {
+        id: 'gallery-1',
+        title: 'Hội thuyết truyền hình Tại sao dự án',
+        type: 'image',
+        thumbnail: '/images/gallery-1.jpg',
+        description: 'Hội thuyết truyền hình',
+    },
+    {
+        id: 'gallery-2',
+        title: 'Hội thuyết truyền hình Giao đất cho thương',
+        type: 'image',
+        thumbnail: '/images/gallery-2.jpg',
+        description: 'Giao đất cho thương mại',
+    },
+    {
+        id: 'gallery-3',
+        title: 'Hội thuyết truyền hình Một số vấn đề',
+        type: 'image',
+        thumbnail: '/images/gallery-3.jpg',
+        description: 'Một số vấn đề pháp lý',
+    },
+    {
+        id: 'gallery-4',
+        title: 'Văn phòng Thừa phát lại',
+        type: 'image',
+        thumbnail: '/images/gallery-4.jpg',
+        description: 'Không gian văn phòng',
+    },
+    {
+        id: 'gallery-5',
+        title: 'Luật sư chuyên viên',
+        type: 'image',
+        thumbnail: '/images/gallery-5.jpg',
+        description: 'Đội ngũ chuyên viên',
+    },
+    {
+        id: 'gallery-6',
+        title: 'Văn phòng làm việc',
+        type: 'image',
+        thumbnail: '/images/gallery-6.jpg',
+        description: 'Không gian làm việc hiện đại',
+    },
+    {
+        id: 'gallery-7',
+        title: 'Hợp thư truyền hình Tại sao dự án',
+        type: 'video',
+        thumbnail: '/images/video-1.jpg',
+        videoId: 'dQw4w9WgXcQ',
+        description: 'Video hợp thư truyền hình',
+    },
+    {
+        id: 'gallery-8',
+        title: 'Hợp thư truyền hình Giao đất',
+        type: 'video',
+        thumbnail: '/images/video-2.jpg',
+        videoId: 'dQw4w9WgXcQ',
+        description: 'Video giao đất',
+    },
+    {
+        id: 'gallery-9',
+        title: 'Hợp thư truyền hình Một số vấn đề',
+        type: 'video',
+        thumbnail: '/images/video-3.jpg',
+        videoId: 'dQw4w9WgXcQ',
+        description: 'Video vấn đề pháp lý',
+    },
+    {
+        id: 'gallery-10',
+        title: 'Hội thuyết truyền hình Văn phòng',
+        type: 'image',
+        thumbnail: '/images/gallery-10.jpg',
+        description: 'Sự kiện văn phòng',
+    },
+    {
+        id: 'gallery-11',
+        title: 'Sự kiện đội ngũ',
+        type: 'image',
+        thumbnail: '/images/gallery-11.jpg',
+        description: 'Hoạt động đội ngũ',
+    },
+    {
+        id: 'gallery-12',
+        title: 'Lễ kỷ niệm',
+        type: 'image',
+        thumbnail: '/images/gallery-12.jpg',
+        description: 'Lễ kỷ niệm công ty',
+    },
+];

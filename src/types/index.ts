@@ -136,3 +136,29 @@ export interface NavItem {
     href: string;
     children?: NavItem[];
 }
+
+// Service Area types
+export interface ServiceArea {
+    id: string;
+    title: string;
+    image: string;
+    description: string;
+}
+
+// Family Law Q&A types
+export interface FamilyLawQA {
+    id: string;
+    question: string;
+    image: string;
+    shortDescription: string;
+}
+
+// Gallery Item types
+export interface GalleryItem {
+    id: string;
+    title: string;
+    type: 'image' | 'video';
+    thumbnail: string;
+    videoId?: string;
+    description: string;
+}

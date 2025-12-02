@@ -83,6 +83,59 @@
     margin-bottom: var(--spacing-3xl);
 }
 
+/* USP - Lợi thế cạnh tranh */
+.hero-usps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-3xl);
+}
+
+.hero-usp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+}
+
+.usp-icon {
+    font-size: var(--font-size-2xl);
+    color: var(--color-secondary-light);
+}
+
+/* Thống kê tin cậy */
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    padding-top: var(--spacing-2xl);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero-stat {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-secondary-light);
+    margin-bottom: var(--spacing-sm);
+}
+
+.stat-label {
+    font-size: var(--font-size-sm);
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: var(--font-weight-medium);
+}
+
 .hero-features {
     display: flex;
     gap: var(--spacing-3xl);
@@ -104,6 +157,16 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+    .hero-usps {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hero-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .hero {
         min-height: 80vh;
@@ -124,6 +187,21 @@
     .hero-cta {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .hero-usps {
+        grid-template-columns: 1fr;
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .hero-stats {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+        padding-top: var(--spacing-lg);
+    }
+
+    .stat-value {
+        font-size: var(--font-size-2xl);
     }
 
     .hero-features {

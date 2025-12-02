@@ -11,32 +11,156 @@ export const navigationItems: NavItem[] = [
         id: 'about',
         label: 'Giới Thiệu',
         href: '#about',
-        // children: [
-        //     { id: 'about-overview', label: 'Giới thiệu chung', href: '#about-overview' },
-        //     { id: 'about-team', label: 'Đội ngũ', href: '#about-team' },
-        //     { id: 'about-vision', label: 'Tầm nhìn & Sứ mệnh', href: '#about-vision' },
-        //     { id: 'about-careers', label: 'Tuyển dụng', href: '#about-careers' },
-        // ],
+        children: [
+            { id: 'about-overview', label: 'Giới thiệu chung', href: '#about-overview' },
+            { id: 'about-philosophy', label: 'Triết lý & Văn hóa hành nghề', href: '#about-philosophy' },
+            { id: 'about-partners', label: 'Đối tác', href: '#about-partners' },
+            { id: 'about-privacy', label: 'Chính sách bảo mật', href: '#about-privacy' },
+            { id: 'about-careers', label: 'Tuyển dụng', href: '#about-careers' },
+        ],
     },
     {
         id: 'services',
         label: 'Dịch Vụ',
         href: '#services',
+        children: [
+            {
+                id: 'svc-business',
+                label: 'Luật Doanh nghiệp',
+                href: '#',
+                children: [
+                    { id: 'svc-business-law', label: 'Pháp luật', href: '#service-doanh-nghiep-phap-luat' },
+                    { id: 'svc-business-proc', label: 'Thủ tục pháp lý', href: '#service-doanh-nghiep-thu-tuc' },
+                    { id: 'svc-business-adv', label: 'Tư vấn', href: '#service-doanh-nghiep-tu-van' },
+                    { id: 'svc-business-rep', label: 'Đại diện ủy quyền', href: '#service-doanh-nghiep-dai-dien' },
+                ],
+            },
+            {
+                id: 'svc-land',
+                label: 'Luật Đất đai',
+                href: '#',
+                children: [
+                    { id: 'svc-land-law', label: 'Pháp luật', href: '#service-dat-dai-phap-luat' },
+                    { id: 'svc-land-proc', label: 'Thủ tục pháp lý', href: '#service-dat-dai-thu-tuc' },
+                    { id: 'svc-land-adv', label: 'Tư vấn', href: '#service-dat-dai-tu-van' },
+                    { id: 'svc-land-rep', label: 'Đại diện ủy quyền', href: '#service-dat-dai-dai-dien' },
+                ],
+            },
+            {
+                id: 'svc-criminal',
+                label: 'Luật Hình sự',
+                href: '#',
+                children: [
+                    { id: 'svc-criminal-law', label: 'Pháp luật', href: '#service-hinh-su-phap-luat' },
+                    { id: 'svc-criminal-proc', label: 'Thủ tục', href: '#service-hinh-su-thu-tuc' },
+                    { id: 'svc-criminal-adv', label: 'Luật sư bào chữa', href: '#service-hinh-su-bao-chua' },
+                    { id: 'svc-criminal-qa', label: 'Hỏi đáp – Tư vấn', href: '#service-hinh-su-hoi-dap' },
+                ],
+            },
+            {
+                id: 'svc-family',
+                label: 'Hôn nhân – Gia đình',
+                href: '#',
+                children: [
+                    { id: 'svc-family-law', label: 'Pháp luật', href: '#service-hon-nhan-phap-luat' },
+                    { id: 'svc-family-proc', label: 'Thủ tục', href: '#service-hon-nhan-thu-tuc' },
+                    { id: 'svc-family-adv', label: 'Tư vấn', href: '#service-hon-nhan-tu-van' },
+                    { id: 'svc-family-rep', label: 'Đại diện ủy quyền', href: '#service-hon-nhan-dai-dien' },
+                ],
+            },
+            {
+                id: 'svc-debt',
+                label: 'Thu hồi nợ',
+                href: '#',
+                children: [
+                    { id: 'svc-debt-law', label: 'Pháp luật', href: '#service-thu-hoi-no-phap-luat' },
+                    { id: 'svc-debt-proc', label: 'Thủ tục', href: '#service-thu-hoi-no-thu-tuc' },
+                    { id: 'svc-debt-adv', label: 'Tư vấn', href: '#service-thu-hoi-no-tu-van' },
+                    { id: 'svc-debt-rep', label: 'Đại diện ủy quyền', href: '#service-thu-hoi-no-dai-dien' },
+                ],
+            },
+            {
+                id: 'svc-arbitration',
+                label: 'Trọng tài thương mại',
+                href: '#',
+                children: [
+                    { id: 'svc-arb-law', label: 'Pháp luật', href: '#service-trong-tai-phap-luat' },
+                    { id: 'svc-arb-proc', label: 'Thủ tục', href: '#service-trong-tai-thu-tuc' },
+                    { id: 'svc-arb-adv', label: 'Tư vấn', href: '#service-trong-tai-tu-van' },
+                    { id: 'svc-arb-rep', label: 'Đại diện', href: '#service-trong-tai-dai-dien' },
+                ],
+            },
+            {
+                id: 'svc-traffic',
+                label: 'Luật Giao thông',
+                href: '#',
+                children: [
+                    { id: 'svc-traffic-law', label: 'Pháp luật', href: '#service-giao-thong-phap-luat' },
+                    { id: 'svc-traffic-proc', label: 'Thủ tục', href: '#service-giao-thong-thu-tuc' },
+                    { id: 'svc-traffic-adv', label: 'Tư vấn', href: '#service-giao-thong-tu-van' },
+                ],
+            },
+            {
+                id: 'svc-immigration',
+                label: 'Luật Di trú',
+                href: '#',
+                children: [
+                    { id: 'svc-imm-law', label: 'Pháp luật', href: '#service-di-tru-phap-luat' },
+                    { id: 'svc-imm-proc', label: 'Thủ tục', href: '#service-di-tru-thu-tuc' },
+                    { id: 'svc-imm-adv', label: 'Tư vấn', href: '#service-di-tru-tu-van' },
+                ],
+            },
+            {
+                id: 'svc-ip',
+                label: 'Sở hữu trí tuệ',
+                href: '#',
+                children: [
+                    { id: 'svc-ip-law', label: 'Pháp luật', href: '#service-shtt-phap-luat' },
+                    { id: 'svc-ip-proc', label: 'Thủ tục', href: '#service-shtt-thu-tuc' },
+                    { id: 'svc-ip-adv', label: 'Tư vấn', href: '#service-shtt-tu-van' },
+                ],
+            },
+        ],
     },
     {
-        id: 'knowledge',
-        label: 'Kiến Thức',
-        href: '#knowledge',
-        // children: [
-        //     { id: 'knowledge-news', label: 'Tin tức', href: '#knowledge-news' },
-        //     { id: 'knowledge-faq', label: 'Hỏi đáp', href: '#knowledge-faq' },
-        //     { id: 'knowledge-legal', label: 'Văn bản pháp luật', href: '#knowledge-legal' },
-        // ],
+        id: 'qa',
+        label: 'Hỏi Đáp',
+        href: '#qa',
+    },
+    {
+        id: 'faq',
+        label: 'Câu hỏi thường gặp',
+        href: '#faq',
+    },
+    {
+        id: 'news',
+        label: 'Tin Tức',
+        href: '#news',
+        children: [
+            { id: 'news-press', label: 'Tin báo chí', href: '#news-press' },
+            { id: 'news-legal', label: 'Tin pháp luật', href: '#news-legal' },
+            { id: 'news-general', label: 'Tin tổng hợp', href: '#news-general' },
+        ],
+    },
+    {
+        id: 'laws',
+        label: 'Văn bản pháp luật',
+        href: '#laws',
     },
     {
         id: 'contact',
         label: 'Liên Hệ',
         href: '#contact',
+    },
+    {
+        id: 'booking',
+        label: 'Đặt lịch',
+        href: '#booking',
+    },
+    {
+        id: 'careers',
+        label: 'Tuyển dụng',
+        href: '#careers',
     },
 ];
 

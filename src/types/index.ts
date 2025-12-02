@@ -49,6 +49,47 @@ export interface LegalDocument {
     publishDate: string;
 }
 
+// Legal Article types
+export interface LegalArticle {
+    id: string;
+    title: string;
+    category: string;
+    content: string;
+    relatedLaws: string[];
+    datePublished: string;
+    author?: string;
+}
+
+// Law Explanation types
+export interface LawExplanation {
+    id: string;
+    lawName: string;
+    lawNumber: string;
+    publishedDate: string;
+    effectiveDate: string;
+    mainPoints: string[];
+    applicationScope: string;
+    penalties?: string[];
+}
+
+// Legal Term types
+export interface LegalTerm {
+    id: string;
+    term: string;
+    definition: string;
+    relatedLaws: string[];
+    examples?: string[];
+}
+
+// Reference types
+export interface Reference {
+    id: string;
+    name: string;
+    url: string;
+    description: string;
+    category: string;
+}
+
 // Testimonial types
 export interface Testimonial {
     id: string;

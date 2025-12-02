@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { FaNewspaper, FaQuestionCircle, FaFileAlt, FaChevronDown, FaChevronUp, FaSearch } from 'react-icons/fa';
+import { FaNewspaper, FaQuestionCircle, FaFileAlt, FaChevronDown, FaChevronUp, FaSearch, FaBook, FaLink, FaLightbulb } from 'react-icons/fa';
 import { blogPosts, faqs, legalDocuments } from '../data/content';
+import { legalArticles, mainLaws, legalTerms, usefulReferences, legalFAQs } from '../data/legalKnowledge';
 import { formatDate } from '../utils/helpers';
 import BlogDetail from './BlogDetail';
 import type { BlogPost } from '../types';
 import './Knowledge.css';
 
 const Knowledge: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'news' | 'faq' | 'legal'>('news');
+    const [activeTab, setActiveTab] = useState<'news' | 'faq' | 'legal' | 'articles' | 'laws' | 'terms' | 'references'>('news');
     const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
@@ -29,9 +30,9 @@ const Knowledge: React.FC = () => {
     return (
         <section id="knowledge" className="section section-alt">
             <div className="container">
-                <h2 className="section-title">Kiến Thức & Tài Liệu</h2>
+                <h2 className="section-title">Kiến Thức & Tài Liệu Pháp Luật</h2>
                 <p className="section-subtitle">
-                    Cập nhật tin tức, giải đáp thắc mắc và tài liệu pháp luật
+                    Cập nhật tin tức, giải đáp thắc mắc và tài liệu pháp luật chi tiết
                 </p>
 
                 {/* Tab Navigation */}
@@ -43,6 +44,30 @@ const Knowledge: React.FC = () => {
                         <FaNewspaper /> Tin tức / Blog
                     </button>
                     <button
+                        className={`tab-btn ${activeTab === 'articles' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('articles')}
+                    >
+                        <FaBook /> Bài Viết Pháp Luật
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'laws' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('laws')}
+                    >
+                        <FaLightbulb /> Luật & Quy Định
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'terms' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('terms')}
+                    >
+                        <FaBook /> Thuật Ngữ Pháp Luật
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'references' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('references')}
+                    >
+                        <FaLink /> Tài Liệu Tham Khảo
+                    </button>
+                    <button
                         className={`tab-btn ${activeTab === 'faq' ? 'active' : ''}`}
                         onClick={() => setActiveTab('faq')}
                     >
@@ -52,7 +77,7 @@ const Knowledge: React.FC = () => {
                         className={`tab-btn ${activeTab === 'legal' ? 'active' : ''}`}
                         onClick={() => setActiveTab('legal')}
                     >
-                        <FaFileAlt /> Văn bản pháp luật
+                        <FaFileAlt /> Tài Liệu Pháp Lý
                     </button>
                 </div>
 
@@ -162,6 +187,107 @@ const Knowledge: React.FC = () => {
                                 ) : (
                                     <p className="no-results">Không tìm thấy văn bản phù hợp.</p>
                                 )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Legal Articles Tab */}
+                    {activeTab === 'articles' && (
+                        <div className="tab-panel animate-fadeIn">
+                            <div className="articles-grid">
+                                {legalArticles.map(article => (
+                                    <div key={article.id} className="article-card">
+                                        <div className="article-header">
+                                            <h3>{article.title}</h3>
+                                            <span className="article-category">{article.category}</span>
+                                        </div>
+                                        <p className="article-excerpt">{article.content.substring(0, 150)}...</p>
+                                        <div className="article-meta">
+                                            {article.author && <span>✍️ {article.author}</span>}
+                                            <span>📅 {formatDate(article.datePublished)}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Laws Tab */}
+                    {activeTab === 'laws' && (
+                        <div className="tab-panel animate-fadeIn">
+                            <div className="laws-list">
+                                {mainLaws.map(law => (
+                                    <div key={law.id} className="law-card">
+                                        <div className="law-header" onClick={() => toggleFaq(law.id)}>
+                                            <div>
+                                                <h3>{law.lawName}</h3>
+                                                <span className="law-number">{law.lawNumber}</span>
+                                            </div>
+                                            <button className="expand-btn">
+                                                {expandedFaq === law.id ? <FaChevronUp /> : <FaChevronDown />}
+                                            </button>
+                                        </div>
+                                        {expandedFaq === law.id && (
+                                            <div className="law-details">
+                                                <div className="law-dates">
+                                                    <span><strong>Công bố:</strong> {formatDate(law.publishedDate)}</span>
+                                                    <span><strong>Có hiệu lực:</strong> {formatDate(law.effectiveDate)}</span>
+                                                </div>
+                                                <div>
+                                                    <h4>Các Điểm Chính:</h4>
+                                                    <ul>
+                                                        {law.mainPoints.map((point, idx) => (
+                                                            <li key={idx}>{point}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                                <p><strong>Phạm Vi Áp Dụng:</strong> {law.applicationScope}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Legal Terms Tab */}
+                    {activeTab === 'terms' && (
+                        <div className="tab-panel animate-fadeIn">
+                            <div className="terms-grid">
+                                {legalTerms.map(term => (
+                                    <div key={term.id} className="term-card">
+                                        <h3>{term.term}</h3>
+                                        <p>{term.definition}</p>
+                                        {term.examples && term.examples.length > 0 && (
+                                            <div className="term-examples">
+                                                <strong>Ví dụ:</strong>
+                                                <ul>
+                                                    {term.examples.map((example, idx) => (
+                                                        <li key={idx}>{example}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* References Tab */}
+                    {activeTab === 'references' && (
+                        <div className="tab-panel animate-fadeIn">
+                            <div className="references-grid">
+                                {usefulReferences.map(ref => (
+                                    <div key={ref.id} className="reference-card">
+                                        <h3>{ref.name}</h3>
+                                        <span className="reference-category">{ref.category}</span>
+                                        <p>{ref.description}</p>
+                                        <a href={ref.url} target="_blank" rel="noopener noreferrer" className="reference-link">
+                                            🔗 Truy cập trang web →
+                                        </a>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     )}

@@ -1,10 +1,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaBook, FaDownload, FaCalendar, FaArrowLeft } from 'react-icons/fa';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import FloatingContact from '../components/FloatingContact';
-import BackToTop from '../components/BackToTop';
+import Layout from '../components/Layout';
 import { legalDocuments } from '../data/content';
 import { formatDate } from '../utils/helpers';
 import './DocumentDetailPage.css';
@@ -15,15 +12,13 @@ const DocumentDetailPage: React.FC = () => {
 
     if (!document) {
         return (
-            <div>
-                <Header />
+            <Layout>
                 <main className="container">
                     <h2>Tài liệu không tìm thấy</h2>
                     <p>Xin lỗi, tài liệu bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
                     <Link to="/documents">Quay về thư viện tài liệu</Link>
                 </main>
-                <Footer />
-            </div>
+            </Layout>
         );
     }
 
@@ -32,8 +27,7 @@ const DocumentDetailPage: React.FC = () => {
         .slice(0, 3);
 
     return (
-        <div className="document-detail-page">
-            <Header />
+        <Layout>
             <main className="container document-detail-container">
                 <Link to="/documents" className="back-link">
                     <FaArrowLeft /> Quay lại thư viện
@@ -150,10 +144,7 @@ const DocumentDetailPage: React.FC = () => {
                     </div>
                 </article>
             </main>
-            <Footer />
-            <FloatingContact />
-            <BackToTop />
-        </div>
+        </Layout>
     );
 };
 

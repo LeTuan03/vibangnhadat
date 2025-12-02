@@ -1,0 +1,20 @@
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.layout-content {
+    flex: 1 1 auto;
+}
+
+/* Keep header fixed spacing for content top offset if header is fixed */
+main, .container {
+    padding-top: 80px;
+}
+
+@media (max-width: 768px) {
+    main, .container {
+        padding-top: 64px;
+    }
+}

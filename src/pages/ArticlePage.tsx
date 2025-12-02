@@ -1,9 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import FloatingContact from '../components/FloatingContact';
-import BackToTop from '../components/BackToTop';
+import Layout from '../components/Layout';
 import { blogPosts } from '../data/content';
 import { formatDate } from '../utils/helpers';
 import './ArticlePage.css';
@@ -14,21 +11,18 @@ const ArticlePage: React.FC = () => {
 
     if (!post) {
         return (
-            <div>
-                <Header />
+            <Layout>
                 <main className="container">
                     <h2>Bài viết không tìm thấy</h2>
                     <p>Xin lỗi, bài viết bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
                     <Link to="/blog">Quay về thư viện bài viết</Link>
                 </main>
-                <Footer />
-            </div>
+            </Layout>
         );
     }
 
     return (
-        <div className="article-page">
-            <Header />
+        <Layout>
             <main className="container article-container">
                 <nav className="breadcrumb">
                     <Link to="/">Trang chủ</Link> / <Link to="/blog">Thư viện</Link> / <span>{post.title}</span>
@@ -74,10 +68,7 @@ const ArticlePage: React.FC = () => {
                     </div>
                 </article>
             </main>
-            <Footer />
-            <FloatingContact />
-            <BackToTop />
-        </div>
+        </Layout>
     );
 };
 

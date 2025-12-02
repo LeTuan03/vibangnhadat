@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import Layout from '../components/Layout';
+// Route-level Layout will provide Header/Footer via Outlet
 import { blogPosts } from '../data/content';
 import { formatDate } from '../utils/helpers';
 import './ArticlePage.css';
@@ -11,19 +11,16 @@ const ArticlePage: React.FC = () => {
 
     if (!post) {
         return (
-            <Layout>
-                <main className="container">
-                    <h2>Bài viết không tìm thấy</h2>
-                    <p>Xin lỗi, bài viết bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
-                    <Link to="/blog">Quay về thư viện bài viết</Link>
-                </main>
-            </Layout>
+            <main className="container">
+                <h2>Bài viết không tìm thấy</h2>
+                <p>Xin lỗi, bài viết bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
+                <Link to="/blog">Quay về thư viện bài viết</Link>
+            </main>
         );
     }
 
     return (
-        <Layout>
-            <main className="container article-container">
+        <main className="container article-container">
                 <nav className="breadcrumb">
                     <Link to="/">Trang chủ</Link> / <Link to="/blog">Thư viện</Link> / <span>{post.title}</span>
                 </nav>
@@ -68,7 +65,6 @@ const ArticlePage: React.FC = () => {
                     </div>
                 </article>
             </main>
-        </Layout>
     );
 };
 

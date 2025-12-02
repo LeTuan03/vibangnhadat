@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaArrowRight } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import { familyLawQAs } from '../data/content';
 import './FamilyLawQA.css';
 
@@ -9,11 +10,11 @@ const FamilyLawQA: React.FC = () => {
             <div className="container">
                 <div className="section-header">
                     <h2 className="section-title">Hôn nhân – Gia đình</h2>
-                    <a href="#" className="see-more-link">Xem thêm <FaArrowRight /></a>
+                    <Link to="/family-law" className="see-more-link">Xem thêm <FaArrowRight /></Link>
                 </div>
                 <div className="family-qa-grid">
                     {familyLawQAs.map((qa) => (
-                        <div key={qa.id} className="family-qa-card">
+                        <Link to={`/family-law/${qa.id}`} key={qa.id} className="family-qa-card">
                             <div
                                 className="family-qa-image"
                                 style={{ backgroundImage: `url(${qa.image})` }}
@@ -22,7 +23,7 @@ const FamilyLawQA: React.FC = () => {
                                 <h3 className="family-qa-question">{qa.question}</h3>
                                 <p className="family-qa-description">{qa.shortDescription}</p>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

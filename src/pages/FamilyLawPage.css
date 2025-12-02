@@ -1,0 +1,4 @@
+.family-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; }
+.family-card { display:flex; background:#fff; border:1px solid #eee; }
+.family-card .thumb { width:140px; background-size:cover; background-position:center; }
+.family-card .content { padding:1rem; }

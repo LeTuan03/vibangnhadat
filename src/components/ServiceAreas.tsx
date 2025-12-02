@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaArrowRight } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import { serviceAreas } from '../data/content';
 import './ServiceAreas.css';
 
@@ -11,17 +12,14 @@ const ServiceAreas: React.FC = () => {
                 <div className="service-areas-grid">
                     {serviceAreas.map((area) => (
                         <div key={area.id} className="service-area-card">
-                            <div
-                                className="service-area-image"
-                                style={{ backgroundImage: `url(${area.image})` }}
-                            >
+                            <Link to={`/service-areas/${area.id}`} className="service-area-image" style={{ backgroundImage: `url(${area.image})` }}>
                                 <div className="service-area-overlay">
                                     <h3 className="service-area-title">{area.title}</h3>
-                                    <button className="btn btn-primary btn-sm">
+                                    <span className="btn btn-primary btn-sm">
                                         Xem chi tiết <FaArrowRight />
-                                    </button>
+                                    </span>
                                 </div>
-                            </div>
+                            </Link>
                         </div>
                     ))}
                 </div>

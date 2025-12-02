@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaBook, FaDownload, FaCalendar, FaArrowLeft } from 'react-icons/fa';
-import Layout from '../components/Layout';
+// Layout provided by route-level wrapper
 import { legalDocuments } from '../data/content';
 import { formatDate } from '../utils/helpers';
 import './DocumentDetailPage.css';
@@ -12,13 +12,11 @@ const DocumentDetailPage: React.FC = () => {
 
     if (!document) {
         return (
-            <Layout>
-                <main className="container">
-                    <h2>Tài liệu không tìm thấy</h2>
-                    <p>Xin lỗi, tài liệu bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
-                    <Link to="/documents">Quay về thư viện tài liệu</Link>
-                </main>
-            </Layout>
+            <main className="container">
+                <h2>Tài liệu không tìm thấy</h2>
+                <p>Xin lỗi, tài liệu bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
+                <Link to="/documents">Quay về thư viện tài liệu</Link>
+            </main>
         );
     }
 
@@ -27,8 +25,7 @@ const DocumentDetailPage: React.FC = () => {
         .slice(0, 3);
 
     return (
-        <Layout>
-            <main className="container document-detail-container">
+        <main className="container document-detail-container">
                 <Link to="/documents" className="back-link">
                     <FaArrowLeft /> Quay lại thư viện
                 </Link>
@@ -144,7 +141,6 @@ const DocumentDetailPage: React.FC = () => {
                     </div>
                 </article>
             </main>
-        </Layout>
     );
 };
 

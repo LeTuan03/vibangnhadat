@@ -1,5 +1,4 @@
 import React from 'react';
-import Layout from '../components/Layout';
 import Hero from '../components/Hero';
 import About from '../components/About';
 import Statistics from '../components/Statistics';
@@ -15,30 +14,27 @@ import Booking from '../components/Booking';
 import Careers from '../components/Careers';
 import Contact from '../components/Contact';
 import Newsletter from '../components/Newsletter';
-import Footer from '../components/Footer';
 
 const HomePage: React.FC = () => {
     return (
         <div className="home-page">
-            <Layout>
-                <main>
-                    <Hero />
-                    <About />
-                    <Statistics />
-                    <Services />
-                    <ServiceAreas />
-                    <VibanServices />
-                    <FamilyLawQA />
-                    <Gallery />
-                    <Testimonials />
-                    <Knowledge />
-                    <QA />
-                    <Booking />
-                    <Careers />
-                    <Contact />
-                </main>
-                <Newsletter />
-            </Layout>
+            <main>
+                <Hero />
+                <About />
+                <Statistics />
+                <Services />
+                <ServiceAreas />
+                <VibanServices />
+                <FamilyLawQA />
+                <Gallery />
+                <Testimonials />
+                <Knowledge />
+                <QA />
+                <Booking />
+                <Careers />
+                <Contact />
+            </main>
+            <Newsletter />
         </div>
     );
 };

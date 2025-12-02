@@ -1,10 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaQuestionCircle, FaArrowLeft } from 'react-icons/fa';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import FloatingContact from '../components/FloatingContact';
-import BackToTop from '../components/BackToTop';
 import { faqs } from '../data/content';
 import './QADetailPage.css';
 
@@ -14,15 +10,11 @@ const QADetailPage: React.FC = () => {
 
     if (!faq) {
         return (
-            <div>
-                <Header />
-                <main className="container">
-                    <h2>Câu hỏi không tìm thấy</h2>
-                    <p>Xin lỗi, câu hỏi bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
-                    <Link to="/qa">Quay về trang hỏi đáp</Link>
-                </main>
-                <Footer />
-            </div>
+            <main className="container">
+                <h2>Câu hỏi không tìm thấy</h2>
+                <p>Xin lỗi, câu hỏi bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
+                <Link to="/qa">Quay về trang hỏi đáp</Link>
+            </main>
         );
     }
 
@@ -32,7 +24,6 @@ const QADetailPage: React.FC = () => {
 
     return (
         <div className="qa-detail-page">
-            <Header />
             <main className="container qa-detail-container">
                 <Link to="/qa" className="back-link">
                     <FaArrowLeft /> Quay lại trang hỏi đáp
@@ -130,9 +121,6 @@ const QADetailPage: React.FC = () => {
                     </div>
                 </article>
             </main>
-            <Footer />
-            <FloatingContact />
-            <BackToTop />
         </div>
     );
 };

@@ -12,6 +12,7 @@
 
 .service-area-card {
     position: relative;
+    display: flex;
     overflow: hidden;
     border-radius: var(--radius-xl);
     aspect-ratio: 1;

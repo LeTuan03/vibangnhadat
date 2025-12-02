@@ -1,4 +1,5 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import FloatingContact from './FloatingContact';
@@ -6,14 +7,14 @@ import BackToTop from './BackToTop';
 import './Layout.css';
 
 interface LayoutProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
     return (
         <div className="app-layout">
             <Header />
-            <div className="layout-content">{children}</div>
+            <div className="layout-content">{children ?? <Outlet />}</div>
             <Footer />
             <FloatingContact />
             <BackToTop />

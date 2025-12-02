@@ -1,0 +1,290 @@
+.knowledge-tabs {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-3xl);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.knowledge-tabs .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-2xl);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+}
+
+.knowledge-tabs .tab-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: var(--color-primary);
+}
+
+.knowledge-tabs .tab-btn.active {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: var(--shadow-lg);
+}
+
+/* News Grid */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: var(--spacing-xl);
+}
+
+.news-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-base);
+}
+
+.news-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.news-image {
+    height: 200px;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: white;
+}
+
+.news-content {
+    padding: var(--spacing-xl);
+}
+
+.news-category {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--color-secondary-light);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-md);
+}
+
+.news-content h3 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.4;
+}
+
+.news-excerpt {
+    color: var(--color-text-light);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-lg);
+}
+
+.news-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+}
+
+.news-read-more {
+    color: var(--color-primary);
+    font-weight: var(--font-weight-semibold);
+    transition: all var(--transition-base);
+}
+
+.news-read-more:hover {
+    color: var(--color-secondary);
+    transform: translateX(4px);
+}
+
+/* FAQ Section */
+.faq-search {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto var(--spacing-3xl);
+}
+
+.faq-search svg {
+    position: absolute;
+    left: var(--spacing-lg);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-light);
+    font-size: var(--font-size-lg);
+}
+
+.search-input {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    padding-left: var(--spacing-4xl);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-base);
+    transition: all var(--transition-base);
+    background: white;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+}
+
+.faq-list {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background: white;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.faq-question {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+    text-align: left;
+    transition: all var(--transition-base);
+    background: white;
+}
+
+.faq-question:hover {
+    background: var(--color-bg-light);
+}
+
+.faq-question.active {
+    background: var(--color-bg-light);
+    color: var(--color-secondary);
+}
+
+.faq-question svg {
+    flex-shrink: 0;
+    font-size: var(--font-size-xl);
+}
+
+.faq-answer {
+    padding: 0 var(--spacing-xl) var(--spacing-xl);
+    color: var(--color-text);
+    line-height: 1.8;
+}
+
+.faq-answer p {
+    margin: 0;
+}
+
+/* Legal Documents */
+.legal-list {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.legal-item {
+    display: flex;
+    gap: var(--spacing-lg);
+    align-items: center;
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+}
+
+.legal-item:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateX(4px);
+}
+
+.legal-icon {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.legal-content {
+    flex: 1;
+}
+
+.legal-content h4 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.legal-content p {
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.6;
+}
+
+.legal-meta {
+    display: flex;
+    gap: var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-lighter);
+}
+
+.legal-category {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--color-secondary-light);
+    color: white;
+    border-radius: var(--radius-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.no-results {
+    text-align: center;
+    padding: var(--spacing-3xl);
+    color: var(--color-text-light);
+    font-size: var(--font-size-lg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .legal-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .legal-meta {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+}

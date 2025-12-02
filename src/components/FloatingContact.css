@@ -1,0 +1,50 @@
+.floating-contact {
+    position: fixed;
+    bottom: var(--spacing-xl);
+    right: var(--spacing-xl);
+    z-index: var(--z-fixed);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.floating-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-2xl);
+    color: white;
+    box-shadow: var(--shadow-xl);
+    transition: all var(--transition-base);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.floating-btn:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-2xl);
+    animation: none;
+}
+
+.floating-btn-zalo {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+}
+
+.floating-btn-phone {
+    background: var(--gradient-secondary);
+}
+
+@media (max-width: 768px) {
+    .floating-contact {
+        bottom: var(--spacing-lg);
+        right: var(--spacing-lg);
+    }
+
+    .floating-btn {
+        width: 50px;
+        height: 50px;
+        font-size: var(--font-size-xl);
+    }
+}

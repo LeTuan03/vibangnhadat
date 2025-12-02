@@ -1,0 +1,331 @@
+.about-tabs {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-3xl);
+    border-bottom: 2px solid var(--color-border);
+    overflow-x: auto;
+    padding-bottom: var(--spacing-sm);
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-light);
+    border-bottom: 3px solid transparent;
+    transition: all var(--transition-base);
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    color: var(--color-primary);
+}
+
+.tab-btn.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-secondary);
+}
+
+.about-content {
+    min-height: 400px;
+}
+
+.tab-panel {
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* Overview Tab */
+.overview-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: var(--spacing-3xl);
+    align-items: center;
+}
+
+.overview-text h3 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.lead {
+    font-size: var(--font-size-xl);
+    color: var(--color-secondary);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-lg);
+}
+
+.overview-text p {
+    line-height: 1.8;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-lg);
+}
+
+.values-list h4 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.values-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.values-list li {
+    padding: var(--spacing-sm) 0;
+    padding-left: var(--spacing-xl);
+    position: relative;
+    color: var(--color-text);
+}
+
+.values-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    font-weight: var(--font-weight-bold);
+}
+
+.overview-image {
+    display: flex;
+    justify-content: center;
+}
+
+.image-placeholder {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    background: url(/src/media/vp.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: var(--radius-2xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 4rem;
+    box-shadow: var(--shadow-xl);
+    z-index: 1;
+}
+
+.image-placeholder::after {
+    content: "";
+    aspect-ratio: 1;
+    border-radius: var(--radius-2xl);
+    position: absolute;
+    inset: 0;
+    background: rgba(51, 37, 37, 0.384);
+    z-index: -1;
+}
+
+.image-placeholder p {
+    font-size: var(--font-size-lg);
+    margin-top: var(--spacing-lg);
+}
+
+/* Team Tab */
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-xl);
+}
+
+.team-grid.visible .team-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.team-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-2xl);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-base);
+}
+
+.team-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+}
+
+.team-avatar {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto var(--spacing-lg);
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+}
+
+.team-card h4 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.team-position {
+    color: var(--color-secondary);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-md);
+}
+
+.team-bio {
+    color: var(--color-text-light);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-md);
+}
+
+.team-contact {
+    color: var(--color-primary);
+    font-size: var(--font-size-sm);
+    transition: all var(--transition-base);
+}
+
+.team-contact:hover {
+    color: var(--color-secondary);
+}
+
+/* Vision Tab */
+.vision-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-3xl);
+}
+
+.vision-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-3xl);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+}
+
+.vision-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--spacing-lg);
+    background: var(--gradient-primary);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+}
+
+.vision-card h3 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.vision-card p {
+    line-height: 1.8;
+    color: var(--color-text);
+    font-size: var(--font-size-lg);
+}
+
+/* Careers Tab */
+.careers-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.careers-content h3 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.careers-info {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-3xl);
+    box-shadow: var(--shadow-md);
+    margin-top: var(--spacing-2xl);
+}
+
+.careers-info h4 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+}
+
+.careers-info h4:first-child {
+    margin-top: 0;
+}
+
+.careers-info ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: var(--spacing-xl);
+}
+
+.careers-info li {
+    padding: var(--spacing-sm) 0;
+    padding-left: var(--spacing-xl);
+    position: relative;
+    color: var(--color-text);
+}
+
+.careers-info li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-secondary);
+    font-weight: var(--font-weight-bold);
+}
+
+.careers-info .btn {
+    margin-top: var(--spacing-xl);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .overview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .overview-image {
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-tabs {
+        gap: var(--spacing-sm);
+    }
+
+    .tab-btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+
+    .team-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .vision-grid {
+        grid-template-columns: 1fr;
+    }
+}

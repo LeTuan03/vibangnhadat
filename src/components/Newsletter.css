@@ -1,0 +1,127 @@
+.newsletter-section {
+    background: var(--gradient-primary);
+    padding: var(--spacing-4xl) 0;
+    color: white;
+}
+
+.newsletter-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-3xl);
+}
+
+.newsletter-text h3 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-sm);
+}
+
+.newsletter-text p {
+    font-size: var(--font-size-lg);
+    opacity: 0.9;
+    margin: 0;
+}
+
+.newsletter-form {
+    flex: 1;
+    max-width: 600px;
+}
+
+.newsletter-input-wrapper {
+    display: flex;
+    gap: var(--spacing-md);
+    background: white;
+    border-radius: var(--radius-full);
+    padding: var(--spacing-xs);
+    box-shadow: var(--shadow-xl);
+}
+
+.input-icon {
+    position: absolute;
+    left: var(--spacing-lg);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-light);
+    font-size: var(--font-size-xl);
+}
+
+.newsletter-input-wrapper input {
+    flex: 1;
+    border: none;
+    padding: var(--spacing-md) var(--spacing-lg);
+    padding-left: var(--spacing-4xl);
+    font-size: var(--font-size-base);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-text);
+}
+
+.newsletter-input-wrapper input:focus {
+    outline: none;
+}
+
+.newsletter-input-wrapper input::placeholder {
+    color: var(--color-text-lighter);
+}
+
+.newsletter-input-wrapper .btn {
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    padding: var(--spacing-md) var(--spacing-2xl);
+}
+
+.newsletter-input-wrapper .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.newsletter-message {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    text-align: center;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.newsletter-message.success {
+    background: var(--color-accent);
+    color: white;
+}
+
+.newsletter-message.error {
+    background: var(--color-danger);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .newsletter-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .newsletter-form {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .newsletter-input-wrapper {
+        flex-direction: column;
+        padding: var(--spacing-md);
+        border-radius: var(--radius-xl);
+    }
+
+    .newsletter-input-wrapper input {
+        padding-left: var(--spacing-lg);
+    }
+
+    .input-icon {
+        display: none;
+    }
+
+    .newsletter-input-wrapper .btn {
+        width: 100%;
+    }
+}

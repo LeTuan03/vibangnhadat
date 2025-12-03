@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaUsers, FaBullseye, FaHeart, FaBriefcase } from 'react-icons/fa';
 import { companyInfo, teamMembers } from '../data/content';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { scrollToElement } from '../utils/helpers';
 import './About.css';
 
 const About: React.FC = () => {
@@ -144,7 +145,7 @@ const About: React.FC = () => {
                                         <li>Cơ hội phát triển nghề nghiệp</li>
                                         <li>Đào tạo và nâng cao kỹ năng</li>
                                     </ul>
-                                    <button className="btn btn-primary" onClick={() => window.location.href = '#contact'}>
+                                    <button className="btn btn-primary" onClick={() => scrollToElement('contact')}>
                                         Liên hệ ngay
                                     </button>
                                 </div>

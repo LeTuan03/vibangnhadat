@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaFileContract, FaHome, FaHandshake, FaLandmark, FaFileSignature, FaBuilding } from 'react-icons/fa';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { scrollToElement } from '../utils/helpers';
 import './VibanServices.css';
 
 interface VibangType {
@@ -199,7 +200,7 @@ const VibanServices: React.FC = () => {
 
                                 <button className="btn btn-primary btn-lg" onClick={() => {
                                     setSelectedType(null);
-                                    window.location.href = '#contact';
+                                    scrollToElement('contact');
                                 }}>
                                     Liên hệ tư vấn
                                 </button>

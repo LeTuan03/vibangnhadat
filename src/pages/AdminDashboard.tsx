@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { FaNewspaper, FaFileContract, FaUsers, FaCog, FaSignOutAlt, FaHome, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import { blogPosts, services } from '../data/content';
 import type { BlogPost } from '../types';
@@ -49,9 +50,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 </nav>
 
                 <div className="admin-sidebar-footer">
-                    <a href="/" className="admin-nav-item">
+                    <Link to="/" className="admin-nav-item">
                         <FaHome /> Về trang chủ
-                    </a>
+                    </Link>
                     <button className="admin-nav-item logout-btn" onClick={onLogout}>
                         <FaSignOutAlt /> Đăng xuất
                     </button>

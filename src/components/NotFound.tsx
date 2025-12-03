@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaHome, FaSearch } from 'react-icons/fa';
 import './NotFound.css';
 
@@ -11,21 +12,21 @@ const NotFound: React.FC = () => {
                 <p>Xin lỗi, trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển.</p>
 
                 <div className="not-found-actions">
-                    <a href="/" className="btn btn-primary btn-lg">
+                    <Link to="/" className="btn btn-primary btn-lg">
                         <FaHome /> Về trang chủ
-                    </a>
-                    <a href="/#contact" className="btn btn-outline btn-lg">
+                    </Link>
+                    <Link to="/#contact" className="btn btn-outline btn-lg">
                         <FaSearch /> Liên hệ hỗ trợ
-                    </a>
+                    </Link>
                 </div>
 
                 <div className="not-found-suggestions">
                     <h3>Có thể bạn đang tìm:</h3>
                     <ul>
-                        <li><a href="/#services">Dịch vụ của chúng tôi</a></li>
-                        <li><a href="/#about">Giới thiệu</a></li>
-                        <li><a href="/#knowledge">Tin tức & Kiến thức</a></li>
-                        <li><a href="/#contact">Liên hệ</a></li>
+                        <li><Link to="/#services">Dịch vụ của chúng tôi</Link></li>
+                        <li><Link to="/#about">Giới thiệu</Link></li>
+                        <li><Link to="/#knowledge">Tin tức & Kiến thức</Link></li>
+                        <li><Link to="/#contact">Liên hệ</Link></li>
                     </ul>
                 </div>
             </div>

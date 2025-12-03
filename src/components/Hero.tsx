@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaPhone, FaArrowRight, FaShieldAlt, FaHeadset, FaClock, FaTrophy } from 'react-icons/fa';
-import { companyInfo, contactInfo, statistics } from '../data/content';
+import { companyInfo, contactInfo } from '../data/content';
 import { scrollToElement, createPhoneLink } from '../utils/helpers';
 import './Hero.css';
 

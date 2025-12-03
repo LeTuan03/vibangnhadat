@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaTimes, FaPhone, FaChevronDown } from 'react-icons/fa';
 import { navigationItems } from '../data/content';
 import { scrollToElement } from '../utils/helpers';
@@ -62,10 +63,12 @@ const Header: React.FC = () => {
         };
     }, [isMobileMenuOpen]);
 
+    const navigate = useNavigate();
+
     const handleNavClick = (href: string) => {
-        // If href starts with /, navigate to that page
+        // If href starts with /, navigate to that page using react-router
         if (href.startsWith('/')) {
-            window.location.href = href;
+            navigate(href);
         } else {
             // Otherwise, scroll to element (hash link)
             const elementId = href.replace('#', '');
@@ -97,8 +100,8 @@ const Header: React.FC = () => {
     };
 
     const handleLogoClick = () => {
-        if(window.location.pathname !== "/") {
-            window.location.href = "/"
+        if (window.location.pathname !== '/') {
+            navigate('/');
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setIsMobileMenuOpen(false);

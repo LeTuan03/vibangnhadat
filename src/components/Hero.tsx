@@ -55,7 +55,7 @@ const Hero: React.FC = () => {
                     </div>
 
                     {/* Thống kê tin cậy */}
-                    <div className="hero-stats animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
+                    {/* <div className="hero-stats animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
                         {statistics.map((stat) => (
                             <div key={stat.id} className="hero-stat">
                                 <div className="stat-value">
@@ -64,7 +64,7 @@ const Hero: React.FC = () => {
                                 <div className="stat-label">{stat.label}</div>
                             </div>
                         ))}
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </section>

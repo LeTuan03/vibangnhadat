@@ -13,9 +13,8 @@ export const navigationItems: NavItem[] = [
         href: '#about',
         children: [
             { id: 'about-overview', label: 'Giới thiệu chung', href: '#about-overview' },
-            { id: 'about-philosophy', label: 'Triết lý & Văn hóa hành nghề', href: '#about-philosophy' },
-            { id: 'about-partners', label: 'Đối tác', href: '#about-partners' },
-            { id: 'about-privacy', label: 'Chính sách bảo mật', href: '#about-privacy' },
+            { id: 'about-philosophy', label: 'Đội ngũ', href: '#about-philosophy' },
+            { id: 'about-partners', label: 'Tầm nhìn và xứ mệnh', href: '#about-partners' },
             { id: 'about-careers', label: 'Tuyển dụng', href: '#about-careers' },
         ],
     },
@@ -72,30 +71,26 @@ export const navigationItems: NavItem[] = [
         ],
     },
     {
-        id: 'qa',
-        label: 'Hỏi Đáp',
-        href: '/qa',
-        children: [
-            { id: 'qa-home', label: 'Tất cả câu hỏi', href: '/qa' },
-            { id: 'qa-business', label: 'Luật Doanh nghiệp', href: '/qa' },
-            { id: 'qa-family', label: 'Luật Hôn nhân & Gia đình', href: '/qa' },
-            { id: 'qa-criminal', label: 'Luật Hình sự', href: '/qa' },
-        ],
-    },
-    {
         id: 'news',
         label: 'Tin Tức & Blog',
         href: '/blog',
         children: [
             { id: 'news-blog', label: 'Thư viện bài viết', href: '/blog' },
             { id: 'news-legal-docs', label: 'Văn bản pháp luật', href: '/documents' },
-            { id: 'news-press', label: 'Tin báo chí', href: '/blog' },
+            { id: 'family-law', label: 'Hôn nhân - Gia đình', href: '/family-law' },
+            // { id: 'news-press', label: 'Tin báo chí', href: '/blog' },
         ],
     },
     {
-        id: 'contact',
-        label: 'Liên Hệ',
-        href: '#contact',
+        id: 'qa',
+        label: 'Hỏi Đáp',
+        href: '/qa',
+        // children: [
+        //     { id: 'qa-home', label: 'Tất cả câu hỏi', href: '/qa' },
+        //     { id: 'qa-business', label: 'Luật Doanh nghiệp', href: '/qa' },
+        //     { id: 'qa-family', label: 'Luật Hôn nhân & Gia đình', href: '/qa' },
+        //     { id: 'qa-criminal', label: 'Luật Hình sự', href: '/qa' },
+        // ],
     },
 ];
 
@@ -513,8 +508,8 @@ export const contactInfo: ContactInfo = {
     workingHours: 'Thứ 2 - Thứ 6: 8:00 - 17:30 | Thứ 7: 8:00 - 12:00',
     zaloLink: 'https://zalo.me/0901234567',
     facebookLink: 'https://facebook.com/thuaphatlaivn',
-    googleMapsLink: 'https://maps.google.com/?q=10.762622,106.660172',
-    googleMapsEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4326570829814!2d106.65771831533427!3d10.762622192330137!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ec3c161a3fb%3A0xef77cd47a1cc691e!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBLaG9hIGjhu41jIFThu7Egbmhpw6puIFRQLkhDTQ!5e0!3m2!1svi!2s!4v1234567890123!5m2!1svi!2s',
+    googleMapsLink: 'https://maps.app.goo.gl/uhYNBQh465eRWbyv5',
+    googleMapsEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.0099405506357!2d105.82155987531051!3d20.972552580662782!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135acf99c42598f%3A0xa9b0b7a6cbbebffd!2zNDQyIMSQLiBLaW0gR2lhbmcsIEtpbSBWxINuLCBIb8OgbmcgTWFpLCBIw6AgTuG7mWksIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1764762676258!5m2!1svi!2s',
     coordinates: {
         lat: 10.762622,
         lng: 106.660172,

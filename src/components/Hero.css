@@ -44,7 +44,7 @@
 .hero-content {
     text-align: center;
     color: white;
-    max-width: 900px;
+    /* max-width: 900px; */
     margin: 0 auto;
     padding: var(--spacing-2xl) 0;
 }

@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaQuestionCircle, FaArrowLeft } from 'react-icons/fa';
 import { faqs } from '../data/content';
 import './QADetailPage.css';
 
 const QADetailPage: React.FC = () => {
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
     const { id } = useParams<{ id: string }>();
     const faq = faqs.find((f) => f.id === id);
 

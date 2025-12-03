@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaNewspaper, FaQuestionCircle, FaFileAlt, FaChevronDown, FaChevronUp, FaSearch, FaBook, FaLink, FaLightbulb } from 'react-icons/fa';
 import { blogPosts, faqs, legalDocuments } from '../data/content';
-import { legalArticles, mainLaws, legalTerms, usefulReferences, legalFAQs } from '../data/legalKnowledge';
+import { legalArticles, mainLaws, legalTerms, usefulReferences } from '../data/legalKnowledge';
 import { formatDate } from '../utils/helpers';
 import BlogDetail from './BlogDetail';
 import type { BlogPost } from '../types';

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaBook, FaDownload, FaCalendar, FaArrowLeft } from 'react-icons/fa';
 // Layout provided by route-level wrapper
@@ -7,6 +7,10 @@ import { formatDate } from '../utils/helpers';
 import './DocumentDetailPage.css';
 
 const DocumentDetailPage: React.FC = () => {
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
     const { id } = useParams<{ id: string }>();
     const document = legalDocuments.find((d) => d.id === id);
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 // Route-level Layout will provide Header/Footer via Outlet
 import { blogPosts } from '../data/content';
@@ -6,6 +6,10 @@ import { formatDate } from '../utils/helpers';
 import './ArticlePage.css';
 
 const ArticlePage: React.FC = () => {
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
     const { id } = useParams<{ id: string }>();
     const post = blogPosts.find((p) => p.id === id);
 

@@ -134,7 +134,7 @@ const vibangTypes: VibangType[] = [
 
 const VibanServices: React.FC = () => {
     const [selectedType, setSelectedType] = useState<VibangType | null>(null);
-    const [ref, isVisible] = useIntersectionObserver({ threshold: 0.1, freezeOnceVisible: true });
+    const [ref] = useIntersectionObserver({ threshold: 0.1, freezeOnceVisible: true });
 
     return (
         <section id="viban-services" className="section">

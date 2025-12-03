@@ -6,15 +6,23 @@
 
 .layout-content {
     flex: 1 1 auto;
-}
-
-/* Keep header fixed spacing for content top offset if header is fixed */
-main, .container {
     padding-top: 80px;
 }
 
+/* Remove extra padding from main/container inside layout-content */
+.layout-content main,
+.layout-content .container {
+    padding-top: 0;
+}
+
 @media (max-width: 768px) {
-    main, .container {
+    .layout-content {
         padding-top: 64px;
     }
+
+    .layout-content main,
+    .layout-content .container {
+        padding-top: 0;
+    }
 }
+

@@ -13,7 +13,7 @@ const iconMap: Record<string, React.ReactNode> = {
 
 const Services: React.FC = () => {
     const [selectedService, setSelectedService] = useState<string | null>(null);
-    const [ref, isVisible] = useIntersectionObserver({ threshold: 0.1, freezeOnceVisible: true });
+    const [ref] = useIntersectionObserver({ threshold: 0.1, freezeOnceVisible: true });
 
     const selectedServiceData = services.find(s => s.id === selectedService);
 

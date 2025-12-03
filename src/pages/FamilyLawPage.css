@@ -1,4 +1,105 @@
-.family-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; }
-.family-card { display:flex; background:#fff; border:1px solid #eee; }
-.family-card .thumb { width:140px; background-size:cover; background-position:center; }
-.family-card .content { padding:1rem; }
+.family-law-page {
+    margin-top: 2rem;
+    max-width: 1100px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 3px solid var(--color-primary);
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+    font-weight: 800;
+}
+
+.page-header p {
+    font-size: 1.1875rem;
+    color: var(--color-text-light);
+    line-height: 1.7;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.family-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.family-card {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-base);
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+}
+
+.family-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+}
+
+.family-card .thumb {
+    width: 100%;
+    height: 240px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.family-card .thumb::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    transition: all var(--transition-base);
+}
+
+.family-card:hover .thumb::after {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.family-card .content {
+    flex: 1;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.family-card h3 {
+    font-size: 1.25rem;
+    color: var(--color-text);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+    font-weight: 700;
+}
+
+.family-card p {
+    color: var(--color-text-light);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    flex: 1;
+    margin-bottom: 1.5rem;
+}
+
+.family-card .btn {
+    align-self: flex-start;
+    margin-top: auto;
+}
+

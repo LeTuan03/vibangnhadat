@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { FaPhone, FaEnvelope } from 'react-icons/fa';
+import React from 'react';
+import { FaPhone } from 'react-icons/fa';
 import { SiZalo } from 'react-icons/si';
 import { contactInfo } from '../data/content';
 import { createPhoneLink, createZaloLink } from '../utils/helpers';
 import './FloatingContact.css';
 
 const FloatingContact: React.FC = () => {
-    const [isExpanded, setIsExpanded] = useState(false);
 
     return (
         <div className="floating-contact">

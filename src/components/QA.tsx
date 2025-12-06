@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
 import { faqs } from '../data/content';
 import './QA.css';
+import { toast } from 'react-toastify';
 
 interface QuestionSubmission {
     name: string;
@@ -43,7 +44,7 @@ const QA: React.FC = () => {
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.agreedTerms) {
-            alert('Vui lòng đồng ý với chính sách bảo mật');
+            toast.error('Vui lòng đồng ý với chính sách bảo mật');
             return;
         }
         console.log('Question submitted:', formData);

@@ -15,7 +15,11 @@ import './index.css';
 import AdminLogin from './components/AdminLogin';
 import QA from './components/QA';
 import LegalDocuments from './components/LegalDocuments';
-import AdminDashboard from './admin/AdminDashboard';
+import AdminLayout from './admin/components/AdminLayout';
+import NewAdmin from './admin/news/NewAdmin';
+import VibanAdmin from './admin/viban/VibanAdmin';
+import ServicesAdmin from './admin/services/ServicesAdmin';
+import Category from './admin/category/Category';
 
 function App() {
     const [isAdminLoggedIn, setIsAdminLoggedIn] = React.useState(() => {
@@ -60,36 +64,36 @@ function App() {
                     <Route path="*" element={<NotFound />} />
 
                 </Route>
-
                 {/* Admin Routes */}
+                <Route
+                    path="/admin"
+                    element={
+                        isAdminLoggedIn ? (
+                            <AdminLayout onLogout={handleLogout} />
+                        ) : (
+                            <Navigate to="/admin/login" replace />
+                        )
+                    }
+                >
+                    <Route index element={<Navigate to="/admin/news" replace />} />
+                    <Route path="news" element={<NewAdmin />} />
+                    <Route path="services" element={<ServicesAdmin />} />
+                    <Route path="viban" element={<VibanAdmin />} />
+                    <Route path="category" element={<Category />} />
+                </Route>
+
                 <Route
                     path="/admin/login"
                     element={
                         isAdminLoggedIn ? (
-                            <AdminDashboard onLogout={handleLogout} />
+                            <Navigate to="/admin/news" replace />
                         ) : (
                             <AdminLogin onLogin={handleLogin} />
                         )
                     }
                 />
 
-                {/* <Route
-                    path="/admin/dashboard"
-                    element={
-                        isAdminLoggedIn ? (
-                            <AdminDashboard onLogout={handleLogout} />
-                        ) : (
-                            <Navigate to="/admin/login" replace />
-                        )
-                    }
-                /> */}
 
-                <Route
-                    path="/admin"
-                    element={<Navigate to="/admin/login" replace />}
-                />
-
-                {/* 404 Page (handled inside layout) */}
             </Routes>
         </BrowserRouter>
     );

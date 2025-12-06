@@ -14,7 +14,7 @@ interface VibangType {
     fees: string;
 }
 
-const vibangTypes: VibangType[] = [
+export const vibangTypes: VibangType[] = [
     {
         id: 'vb-danssu',
         title: 'Vi bằng Giao dịch Dân sự',

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaTimes, FaCalendarAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
 import './Booking.css';
+import { toast } from 'react-toastify';
 
 interface BookingFormData {
     name: string;
@@ -40,7 +41,7 @@ const Booking: React.FC = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.agreedTerms) {
-            alert('Vui lòng đồng ý với chính sách bảo mật');
+            toast.error('Vui lòng đồng ý với chính sách bảo mật');
             return;
         }
         // Here you would typically send the data to a backend

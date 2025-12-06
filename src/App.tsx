@@ -15,6 +15,7 @@ import './index.css';
 import AdminLogin from './components/AdminLogin';
 import QA from './components/QA';
 import LegalDocuments from './components/LegalDocuments';
+import AdminDashboard from './admin/AdminDashboard';
 
 function App() {
     const [isAdminLoggedIn, setIsAdminLoggedIn] = React.useState(() => {
@@ -26,10 +27,10 @@ function App() {
         setIsAdminLoggedIn(true);
     };
 
-    // const handleLogout = () => {
-    //     localStorage.removeItem('adminLoggedIn');
-    //     setIsAdminLoggedIn(false);
-    // };
+    const handleLogout = () => {
+        localStorage.removeItem('adminLoggedIn');
+        setIsAdminLoggedIn(false);
+    };
 
     return (
         <BrowserRouter>
@@ -65,7 +66,7 @@ function App() {
                     path="/admin/login"
                     element={
                         isAdminLoggedIn ? (
-                            <Navigate to="/admin/dashboard" replace />
+                            <AdminDashboard onLogout={handleLogout} />
                         ) : (
                             <AdminLogin onLogin={handleLogin} />
                         )

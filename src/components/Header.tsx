@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { FaBars, FaTimes, FaPhone, FaChevronDown, FaHome } from 'react-icons/fa';
 import navigationService, { NavItem } from '../admin/api/navigationService';
 import { scrollToElement } from '../utils/helpers';
@@ -246,14 +246,14 @@ const Header: React.FC = () => {
           </nav>
 
           {/* CTA Button */}
-          <a
+          <Link
             className="header-cta"
-            href="/admin/login"
+            to="/admin/login"
             aria-label="Đăng nhập quản trị"
           >
             <FaHome style={{ fontSize: '0.875rem' }} />
             Đăng nhập
-          </a>
+          </Link>
           {/* <a
             href="tel:+840901234567"
             className="header-cta"

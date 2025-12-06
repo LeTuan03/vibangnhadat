@@ -31,6 +31,12 @@ const Category = React.lazy(() => import('./admin/category/CategoryAdmin'));
 const DocumentsAdmin = React.lazy(() => import('./admin/documents/DocumentsAdmin'));
 const QAAdmin = React.lazy(() => import('./admin/qa/QAAdmin'));
 const AdminMenuEditor = React.lazy(() => import('./admin/menu/AdminMenuEditor'));
+const StatisticsAdmin = React.lazy(() => import('./admin/statistics/StatisticsAdmin'));
+const ServiceAreasAdmin = React.lazy(() => import('./admin/service-areas/ServiceAreasAdmin'));
+const FamilyLawAdmin = React.lazy(() => import('./admin/family-law/FamilyLawAdmin'));
+const GalleryAdmin = React.lazy(() => import('./admin/gallery/GalleryAdmin'));
+const CompanyInfoAdmin = React.lazy(() => import('./admin/company-info/CompanyInfoAdmin'));
+const TeamAdmin = React.lazy(() => import('./admin/team/TeamAdmin'));
 
 /**
  * Suspense boundary component for lazy-loaded routes
@@ -113,6 +119,12 @@ function App() {
                         <Route path="menu" element={<AdminMenuEditor />} />
                         <Route path="documents" element={<DocumentsAdmin />} />
                         <Route path="qa" element={<QAAdmin />} />
+                        <Route path="statistics" element={<StatisticsAdmin />} />
+                        <Route path="service-areas" element={<ServiceAreasAdmin />} />
+                        <Route path="family-law" element={<FamilyLawAdmin />} />
+                        <Route path="gallery" element={<GalleryAdmin />} />
+                        <Route path="company-info" element={<CompanyInfoAdmin />} />
+                        <Route path="team" element={<TeamAdmin />} />
                     </Route>
 
                     {/* Admin login route */}

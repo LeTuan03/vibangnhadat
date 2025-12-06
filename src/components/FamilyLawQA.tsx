@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { familyLawQAs } from '../data/content';
+import { familyLawService } from '../admin/api/familyLawService';
+import { mockFamilyLawQAs } from '../data/mockData';
 import './FamilyLawQA.css';
 
 const FamilyLawQA: React.FC = () => {
+    const [familyLawQAs] = useState(() => {
+        familyLawService.initialize(mockFamilyLawQAs);
+        return familyLawService.getAllFamilyLaws();
+    });
+
     return (
         <section id="family-law-qa" className="family-law-qa-section">
             <div className="container">

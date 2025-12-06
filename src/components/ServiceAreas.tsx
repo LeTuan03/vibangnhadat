@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { serviceAreas } from '../data/content';
+import { serviceAreaService } from '../admin/api/serviceAreaService';
+import { mockServiceAreas } from '../data/mockData';
 import './ServiceAreas.css';
 
 const ServiceAreas: React.FC = () => {
+    const [serviceAreas] = useState(() => {
+        serviceAreaService.initialize(mockServiceAreas);
+        return serviceAreaService.getAllServiceAreas();
+    });
+
     return (
         <section id="service-areas" className="service-areas-section">
             <div className="container">

@@ -1,13 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaQuestionCircle, FaArrowLeft } from 'react-icons/fa';
-import { faqs } from '../data/content';
+import { qaService } from '../admin/api/qaService';
+import { mockFAQs } from '../data/mockData';
 import './QADetailPage.css';
 
 const QADetailPage: React.FC = () => {
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
+
+    const [faqs] = useState(() => {
+        qaService.initializeFAQs(mockFAQs);
+        return qaService.getAllFAQs();
+    });
 
     const { id } = useParams<{ id: string }>();
     const faq = faqs.find((f) => f.id === id);

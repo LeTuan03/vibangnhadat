@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { familyLawQAs } from '../data/content';
+import { familyLawService } from '../admin/api/familyLawService';
+import { mockFamilyLawQAs } from '../data/mockData';
 import { FaArrowLeft } from 'react-icons/fa';
 import './FamilyLawDetailPage.css';
 
@@ -8,6 +9,11 @@ const FamilyLawDetailPage: React.FC = () => {
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
+
+    const [familyLawQAs] = useState(() => {
+        familyLawService.initialize(mockFamilyLawQAs);
+        return familyLawService.getAllFamilyLaws();
+    });
 
     const { id } = useParams<{ id: string }>();
     const item = familyLawQAs.find((f) => f.id === id);

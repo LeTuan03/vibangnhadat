@@ -1,11 +1,11 @@
 // src/pages/admin/NewsAdmin.tsx
 
-import { blogPosts } from "@/data/content";
 import { BlogPost } from "@/types";
 import { useState, useEffect } from "react";
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { BlogFormModal } from "./BlogFormModal";
 import { blogService } from "../api/blogService";
+import { mockBlogPosts } from "@/data/mockData";
 import { toast } from "react-toastify";
 
 function NewsAdmin() {
@@ -16,7 +16,7 @@ function NewsAdmin() {
 
     // Khởi tạo dữ liệu khi component mount
     useEffect(() => {
-        blogService.initializePosts(blogPosts);
+        blogService.initializePosts(mockBlogPosts);
         loadPosts();
     }, []);
 

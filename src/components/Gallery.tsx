@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaPlay, FaArrowRight } from 'react-icons/fa';
-import { galleryItems } from '../data/content';
+import { galleryService } from '../admin/api/galleryService';
+import { mockGalleryItems } from '../data/mockData';
 import './Gallery.css';
 
 interface VideoModalProps {
@@ -29,6 +30,10 @@ const VideoModal: React.FC<VideoModalProps> = ({ videoId, onClose }) => {
 
 const Gallery: React.FC = () => {
     const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+    const [galleryItems] = useState(() => {
+        galleryService.initialize(mockGalleryItems);
+        return galleryService.getAllGalleryItems();
+    });
 
     return (
         <section id="gallery" className="gallery-section">

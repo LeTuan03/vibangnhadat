@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { FaNewspaper, FaQuestionCircle, FaFileAlt, FaChevronDown, FaChevronUp, FaSearch, FaBook, FaLink, FaLightbulb } from 'react-icons/fa';
-import { blogPosts, faqs, legalDocuments } from '../data/content';
+import { blogService } from '../admin/api/blogService';
+import { qaService } from '../admin/api/qaService';
+import { documentService } from '../admin/api/documentService';
+import { mockBlogPosts, mockFAQs, mockLegalDocuments } from '../data/mockData';
 import { legalArticles, mainLaws, legalTerms, usefulReferences } from '../data/legalKnowledge';
 import { formatDate } from '../utils/helpers';
 import BlogDetail from './BlogDetail';
@@ -12,6 +15,21 @@ const Knowledge: React.FC = () => {
     const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
+
+    const [blogPosts] = useState(() => {
+        blogService.initializePosts(mockBlogPosts);
+        return blogService.getAllPosts();
+    });
+
+    const [faqs] = useState(() => {
+        qaService.initializeFAQs(mockFAQs);
+        return qaService.getAllFAQs();
+    });
+
+    const [legalDocuments] = useState(() => {
+        documentService.initializeDocuments(mockLegalDocuments);
+        return documentService.getAllDocuments();
+    });
 
     const toggleFaq = (id: string) => {
         setExpandedFaq(expandedFaq === id ? null : id);

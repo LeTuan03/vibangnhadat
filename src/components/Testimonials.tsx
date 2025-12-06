@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FaStar, FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { testimonials } from '../data/content';
+import { mockTestimonials } from '../data/mockData';
 import './Testimonials.css';
 
 const Testimonials: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlay, setIsAutoPlay] = useState(true);
+    const [testimonials] = useState(mockTestimonials);
     const itemsPerSlide = 3;
     const totalSlides = Math.ceil(testimonials.length / itemsPerSlide);
 

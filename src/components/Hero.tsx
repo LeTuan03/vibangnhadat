@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaPhone, FaArrowRight, FaShieldAlt, FaHeadset, FaClock, FaTrophy } from 'react-icons/fa';
-import { companyInfo, contactInfo } from '../data/content';
+import { companyInfoService } from '../admin/api/companyInfoService';
+import { mockCompanyInfo, mockContactInfo } from '../data/mockData';
 import { scrollToElement, createPhoneLink } from '../utils/helpers';
 import './Hero.css';
 
 const Hero: React.FC = () => {
+    const [companyInfo] = useState(() => {
+        companyInfoService.initializeCompanyInfo(mockCompanyInfo);
+        return companyInfoService.getCompanyInfo() || mockCompanyInfo;
+    });
+
+    const [contactInfo] = useState(() => {
+        companyInfoService.initializeContactInfo(mockContactInfo);
+        return companyInfoService.getContactInfo() || mockContactInfo;
+    });
+
     return (
         <section id="home" className="hero">
             <div className="hero-background"></div>

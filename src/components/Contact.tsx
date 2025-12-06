@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaPaperPlane } from 'react-icons/fa';
 import { SiZalo } from 'react-icons/si';
-import { contactInfo } from '../data/content';
+import { companyInfoService } from '../admin/api/companyInfoService';
+import { mockContactInfo } from '../data/mockData';
 import { createPhoneLink, createZaloLink, formatPhoneNumber, isValidEmail, isValidPhone } from '../utils/helpers';
 import './Contact.css';
 
 const Contact: React.FC = () => {
+    const [contactInfo] = useState(() => {
+        companyInfoService.initializeContactInfo(mockContactInfo);
+        return companyInfoService.getContactInfo() || mockContactInfo;
+    });
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',

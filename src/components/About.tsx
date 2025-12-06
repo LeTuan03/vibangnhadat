@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { FaUsers, FaBullseye, FaHeart, FaBriefcase } from 'react-icons/fa';
-import { companyInfo, teamMembers } from '../data/content';
+import { companyInfoService } from '../admin/api/companyInfoService';
+import { mockCompanyInfo, mockTeamMembers } from '../data/mockData';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import { scrollToElement } from '../utils/helpers';
 import './About.css';
 
 const About: React.FC = () => {
+    const [companyInfo] = useState(() => {
+        companyInfoService.initializeCompanyInfo(mockCompanyInfo);
+        return companyInfoService.getCompanyInfo() || mockCompanyInfo;
+    });
+
+    const [teamMembers] = useState(mockTeamMembers);
+
     const [activeTab, setActiveTab] = useState<'overview' | 'team' | 'vision' | 'careers'>('overview');
     const [ref, isVisible] = useIntersectionObserver({ threshold: 0.1, freezeOnceVisible: true });
 

@@ -38,6 +38,13 @@
 .admin-nav {
     flex: 1;
     padding: var(--spacing-lg) 0;
+    height: calc(100vh - 300px);
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.admin-nav::-webkit-scrollbar {
+    width: 0px;
 }
 
 .admin-nav-item {
@@ -327,7 +334,7 @@
 .modal-header h2 {
     margin: 0;
     font-size: 1.5rem;
-    color: var(--color-primary);
+    color: #fff;
 }
 
 .modal-close {

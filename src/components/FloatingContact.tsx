@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaPhone } from 'react-icons/fa';
 import { SiZalo } from 'react-icons/si';
-import { contactInfo } from '../data/content';
+import { companyInfoService } from '../admin/api/companyInfoService';
+import { mockContactInfo } from '../data/mockData';
 import { createPhoneLink, createZaloLink } from '../utils/helpers';
 import './FloatingContact.css';
 
 const FloatingContact: React.FC = () => {
+    const [contactInfo] = useState(() => {
+        companyInfoService.initializeContactInfo(mockContactInfo);
+        return companyInfoService.getContactInfo() || mockContactInfo;
+    });
 
     return (
         <div className="floating-contact">

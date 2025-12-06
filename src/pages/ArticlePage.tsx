@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { blogPosts } from '../data/content';
+import { blogService } from '../admin/api/blogService';
+import { mockBlogPosts } from '../data/mockData';
 import { formatDate } from '../utils/helpers';
 import './ArticlePage.css';
 
@@ -8,6 +9,11 @@ const ArticlePage: React.FC = () => {
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
+
+    const [blogPosts] = useState(() => {
+        blogService.initializePosts(mockBlogPosts);
+        return blogService.getAllPosts();
+    });
 
     const { id } = useParams<{ id: string }>();
     const post = blogPosts.find((p) => p.id === id);

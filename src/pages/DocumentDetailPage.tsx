@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaBook, FaDownload, FaCalendar, FaArrowLeft } from 'react-icons/fa';
 // Layout provided by route-level wrapper
-import { legalDocuments } from '../data/content';
+import { documentService } from '../admin/api/documentService';
+import { mockLegalDocuments } from '../data/mockData';
 import { formatDate } from '../utils/helpers';
 import './DocumentDetailPage.css';
 
@@ -10,6 +11,11 @@ const DocumentDetailPage: React.FC = () => {
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
+
+    const [legalDocuments] = useState(() => {
+        documentService.initializeDocuments(mockLegalDocuments);
+        return documentService.getAllDocuments();
+    });
 
     const { id } = useParams<{ id: string }>();
     const document = legalDocuments.find((d) => d.id === id);

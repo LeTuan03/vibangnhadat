@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaAward, FaUsers, FaFileContract, FaCheckCircle } from 'react-icons/fa';
-import { statistics } from '../data/content';
+import { statisticsService } from '../admin/api/statisticsService';
+import { mockStatistics } from '../data/mockData';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import './Statistics.css';
 
@@ -14,6 +15,10 @@ const iconMap: Record<string, React.ReactNode> = {
 const Statistics: React.FC = () => {
     const [ref, isVisible] = useIntersectionObserver({ threshold: 0.3, freezeOnceVisible: true });
     const [counts, setCounts] = useState<Record<string, number>>({});
+    const [statistics] = useState(() => {
+        statisticsService.initialize(mockStatistics);
+        return statisticsService.getAllStatistics();
+    });
 
     useEffect(() => {
         if (!isVisible) return;
@@ -38,7 +43,7 @@ const Statistics: React.FC = () => {
                 }
             }, interval);
         });
-    }, [isVisible]);
+    }, [isVisible, statistics]);
 
     return (
         <section className="statistics-section">

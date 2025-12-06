@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaNewspaper, FaFileContract, FaUsers, FaCog, FaSignOutAlt, FaHome, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
-import { blogPosts, services } from '../data/content';
+import { FaNewspaper, FaFileContract, FaUsers, FaCog, FaSignOutAlt, FaHome, FaEdit, FaTrash, FaTrophy, FaMapMarkerAlt, FaImage, FaInfo, FaHeart } from 'react-icons/fa';
+import { blogService } from './api/blogService';
+import { mockBlogPosts } from '../data/mockData';
 import type { BlogPost } from '../types';
 import './AdminDashboard.css';
 
@@ -9,9 +10,14 @@ interface AdminDashboardProps {
     onLogout: () => void;
 }
 
+type AdminTab = 'news' | 'services' | 'viban' | 'statistics' | 'serviceAreas' | 'familyLaw' | 'gallery' | 'team' | 'company';
+
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
-    const [activeTab, setActiveTab] = useState<'news' | 'services' | 'viban'>('news');
-    const [posts, setPosts] = useState<BlogPost[]>(blogPosts);
+    const [activeTab, setActiveTab] = useState<AdminTab>('news');
+    const [posts, setPosts] = useState<BlogPost[]>(() => {
+        blogService.initializePosts(mockBlogPosts);
+        return blogService.getAllPosts();
+    });
 
     const handleDeletePost = (id: string) => {
         if (window.confirm('Bạn có chắc muốn xóa bài viết này?')) {
@@ -33,19 +39,55 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                         className={`admin-nav-item ${activeTab === 'news' ? 'active' : ''}`}
                         onClick={() => setActiveTab('news')}
                     >
-                        <FaNewspaper /> Quản lý Tin tức
+                        <FaNewspaper /> Tin tức & Blog
                     </button>
                     <button
                         className={`admin-nav-item ${activeTab === 'services' ? 'active' : ''}`}
                         onClick={() => setActiveTab('services')}
                     >
-                        <FaFileContract /> Quản lý Dịch vụ
+                        <FaFileContract /> Dịch vụ
                     </button>
                     <button
                         className={`admin-nav-item ${activeTab === 'viban' ? 'active' : ''}`}
                         onClick={() => setActiveTab('viban')}
                     >
-                        <FaUsers /> Quản lý Vi bằng
+                        <FaUsers /> Vi bằng
+                    </button>
+                    <button
+                        className={`admin-nav-item ${activeTab === 'statistics' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('statistics')}
+                    >
+                        <FaTrophy /> Thống kê
+                    </button>
+                    <button
+                        className={`admin-nav-item ${activeTab === 'serviceAreas' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('serviceAreas')}
+                    >
+                        <FaMapMarkerAlt /> Lĩnh vực dịch vụ
+                    </button>
+                    <button
+                        className={`admin-nav-item ${activeTab === 'familyLaw' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('familyLaw')}
+                    >
+                        <FaHeart /> Hôn nhân - Gia đình
+                    </button>
+                    <button
+                        className={`admin-nav-item ${activeTab === 'gallery' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('gallery')}
+                    >
+                        <FaImage /> Thư viện ảnh & Video
+                    </button>
+                    <button
+                        className={`admin-nav-item ${activeTab === 'team' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('team')}
+                    >
+                        <FaUsers /> Đội ngũ
+                    </button>
+                    <button
+                        className={`admin-nav-item ${activeTab === 'company' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('company')}
+                    >
+                        <FaInfo /> Thông tin công ty
                     </button>
                 </nav>
 
@@ -63,13 +105,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             <main className="admin-main">
                 <div className="admin-header">
                     <h1>
-                        {activeTab === 'news' && 'Quản lý Tin tức'}
+                        {activeTab === 'news' && 'Quản lý Tin tức & Blog'}
                         {activeTab === 'services' && 'Quản lý Dịch vụ'}
                         {activeTab === 'viban' && 'Quản lý Vi bằng'}
+                        {activeTab === 'statistics' && 'Quản lý Thống kê'}
+                        {activeTab === 'serviceAreas' && 'Quản lý Lĩnh vực Dịch vụ'}
+                        {activeTab === 'familyLaw' && 'Quản lý Hôn nhân - Gia đình'}
+                        {activeTab === 'gallery' && 'Quản lý Thư viện'}
+                        {activeTab === 'team' && 'Quản lý Đội ngũ'}
+                        {activeTab === 'company' && 'Quản lý Thông tin công ty'}
                     </h1>
-                    <button className="btn btn-primary">
-                        <FaPlus /> Thêm mới
-                    </button>
                 </div>
 
                 <div className="admin-content">
@@ -114,33 +159,79 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                         </div>
                     )}
 
-                    {/* Services Management */}
-                    {activeTab === 'services' && (
-                        <div className="admin-cards">
-                            {services.map((service) => (
-                                <div key={service.id} className="admin-card">
-                                    <h3>{service.title}</h3>
-                                    <p>{service.description}</p>
-                                    <div className="admin-card-actions">
-                                        <button className="btn btn-outline">
-                                            <FaEdit /> Chỉnh sửa
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
                     {/* Vi bang Management */}
                     {activeTab === 'viban' && (
                         <div className="admin-info">
                             <div className="info-box">
                                 <FaCog size={48} />
                                 <h3>Quản lý Lập vi bằng</h3>
-                                <p>Tính năng đang được phát triển</p>
-                                <p className="text-muted">
-                                    Bạn có thể quản lý 6 loại vi bằng: Dân sự, Nhà đất, Thế chấp, Di chúc, Kinh doanh, Cho thuê
-                                </p>
+                                <p>Tính năng quản lý Vi bằng</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Statistics Management */}
+                    {activeTab === 'statistics' && (
+                        <div className="admin-info">
+                            <div className="info-box">
+                                <FaTrophy size={48} />
+                                <h3>Quản lý Thống kê</h3>
+                                <p>Quản lý các chỉ số thống kê trên trang chủ</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Service Areas Management */}
+                    {activeTab === 'serviceAreas' && (
+                        <div className="admin-info">
+                            <div className="info-box">
+                                <FaMapMarkerAlt size={48} />
+                                <h3>Quản lý Lĩnh vực Dịch vụ</h3>
+                                <p>Quản lý các lĩnh vực hoạt động dịch vụ</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Family Law Management */}
+                    {activeTab === 'familyLaw' && (
+                        <div className="admin-info">
+                            <div className="info-box">
+                                <FaHeart size={48} />
+                                <h3>Quản lý Hôn nhân - Gia đình</h3>
+                                <p>Quản lý các câu hỏi hôn nhân và gia đình</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Gallery Management */}
+                    {activeTab === 'gallery' && (
+                        <div className="admin-info">
+                            <div className="info-box">
+                                <FaImage size={48} />
+                                <h3>Quản lý Thư viện</h3>
+                                <p>Quản lý hình ảnh và video</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Team Management */}
+                    {activeTab === 'team' && (
+                        <div className="admin-info">
+                            <div className="info-box">
+                                <FaUsers size={48} />
+                                <h3>Quản lý Đội ngũ</h3>
+                                <p>Quản lý thành viên đội ngũ công ty</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Company Info Management */}
+                    {activeTab === 'company' && (
+                        <div className="admin-info">
+                            <div className="info-box">
+                                <FaInfo size={48} />
+                                <h3>Quản lý Thông tin công ty</h3>
+                                <p>Quản lý thông tin liên hệ và thông tin công ty</p>
                             </div>
                         </div>
                     )}

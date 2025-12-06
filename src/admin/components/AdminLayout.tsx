@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaFileContract, FaHome, FaNewspaper, FaSignOutAlt, FaUsers, FaQuestionCircle, FaList, FaBook } from 'react-icons/fa';
+import { FaFileContract, FaHome, FaNewspaper, FaSignOutAlt, FaUsers, FaQuestionCircle, FaList, FaBook, FaTrophy, FaMapMarkerAlt, FaImage, FaInfo, FaHeart } from 'react-icons/fa';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import '../AdminDashboard.css';
 
@@ -26,43 +26,84 @@ const AdminLayout: React.FC<LayoutProps> = ({ children, onLogout }) => {
                         to="/admin/news"
                         className={`admin-nav-item ${isActive('/admin/news') ? 'active' : ''}`}
                     >
-                        <FaNewspaper /> Quản lý Tin tức & Blog
+                        <FaNewspaper /> Tin tức & Blog
                     </Link>
                     <Link
                         to="/admin/services"
                         className={`admin-nav-item ${isActive('/admin/services') ? 'active' : ''}`}
                     >
-                        <FaFileContract /> Quản lý Dịch vụ
+                        <FaFileContract /> Dịch vụ
                     </Link>
                     <Link
                         to="/admin/viban"
                         className={`admin-nav-item ${isActive('/admin/viban') ? 'active' : ''}`}
                     >
-                        <FaUsers /> Quản lý Vi bằng
+                        <FaUsers /> Vi bằng
                     </Link>
                     <Link
                         to="/admin/category"
                         className={`admin-nav-item ${isActive('/admin/category') ? 'active' : ''}`}
                     >
-                        <FaList /> Quản lý Danh mục
-                    </Link>
-                    <Link
-                        to="/admin/menu"
-                        className={`admin-nav-item ${isActive('/admin/menu') ? 'active' : ''}`}
-                    >
-                        <FaList /> Quản lý Menu Client
+                        <FaList /> Danh mục
                     </Link>
                     <Link
                         to="/admin/documents"
                         className={`admin-nav-item ${isActive('/admin/documents') ? 'active' : ''}`}
                     >
-                        <FaBook /> Quản lý Tài liệu
+                        <FaBook /> Tài liệu
                     </Link>
                     <Link
                         to="/admin/qa"
                         className={`admin-nav-item ${isActive('/admin/qa') ? 'active' : ''}`}
                     >
-                        <FaQuestionCircle /> Quản lý Hỏi & Đáp
+                        <FaQuestionCircle /> Hỏi & Đáp
+                    </Link>
+
+                    {/* Divider */}
+                    <div style={{ borderTop: '1px solid #ddd', margin: '10px 0' }}></div>
+
+                    {/* New admin sections */}
+                    <Link
+                        to="/admin/statistics"
+                        className={`admin-nav-item ${isActive('/admin/statistics') ? 'active' : ''}`}
+                    >
+                        <FaTrophy /> Thống kê
+                    </Link>
+                    <Link
+                        to="/admin/service-areas"
+                        className={`admin-nav-item ${isActive('/admin/service-areas') ? 'active' : ''}`}
+                    >
+                        <FaMapMarkerAlt /> Lĩnh vực dịch vụ
+                    </Link>
+                    <Link
+                        to="/admin/family-law"
+                        className={`admin-nav-item ${isActive('/admin/family-law') ? 'active' : ''}`}
+                    >
+                        <FaHeart /> Hôn nhân - Gia đình
+                    </Link>
+                    <Link
+                        to="/admin/gallery"
+                        className={`admin-nav-item ${isActive('/admin/gallery') ? 'active' : ''}`}
+                    >
+                        <FaImage /> Thư viện ảnh & Video
+                    </Link>
+                    <Link
+                        to="/admin/team"
+                        className={`admin-nav-item ${isActive('/admin/team') ? 'active' : ''}`}
+                    >
+                        <FaUsers /> Đội ngũ
+                    </Link>
+                    <Link
+                        to="/admin/company-info"
+                        className={`admin-nav-item ${isActive('/admin/company-info') ? 'active' : ''}`}
+                    >
+                        <FaInfo /> Thông tin công ty
+                    </Link>
+                    <Link
+                        to="/admin/menu"
+                        className={`admin-nav-item ${isActive('/admin/menu') ? 'active' : ''}`}
+                    >
+                        <FaList /> Menu Client
                     </Link>
                 </nav>
 

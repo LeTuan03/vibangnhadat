@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { serviceAreas } from '../data/content';
+import { serviceAreaService } from '../admin/api/serviceAreaService';
+import { mockServiceAreas } from '../data/mockData';
 import { FaArrowLeft } from 'react-icons/fa';
 import './ServiceAreaDetailPage.css';
 
@@ -8,6 +9,11 @@ const ServiceAreaDetailPage: React.FC = () => {
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
+
+    const [serviceAreas] = useState(() => {
+        serviceAreaService.initialize(mockServiceAreas);
+        return serviceAreaService.getAllServiceAreas();
+    });
 
     const { id } = useParams<{ id: string }>();
     const area = serviceAreas.find((s) => s.id === id);

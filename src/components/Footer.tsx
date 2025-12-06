@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook } from 'react-icons/fa';
 import { SiZalo } from 'react-icons/si';
-import { companyInfo, contactInfo } from '../data/content';
+import { companyInfoService } from '../admin/api/companyInfoService';
+import { mockCompanyInfo, mockContactInfo } from '../data/mockData';
 import navigationService, { NavItem } from '../admin/api/navigationService';
 import { scrollToElement, formatPhoneNumber, createPhoneLink, createZaloLink } from '../utils/helpers';
 import './Footer.css';
 
 const Footer: React.FC = () => {
+    const [companyInfo] = useState(() => {
+        companyInfoService.initializeCompanyInfo(mockCompanyInfo);
+        return companyInfoService.getCompanyInfo() || mockCompanyInfo;
+    });
+
+    const [contactInfo] = useState(() => {
+        companyInfoService.initializeContactInfo(mockContactInfo);
+        return companyInfoService.getContactInfo() || mockContactInfo;
+    });
+
     const currentYear = new Date().getFullYear();
 
     const [navItems, setNavItems] = React.useState<NavItem[]>(() => navigationService.getAll());

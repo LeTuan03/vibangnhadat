@@ -1,12 +1,22 @@
 import React from 'react';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook } from 'react-icons/fa';
 import { SiZalo } from 'react-icons/si';
-import { companyInfo, contactInfo, navigationItems } from '../data/content';
+import { companyInfo, contactInfo } from '../data/content';
+import navigationService, { NavItem } from '../admin/api/navigationService';
 import { scrollToElement, formatPhoneNumber, createPhoneLink, createZaloLink } from '../utils/helpers';
 import './Footer.css';
 
 const Footer: React.FC = () => {
     const currentYear = new Date().getFullYear();
+
+    const [navItems, setNavItems] = React.useState<NavItem[]>(() => navigationService.getAll());
+
+    React.useEffect(() => {
+        const update = () => setNavItems(navigationService.getAll());
+        const unsub = navigationService.subscribe(update);
+        update();
+        return () => unsub();
+    }, []);
 
     return (
         <footer className="footer">
@@ -33,7 +43,7 @@ const Footer: React.FC = () => {
                         <div className="footer-column">
                             <h4 className="footer-heading">Liên kết nhanh</h4>
                             <ul className="footer-links">
-                                {navigationItems.map((item) => (
+                                {navItems.map((item) => (
                                     <li key={item.id}>
                                         <button onClick={() => scrollToElement(item.href.replace('#', ''))}>
                                             {item.label}

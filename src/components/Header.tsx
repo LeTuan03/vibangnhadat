@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaBars, FaTimes, FaPhone, FaChevronDown } from 'react-icons/fa';
-import { navigationItems } from '../data/content';
+import navigationService, { NavItem } from '../admin/api/navigationService';
 import { scrollToElement } from '../utils/helpers';
 import { useScrollSpy } from '../hooks/useScrollSpy';
 import './Header.css';
@@ -15,6 +15,8 @@ const Header: React.FC = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [navigationItems, setNavigationItems] = React.useState<NavItem[]>(() => navigationService.getAll());
 
   // Chỉ lấy các id của section thật sự (href dạng #id) cho scroll spy
   const sectionIds = [
@@ -37,6 +39,15 @@ const Header: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Subscribe to navigation changes so header updates when admin edits menu
+  useEffect(() => {
+    const update = () => setNavigationItems(navigationService.getAll());
+    const unsub = navigationService.subscribe(update);
+    // ensure initial
+    update();
+    return () => unsub();
   }, []);
 
   // Đóng dropdown khi click ra ngoài

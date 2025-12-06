@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { FaCalendar, FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { blogPosts } from '../data/content';
+import { blogService } from '../admin/api/blogService';
+import { mockBlogPosts } from '../data/mockData';
 import './BlogList.css';
 
 const POSTS_PER_PAGE = 6;
@@ -9,10 +10,14 @@ const POSTS_PER_PAGE = 6;
 const BlogList: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
+    const [posts] = useState(() => {
+        blogService.initializePosts(mockBlogPosts);
+        return blogService.getAllPosts();
+    });
 
-    const categories = ['all', ...new Set(blogPosts.map((p) => p.category))];
+    const categories = ['all', ...new Set(posts.map((p) => p.category))];
     const filteredPosts =
-        selectedCategory === 'all' ? blogPosts : blogPosts.filter((p) => p.category === selectedCategory);
+        selectedCategory === 'all' ? posts : posts.filter((p) => p.category === selectedCategory);
 
     const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
     const startIdx = (currentPage - 1) * POSTS_PER_PAGE;

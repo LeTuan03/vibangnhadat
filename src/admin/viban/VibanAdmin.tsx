@@ -1,173 +1,229 @@
-// src/pages/admin/VibanAdmin.tsx
+import React, { useState, useEffect } from 'react';
+import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
+import { vibanService } from '../api/vibanService';
+import { mockVibans } from '../../data/mockData';
+import { toast } from 'react-toastify';
+import '../documents/Admin.css';
 
-import { useState, useEffect } from "react";
-import { FaEdit, FaPlus, FaTrash, FaTimes, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
-import vibanService from "../services/vibanService";
-import { VibanFormModal } from "./VibanFormModal";
-import { vibangTypes } from "@/components/VibanServices";
-import { R } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
-import { toast } from "react-toastify";
-
-// ============================================
-// VIBAN TYPE INTERFACE
-// ============================================
-export interface VibangType {
+interface Viban {
     id: string;
-    title: string;
-    // icon?: React.ReactNode;
+    name: string;
     description: string;
-    requirements: string[];
-    process: string[];
-    fees: string;
+    category: string;
+    status: string;
+    createdDate: string;
 }
 
-function VibanAdmin() {
-    const [vibanList, setVibanList] = useState<VibangType[]>([]);
+const VibanAdmin: React.FC = () => {
+    const [vibans, setVibans] = useState<Viban[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingViban, setEditingViban] = useState<VibangType | null>(null);
+    const [editingViban, setEditingViban] = useState<Viban | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [formData, setFormData] = useState({
+        name: '',
+        description: '',
+        category: '',
+        status: 'active',
+        createdDate: new Date().toISOString().split('T')[0]
+    });
 
     useEffect(() => {
-        vibanService.initializeViban(vibangTypes);
-        loadViban();
+        vibanService.initializeVibans(mockVibans);
+        loadVibans();
     }, []);
 
-    const loadViban = () => {
-        const allViban = vibanService.getAllViban();
-        setVibanList(allViban);
+    const loadVibans = () => {
+        const allVibans = vibanService.getAllVibans();
+        setVibans(allVibans);
     };
 
     const handleAddNew = () => {
         setEditingViban(null);
+        setFormData({
+            name: '',
+            description: '',
+            category: '',
+            status: 'active',
+            createdDate: new Date().toISOString().split('T')[0]
+        });
         setIsModalOpen(true);
     };
 
-    const handleEdit = (viban: VibangType) => {
+    const handleEdit = (viban: Viban) => {
         setEditingViban(viban);
+        setFormData({
+            name: viban.name,
+            description: viban.description,
+            category: viban.category,
+            status: viban.status,
+            createdDate: viban.createdDate
+        });
         setIsModalOpen(true);
     };
 
-    const handleSave = (vibanData: Omit<VibangType, 'id'> | VibangType) => {
-        if ('id' in vibanData) {
-            const updated = vibanService.updateViban(vibanData.id, vibanData);
+    const handleSave = () => {
+        if (!formData.name || !formData.category) {
+            toast.error('Vui lòng điền tất cả các trường bắt buộc');
+            return;
+        }
+
+        if (editingViban) {
+            const updated = vibanService.updateViban(editingViban.id, {
+                ...editingViban,
+                ...formData
+            });
             if (updated) {
-                setVibanList(vibanList.map(v => v.id === vibanData.id ? updated : v));
+                setVibans(vibans.map(v => v.id === editingViban.id ? updated : v));
                 toast.success('Cập nhật vi bằng thành công!');
             }
         } else {
-            const newViban = vibanService.createViban(vibanData);
-            setVibanList([newViban, ...vibanList]);
+            const newViban = vibanService.createViban(formData);
+            setVibans([newViban, ...vibans]);
             toast.success('Thêm vi bằng mới thành công!');
         }
         setIsModalOpen(false);
-        setEditingViban(null);
     };
 
     const handleDelete = (id: string) => {
         if (window.confirm('Bạn có chắc muốn xóa vi bằng này?')) {
             const success = vibanService.deleteViban(id);
             if (success) {
-                setVibanList(vibanList.filter(viban => viban.id !== id));
+                setVibans(vibans.filter(v => v.id !== id));
                 toast.success('Xóa vi bằng thành công!');
-            } else {
-                toast.error('Xóa vi bằng thất bại!');
             }
         }
     };
 
-    const filteredViban = vibanList.filter(viban =>
-        viban.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        viban.description.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredVibans = vibans.filter(viban =>
+        viban.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        viban.category.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
-        <div>
-
+        <div className="admin-section">
             <div className="admin-header">
-                <h1>Quản lý Vi bằng</h1>
-                <button className="btn btn-primary" onClick={handleAddNew}>
+                <h2>Quản lý Vi bằng</h2>
+                <button className="btn-primary" onClick={handleAddNew}>
                     <FaPlus /> Thêm mới
                 </button>
             </div>
 
-            <div style={{ marginBottom: '20px' }}>
+            <div className="admin-search">
                 <input
                     type="text"
                     placeholder="Tìm kiếm vi bằng..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="form-control"
-                    style={{ maxWidth: '400px' }}
+                    className="search-input"
                 />
             </div>
 
-            <div className="admin-content">
-                <div className="viban-grid">
-                    {filteredViban.length === 0 ? (
-                        <div style={{
-                            textAlign: 'center',
-                            padding: '60px 20px',
-                            gridColumn: '1 / -1',
-                            color: '#6b7280'
-                        }}>
-                            {searchTerm ? 'Không tìm thấy vi bằng phù hợp' : 'Chưa có vi bằng nào'}
-                        </div>
-                    ) : (
-                        filteredViban.map((viban) => (
-                            <div key={viban.id} className="viban-card">
-                                <div className="viban-header">
-                                    <div>
-                                        <h3>{viban.title}</h3>
-                                        {/* <span className="icon-badge">{viban.icon}</span> */}
-                                    </div>
-                                </div>
-                                <div className="viban-fees">
-                                    <strong>Phí:</strong> {viban.fees}
-                                </div>
-
-                                <div className="viban-actions">
-                                    <button
-                                        className="btn btn-outline"
-                                        onClick={() => handleEdit(viban)}
-                                    >
-                                        <FaEdit /> Chỉnh sửa
-                                    </button>
-                                    <button
-                                        className="btn btn-outline-danger"
-                                        onClick={() => handleDelete(viban.id)}
-                                    >
-                                        <FaTrash /> Xóa
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
-
-                <div style={{
-                    marginTop: '20px',
-                    padding: '16px',
-                    background: '#f9fafb',
-                    borderRadius: '8px'
-                }}>
-                    <div style={{ color: '#6b7280' }}>
-                        Tổng số vi bằng: <strong>{vibanList.length}</strong>
-                        {searchTerm && ` | Kết quả tìm kiếm: ${filteredViban.length}`}
-                    </div>
-                </div>
+            <div className="admin-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên vi bằng</th>
+                            <th>Danh mục</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày tạo</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredVibans.length > 0 ? (
+                            filteredVibans.map(viban => (
+                                <tr key={viban.id}>
+                                    <td>{viban.name}</td>
+                                    <td>{viban.category}</td>
+                                    <td>
+                                        <span className={`status-badge ${viban.status}`}>
+                                            {viban.status === 'active' ? 'Hoạt động' : 'Vô hiệu hóa'}
+                                        </span>
+                                    </td>
+                                    <td>{new Date(viban.createdDate).toLocaleDateString('vi-VN')}</td>
+                                    <td className="action-buttons">
+                                        <button className="btn-edit" onClick={() => handleEdit(viban)}>
+                                            <FaEdit /> Sửa
+                                        </button>
+                                        <button className="btn-delete" onClick={() => handleDelete(viban.id)}>
+                                            <FaTrash /> Xóa
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={5} className="text-center">Không có dữ liệu</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
             </div>
 
-            <VibanFormModal
-                isOpen={isModalOpen}
-                onClose={() => {
-                    setIsModalOpen(false);
-                    setEditingViban(null);
-                }}
-                onSave={handleSave}
-                editViban={editingViban}
-            />
+            {isModalOpen && (
+                <div className="admin-modal-overlay" onClick={() => setIsModalOpen(false)}>
+                    <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+                        <h3>{editingViban ? 'Chỉnh sửa vi bằng' : 'Thêm vi bằng mới'}</h3>
+                        
+                        <div className="form-group">
+                            <label>Tên vi bằng *</label>
+                            <input
+                                type="text"
+                                value={formData.name}
+                                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                placeholder="Nhập tên vi bằng"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Mô tả</label>
+                            <textarea
+                                value={formData.description}
+                                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                placeholder="Nhập mô tả"
+                                rows={3}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Danh mục *</label>
+                            <input
+                                type="text"
+                                value={formData.category}
+                                onChange={(e) => setFormData({...formData, category: e.target.value})}
+                                placeholder="Nhập danh mục"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Trạng thái</label>
+                            <select
+                                value={formData.status}
+                                onChange={(e) => setFormData({...formData, status: e.target.value as 'active' | 'inactive'})}
+                            >
+                                <option value="active">Hoạt động</option>
+                                <option value="inactive">Vô hiệu hóa</option>
+                            </select>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Ngày tạo</label>
+                            <input
+                                type="date"
+                                value={formData.createdDate}
+                                onChange={(e) => setFormData({...formData, createdDate: e.target.value})}
+                            />
+                        </div>
+
+                        <div className="modal-actions">
+                            <button className="btn-cancel" onClick={() => setIsModalOpen(false)}>Hủy</button>
+                            <button className="btn-save" onClick={handleSave}>Lưu</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
-}
+};
 
 export default VibanAdmin;

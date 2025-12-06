@@ -19,9 +19,29 @@ import AdminLayout from './admin/components/AdminLayout';
 import NewAdmin from './admin/news/NewAdmin';
 import VibanAdmin from './admin/viban/VibanAdmin';
 import ServicesAdmin from './admin/services/ServicesAdmin';
-import Category from './admin/category/Category';
+import Category from './admin/category/CategoryAdmin';
+import DocumentsAdmin from './admin/documents/DocumentsAdmin';
+import QAAdmin from './admin/qa/QAAdmin';
+import AdminMenuEditor from './admin/menu/AdminMenuEditor';
+import navigationService from './admin/api/navigationService';
+import { mockNavigation, mockCategories } from './data/mockData';
+import { categoryService } from './admin/api/categoryService';
 
 function App() {
+    React.useEffect(() => {
+        // Ensure navigation service is initialized once
+        try {
+            navigationService.initialize(mockNavigation);
+            // initialize categories for admin forms
+            try {
+                categoryService.initializeCategories(mockCategories as any);
+            } catch (e) {
+                // ignore
+            }
+        } catch (e) {
+            // ignore
+        }
+    }, []);
     const [isAdminLoggedIn, setIsAdminLoggedIn] = React.useState(() => {
         return localStorage.getItem('adminLoggedIn') === 'true';
     });
@@ -80,6 +100,9 @@ function App() {
                     <Route path="services" element={<ServicesAdmin />} />
                     <Route path="viban" element={<VibanAdmin />} />
                     <Route path="category" element={<Category />} />
+                    <Route path="menu" element={<AdminMenuEditor />} />
+                    <Route path="documents" element={<DocumentsAdmin />} />
+                    <Route path="qa" element={<QAAdmin />} />
                 </Route>
 
                 <Route

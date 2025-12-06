@@ -1,5 +1,6 @@
 import { BlogPost } from "@/types";
 import { useEffect, useState } from "react";
+import { categoryService } from '../api/categoryService';
 import { FaTimes } from "react-icons/fa";
 import { toast } from "react-toastify";
 
@@ -41,6 +42,16 @@ export const BlogFormModal: React.FC<BlogFormModalProps> = ({ isOpen, onClose, o
             });
         }
     }, [editPost, isOpen]);
+
+    const [categories, setCategories] = useState<Array<{id: string; name: string}>>([]);
+
+    useEffect(() => {
+        try {
+            setCategories(categoryService.getAllCategories().map(c => ({ id: c.id, name: c.name })));
+        } catch (e) {
+            setCategories([]);
+        }
+    }, []);
 
     const handleSubmit = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -162,10 +173,9 @@ export const BlogFormModal: React.FC<BlogFormModalProps> = ({ isOpen, onClose, o
                             className="form-control"
                         >
                             <option value="">Chọn danh mục</option>
-                            <option value="Tin tức">Tin tức</option>
-                            <option value="Thông báo">Thông báo</option>
-                            <option value="Hướng dẫn">Hướng dẫn</option>
-                            <option value="Pháp luật">Pháp luật</option>
+                            {categories.map(c => (
+                                <option key={c.id} value={c.name}>{c.name}</option>
+                            ))}
                         </select>
                     </div>
                 </div>

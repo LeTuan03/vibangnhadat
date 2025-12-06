@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaFileContract, FaEnvelopeOpenText, FaSearchDollar, FaGavel, FaTimes } from 'react-icons/fa';
-import { services } from '../data/content';
+import serviceService from '../admin/api/serviceService';
+import { mockServices } from '../data/mockData';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import './Services.css';
 
@@ -14,8 +15,12 @@ const iconMap: Record<string, React.ReactNode> = {
 const Services: React.FC = () => {
     const [selectedService, setSelectedService] = useState<string | null>(null);
     const [ref] = useIntersectionObserver({ threshold: 0.1, freezeOnceVisible: true });
+    const [services] = useState(() => {
+        serviceService.initializeServices(mockServices);
+        return serviceService.getAllServices();
+    });
 
-    const selectedServiceData = services.find(s => s.id === selectedService);
+    const selectedServiceData = services.find((s: any) => s.id === selectedService);
 
     return (
         <section id="services" className="section">
@@ -26,7 +31,7 @@ const Services: React.FC = () => {
                 </p>
 
                 <div ref={ref} className={`services-grid`}>
-                    {services.map((service, index) => (
+                    {services.map((service: any, index: number) => (
                         <div
                             key={service.id}
                             className="service-card"
@@ -65,7 +70,7 @@ const Services: React.FC = () => {
                             <div className="modal-section">
                                 <h3>Dịch vụ bao gồm:</h3>
                                 <ul className="modal-list">
-                                    {selectedServiceData.details.map((detail, index) => (
+                                    {selectedServiceData.details.map((detail: any, index: number) => (
                                         <li key={index}>{detail}</li>
                                     ))}
                                 </ul>
@@ -74,7 +79,7 @@ const Services: React.FC = () => {
                             <div className="modal-section">
                                 <h3>Lợi ích:</h3>
                                 <ul className="modal-list benefits-list">
-                                    {selectedServiceData.benefits.map((benefit, index) => (
+                                    {selectedServiceData.benefits.map((benefit: any, index: number) => (
                                         <li key={index}>{benefit}</li>
                                     ))}
                                 </ul>

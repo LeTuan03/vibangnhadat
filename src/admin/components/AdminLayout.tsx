@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaFileContract, FaHome, FaNewspaper, FaSignOutAlt, FaUsers } from 'react-icons/fa';
+import { FaFileContract, FaHome, FaNewspaper, FaSignOutAlt, FaUsers, FaQuestionCircle, FaList, FaBook } from 'react-icons/fa';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import '../AdminDashboard.css';
 
@@ -44,7 +44,25 @@ const AdminLayout: React.FC<LayoutProps> = ({ children, onLogout }) => {
                         to="/admin/category"
                         className={`admin-nav-item ${isActive('/admin/category') ? 'active' : ''}`}
                     >
-                        <FaNewspaper /> Quản lý Danh mục
+                        <FaList /> Quản lý Danh mục
+                    </Link>
+                    <Link
+                        to="/admin/menu"
+                        className={`admin-nav-item ${isActive('/admin/menu') ? 'active' : ''}`}
+                    >
+                        <FaList /> Quản lý Menu Client
+                    </Link>
+                    <Link
+                        to="/admin/documents"
+                        className={`admin-nav-item ${isActive('/admin/documents') ? 'active' : ''}`}
+                    >
+                        <FaBook /> Quản lý Tài liệu
+                    </Link>
+                    <Link
+                        to="/admin/qa"
+                        className={`admin-nav-item ${isActive('/admin/qa') ? 'active' : ''}`}
+                    >
+                        <FaQuestionCircle /> Quản lý Hỏi & Đáp
                     </Link>
                 </nav>
 
@@ -56,12 +74,6 @@ const AdminLayout: React.FC<LayoutProps> = ({ children, onLogout }) => {
                         <FaSignOutAlt /> Đăng xuất
                     </button>
                 </div>
-                <Link
-                    to="/admin/category"
-                    className={`admin-nav-item ${isActive('/admin/category') ? 'active' : ''}`}
-                >
-                    <FaNewspaper /> Quản lý Tin tức & Blog
-                </Link>
             </aside>
 
             {/* Main Content */}

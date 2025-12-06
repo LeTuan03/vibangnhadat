@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBook, FaDownload, FaFilter } from 'react-icons/fa';
-import { legalDocuments } from '../data/content';
+import { documentService } from '../admin/api/documentService';
+import { mockLegalDocuments } from '../data/mockData';
 import './LegalDocuments.css';
 
 const LegalDocuments: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
+    const [legalDocuments] = useState(() => {
+        documentService.initializeDocuments(mockLegalDocuments);
+        return documentService.getAllDocuments();
+    });
 
     const categories = ['all', ...new Set(legalDocuments.map((d) => d.category))];
     const filteredDocs =

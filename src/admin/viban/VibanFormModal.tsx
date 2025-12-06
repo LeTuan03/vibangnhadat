@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
-import { VibangType } from "./VibanAdmin";
 import { FaTimes, FaTrash } from "react-icons/fa";
+
+interface VibangType {
+    id?: string;
+    title: string;
+    description: string;
+    requirements: string[];
+    process: string[];
+    fees: string;
+}
 
 interface VibanFormModalProps {
     isOpen: boolean;

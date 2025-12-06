@@ -1,12 +1,13 @@
 // src/pages/admin/ServicesAdmin.tsx
 
-import { services } from "@/data/content";
-import { Service } from "@/types";
+import { mockServices } from '../../data/mockData';
+import { Service } from '../../types';
 import { useState, useEffect } from "react";
-import { FaEdit, FaPlus, FaTrash, FaTimes } from "react-icons/fa";
+import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
-import serviceService from "../api/serviceAdmin";
+import serviceService from "../api/serviceService";
 import { ServiceFormModal } from "./ServiceFormModal";
+import '../documents/Admin.css';
 
 
 function ServicesAdmin() {
@@ -17,7 +18,7 @@ function ServicesAdmin() {
 
     // Khởi tạo dữ liệu khi component mount
     useEffect(() => {
-        serviceService.initializeServices(services);
+        serviceService.initializeServices(mockServices);
         loadServices();
     }, []);
 

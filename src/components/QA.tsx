@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
-import { faqs } from '../data/content';
+import { qaService } from '../admin/api/qaService';
+import { mockFAQs } from '../data/mockData';
 import './QA.css';
 import { toast } from 'react-toastify';
 
@@ -26,6 +27,10 @@ const QA: React.FC = () => {
         agreedTerms: false,
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [faqs] = useState(() => {
+        qaService.initializeFAQs(mockFAQs);
+        return qaService.getAllFAQs();
+    });
 
     const categories = ['all', ...new Set(faqs.map((f) => f.category))];
     const filteredFAQs =

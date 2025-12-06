@@ -199,19 +199,39 @@ export const mockTeamMembers: TeamMember[] = [
 export const mockVibans = [
     {
         id: 'viban-1',
-        name: 'Vi bằng Pháp lý số 001',
-        description: 'Vi bằng xác nhận tư cách pháp lý của cá nhân',
-        category: 'Xác nhận tư cách',
-        status: 'active',
-        createdDate: '2024-01-01'
+        title: 'Vi bằng Dân sự',
+        description: 'Vi bằng xác nhận tư cách pháp lý của cá nhân trong các vụ việc dân sự',
+        requirements: [
+            'Giấy CMND/CCCD của các bên liên quan',
+            'Chứng chỉ khai sinh',
+            'Hóa đơn điện, nước hoặc giấy tờ chứng minh địa chỉ',
+            'Giấy tờ liên quan đến vụ việc'
+        ],
+        process: [
+            'Nộp hồ sơ đầy đủ tại cơ quan thừa phát lại',
+            'Kiểm tra và làm rõ thông tin',
+            'Tiếp xúc với các bên liên quan nếu cần',
+            'Cấp vi bằng'
+        ],
+        fees: '200.000đ - 500.000đ'
     },
     {
         id: 'viban-2',
-        name: 'Vi bằng Hợp đồng số 002',
-        description: 'Vi bằng chứng thực hợp đồng mua bán bất động sản',
-        category: 'Chứng thực',
-        status: 'active',
-        createdDate: '2024-01-02'
+        title: 'Vi bằng Hợp đồng Mua bán Bất động sản',
+        description: 'Vi bằng chứng thực hợp đồng mua bán bất động sản và quyền sử dụng đất',
+        requirements: [
+            'Giấy CMND/CCCD của người mua và người bán',
+            'Sổ đỏ hoặc giấy chứng nhận quyền sử dụng đất',
+            'Hóa đơn điện, nước hoặc giấy tờ chứng minh địa chỉ',
+            'Bản vẽ hoặc hình ảnh bất động sản'
+        ],
+        process: [
+            'Tư vấn và soạn thảo hợp đồng',
+            'Kiểm tra pháp lý bất động sản',
+            'Tiếp xúc xác nhận ý nguyện các bên',
+            'Cấp vi bằng chứng thực'
+        ],
+        fees: '1.000.000đ - 2.500.000đ'
     }
 ];
 

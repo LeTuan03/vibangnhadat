@@ -99,7 +99,7 @@
     background: var(--gradient-primary);
     color: white;
     /* padding: var(--spacing-3xl) var(--spacing-xl); */
-    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    /* border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; */
     text-align: center;
 }
 

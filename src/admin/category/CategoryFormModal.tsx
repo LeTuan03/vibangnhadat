@@ -85,7 +85,7 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({ isOpen, on
                 <div className="modal-header">
                     <h2>{editCategory ? 'Chỉnh sửa danh mục' : 'Thêm danh mục mới'}</h2>
                     <button className="modal-close" onClick={onClose}>
-                        <FaTimes color="#fff" />
+                        <FaTimes />
                     </button>
                 </div>
 

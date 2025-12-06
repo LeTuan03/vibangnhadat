@@ -85,7 +85,7 @@ const Services: React.FC = () => {
                                 </ul>
                             </div>
 
-                            <button className="btn btn-primary btn-lg" onClick={() => setSelectedService(null)}>
+                            <button className="btn btn-primary btn-xl" onClick={() => setSelectedService(null)}>
                                 Liên hệ tư vấn
                             </button>
                         </div>

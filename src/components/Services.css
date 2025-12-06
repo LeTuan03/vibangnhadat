@@ -83,7 +83,7 @@
 
 .modal-content {
     background: white;
-    border-radius: var(--radius-2xl);
+    /* border-radius: var(--radius-2xl); */
     /* max-width: 700px; */
     width: 100%;
     max-height: 90vh;
@@ -123,7 +123,7 @@
     background: var(--gradient-primary);
     color: white;
     /* padding: var(--spacing-3xl) var(--spacing-xl); */
-    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    /* border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; */
     text-align: center;
 }
 

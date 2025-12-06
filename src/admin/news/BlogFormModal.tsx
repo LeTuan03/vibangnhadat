@@ -86,7 +86,7 @@ export const BlogFormModal: React.FC<BlogFormModalProps> = ({ isOpen, onClose, o
                 <div className="modal-header">
                     <h2>{editPost ? 'Chỉnh sửa bài viết' : 'Thêm bài viết mới'}</h2>
                     <button className="modal-close" onClick={onClose}>
-                        <FaTimes color="#fff" />
+                        <FaTimes />
                     </button>
                 </div>
 

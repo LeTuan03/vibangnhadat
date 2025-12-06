@@ -198,7 +198,7 @@ const VibanServices: React.FC = () => {
                                     <p className="fee-info">{selectedType.fees}</p>
                                 </div>
 
-                                <button className="btn btn-primary btn-lg" onClick={() => {
+                                <button className="btn btn-primary btn-xl" onClick={() => {
                                     setSelectedType(null);
                                     scrollToElement('contact');
                                 }}>

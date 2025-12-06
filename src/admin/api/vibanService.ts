@@ -1,10 +1,10 @@
 interface Viban {
-    id: string;
-    name: string;
+    id?: string;
+    title: string;
     description: string;
-    category: string;
-    status: string;
-    createdDate: string;
+    requirements: string[];
+    process: string[];
+    fees: string;
 }
 
 class VibanService {
@@ -50,7 +50,7 @@ class VibanService {
     searchVibans(query: string): Viban[] {
         const q = query.toLowerCase();
         return this.vibans.filter(v =>
-            v.name.toLowerCase().includes(q) ||
+            v.title.toLowerCase().includes(q) ||
             v.description.toLowerCase().includes(q)
         );
     }

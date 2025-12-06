@@ -206,7 +206,7 @@ const Contact: React.FC = () => {
 
                             <button
                                 type="submit"
-                                className="btn btn-primary btn-lg"
+                                className="btn btn-primary btn-xl"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? 'Đang gửi...' : (

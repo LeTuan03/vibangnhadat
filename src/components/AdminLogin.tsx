@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import './AdminLogin.css';
+import { Link } from 'react-router-dom';
 
 interface AdminLoginProps {
     onLogin: (username: string, password: string) => void;
@@ -78,6 +79,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
                     <div className="demo-credentials">
                         <p><strong>Demo:</strong> admin / admin123</p>
+                        <Link to="/">Sang Landing page</Link>
                     </div>
                 </form>
             </div>

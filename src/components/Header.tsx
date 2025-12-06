@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaBars, FaTimes, FaPhone, FaChevronDown } from 'react-icons/fa';
+import { FaBars, FaTimes, FaPhone, FaChevronDown, FaHome } from 'react-icons/fa';
 import navigationService, { NavItem } from '../admin/api/navigationService';
 import { scrollToElement } from '../utils/helpers';
 import { useScrollSpy } from '../hooks/useScrollSpy';
@@ -247,13 +247,21 @@ const Header: React.FC = () => {
 
           {/* CTA Button */}
           <a
+            className="header-cta"
+            href="/admin/login"
+            aria-label="Đăng nhập quản trị"
+          >
+            <FaHome style={{ fontSize: '0.875rem' }} />
+            Đăng nhập
+          </a>
+          {/* <a
             href="tel:+840901234567"
             className="header-cta"
             aria-label="Liên hệ ngay qua điện thoại"
           >
             <FaPhone style={{ fontSize: '0.875rem' }} />
             Liên hệ ngay
-          </a>
+          </a> */}
 
           {/* Mobile Menu Toggle */}
           <button

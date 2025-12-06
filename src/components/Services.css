@@ -184,7 +184,7 @@
 .modal-list li::before {
     content: '✓';
     position: absolute;
-    left: 0;
+    left: -20px;
     color: var(--color-accent);
     font-weight: var(--font-weight-bold);
 }

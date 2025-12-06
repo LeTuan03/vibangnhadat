@@ -175,6 +175,7 @@
     padding: 2.5rem;
     border-radius: var(--radius-xl);
     margin-top: 3rem;
+    margin-bottom: 3rem;
     text-align: center;
     box-shadow: var(--shadow-lg);
 }

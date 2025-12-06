@@ -44,8 +44,11 @@ const Booking: React.FC = () => {
             toast.error('Vui lòng đồng ý với chính sách bảo mật');
             return;
         }
-        // Here you would typically send the data to a backend
-        console.log('Booking data:', formData);
+        if (!formData.name || !formData.phone || !formData.email || !formData.consultationArea || !formData.preferredDate) {
+            toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
+            return;
+        }
+        toast.success('Yêu cầu tư vấn của bạn đã được gửi thành công. Chúng tôi sẽ liên hệ bạn sớm!');
         setIsSubmitted(true);
         setTimeout(() => {
             setIsOpen(false);

@@ -1,27 +1,53 @@
-// Service types
-export interface Service {
+/** Base entity type with required id */
+export interface BaseEntity {
     id: string;
+}
+
+/** Generic service response type */
+export type ServiceResponse<T> = {
+    data: T;
+    status: 'success' | 'error';
+    message?: string;
+};
+
+/** Generic paginated response type */
+export interface PaginatedResponse<T> {
+    items: T[];
+    total: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
+}
+
+// ============ Service Types ============
+export interface Service extends BaseEntity {
     title: string;
     description: string;
     icon: string;
     details: string[];
     benefits: string[];
+    createdAt?: string;
+    updatedAt?: string;
 }
 
-// Team member types
-export interface TeamMember {
-    id: string;
+// ============ Team Types ============
+export interface TeamMember extends BaseEntity {
     name: string;
     position: string;
     bio: string;
     image?: string;
     email?: string;
     phone?: string;
+    specialization?: string[];
+    socialLinks?: {
+        facebook?: string;
+        linkedin?: string;
+        twitter?: string;
+    };
 }
 
-// Blog/News types
-export interface BlogPost {
-    id: string;
+// ============ Blog/News Types ============
+export interface BlogPost extends BaseEntity {
     title: string;
     excerpt: string;
     content: string;
@@ -29,40 +55,49 @@ export interface BlogPost {
     date: string;
     category: string;
     image?: string;
+    tags?: string[];
+    featured?: boolean;
+    views?: number;
 }
 
-// FAQ types
-export interface FAQ {
-    id: string;
+// ============ FAQ/Q&A Types ============
+export interface FAQ extends BaseEntity {
     question: string;
     answer: string;
     category: string;
+    tags?: string[];
+    relatedFAQs?: string[];
+    helpfulCount?: number;
+    views?: number;
 }
 
-// Legal document types
-export interface LegalDocument {
-    id: string;
+// ============ Legal Document Types ============
+export interface LegalDocument extends BaseEntity {
     title: string;
     description: string;
     category: string;
     fileUrl?: string;
     publishDate: string;
+    author?: string;
+    version?: string;
+    tags?: string[];
 }
 
-// Legal Article types
-export interface LegalArticle {
-    id: string;
+// ============ Legal Article Types ============
+export interface LegalArticle extends BaseEntity {
     title: string;
     category: string;
     content: string;
     relatedLaws: string[];
     datePublished: string;
     author?: string;
+    readTime?: number;
+    tags?: string[];
+    featured?: boolean;
 }
 
-// Law Explanation types
-export interface LawExplanation {
-    id: string;
+// ============ Law Explanation Types ============
+export interface LawExplanation extends BaseEntity {
     lawName: string;
     lawNumber: string;
     publishedDate: string;
@@ -70,38 +105,43 @@ export interface LawExplanation {
     mainPoints: string[];
     applicationScope: string;
     penalties?: string[];
+    category?: string;
+    relatedDocuments?: string[];
 }
 
-// Legal Term types
-export interface LegalTerm {
-    id: string;
+// ============ Legal Term Types ============
+export interface LegalTerm extends BaseEntity {
     term: string;
     definition: string;
     relatedLaws: string[];
     examples?: string[];
+    pronunciation?: string;
+    englishEquivalent?: string;
 }
 
-// Reference types
-export interface Reference {
-    id: string;
+// ============ Reference Types ============
+export interface Reference extends BaseEntity {
     name: string;
     url: string;
     description: string;
     category: string;
+    dateAdded?: string;
+    isVerified?: boolean;
 }
 
-// Testimonial types
-export interface Testimonial {
-    id: string;
+// ============ Testimonial Types ============
+export interface Testimonial extends BaseEntity {
     name: string;
     position: string;
     company: string;
     content: string;
     rating: number;
     image?: string;
+    date?: string;
+    verified?: boolean;
 }
 
-// Contact info types
+// ============ Contact Types ============
 export interface ContactInfo {
     phone: string;
     email: string;
@@ -117,48 +157,92 @@ export interface ContactInfo {
     };
 }
 
-// Statistics types
-export interface Statistic {
-    id: string;
+// ============ Statistics Types ============
+export interface Statistic extends BaseEntity {
     label: string;
     value: number;
     suffix: string;
     icon: string;
+    animationDuration?: number;
 }
 
-// Language types
-export type Language = 'vi' | 'en';
-
-// Navigation types
-export interface NavItem {
-    id: string;
+// ============ Navigation Types ============
+export interface NavItem extends BaseEntity {
     label: string;
     href: string;
     children?: NavItem[];
+    icon?: string;
+    badge?: {
+        text: string;
+        color: string;
+    };
 }
 
-// Service Area types
-export interface ServiceArea {
-    id: string;
+// ============ Service Area Types ============
+export interface ServiceArea extends BaseEntity {
     title: string;
     image: string;
     description: string;
+    details?: string[];
+    icon?: string;
 }
 
-// Family Law Q&A types
-export interface FamilyLawQA {
-    id: string;
+// ============ Family Law Types ============
+export interface FamilyLawQA extends BaseEntity {
     question: string;
     image: string;
     shortDescription: string;
+    fullDescription?: string;
+    category?: string;
+    relatedQAs?: string[];
 }
 
-// Gallery Item types
-export interface GalleryItem {
-    id: string;
+// ============ Gallery Types ============
+export interface GalleryItem extends BaseEntity {
     title: string;
     type: 'image' | 'video';
     thumbnail: string;
     videoId?: string;
     description: string;
+    fullDescription?: string;
+    category?: string;
+}
+
+// ============ Language Types ============
+export type Language = 'vi' | 'en';
+
+// ============ Form Types ============
+export interface QuestionSubmission {
+    name: string;
+    email: string;
+    phone: string;
+    category: string;
+    question: string;
+    agreedTerms: boolean;
+    timestamp?: string;
+}
+
+export interface BookingFormData {
+    name: string;
+    phone: string;
+    email: string;
+    consultationType: 'online' | 'offline' | 'phone';
+    consultationArea: string;
+    preferredDate: string;
+    description: string;
+    agreedTerms: boolean;
+    timestamp?: string;
+}
+
+// ============ Utility Types ============
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+export type Partial<T> = { [P in keyof T]?: T[P] };
+export type Required<T> = { [P in keyof T]-?: T[P] };
+export type Readonly<T> = { readonly [P in keyof T]: T[P] };
+
+// Generic collection type
+export interface Collection<T extends BaseEntity> {
+    items: T[];
+    total: number;
+    lastUpdated?: string;
 }

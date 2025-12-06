@@ -1,12 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { FaCalendar, FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { blogService } from '../admin/api/blogService';
 import { mockBlogPosts } from '../data/mockData';
+import { BlogPost } from '../types';
 import './BlogList.css';
 
 const POSTS_PER_PAGE = 6;
 
+/**
+ * BlogCard - Memoized component for individual blog post display
+ */
+const BlogCard = React.memo(({ post }: { post: BlogPost }) => (
+    <article className="blog-card">
+        <div className="blog-image">
+            <img
+                src={post.image || '/images/blog-placeholder.jpg'}
+                alt={post.title}
+            />
+            <span className="blog-category">{post.category}</span>
+        </div>
+        <div className="blog-content">
+            <h3 className="blog-title">{post.title}</h3>
+            <p className="blog-excerpt">{post.excerpt}</p>
+            <div className="blog-meta">
+                <span><FaCalendar /> {new Date(post.date).toLocaleDateString('vi-VN')}</span>
+                <span><FaUser /> {post.author}</span>
+            </div>
+            <Link to={`/blog/${post.id}`} className="blog-link">
+                Đọc thêm →
+            </Link>
+        </div>
+    </article>
+));
+
+BlogCard.displayName = 'BlogCard';
+
+/**
+ * BlogList - Main component for displaying paginated blog posts with filtering
+ */
 const BlogList: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -15,23 +47,36 @@ const BlogList: React.FC = () => {
         return blogService.getAllPosts();
     });
 
-    const categories = ['all', ...new Set(posts.map((p) => p.category))];
-    const filteredPosts =
-        selectedCategory === 'all' ? posts : posts.filter((p) => p.category === selectedCategory);
+    // Memoized categories list
+    const categories = useMemo(
+        () => ['all', ...new Set(posts.map((p) => p.category))],
+        [posts]
+    );
 
-    const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
-    const startIdx = (currentPage - 1) * POSTS_PER_PAGE;
-    const displayedPosts = filteredPosts.slice(startIdx, startIdx + POSTS_PER_PAGE);
+    // Memoized filtered posts
+    const filteredPosts = useMemo(
+        () => selectedCategory === 'all' ? posts : posts.filter((p) => p.category === selectedCategory),
+        [posts, selectedCategory]
+    );
 
-    const handlePageChange = (page: number) => {
+    // Memoized pagination calculations
+    const paginationData = useMemo(() => {
+        const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
+        const startIdx = (currentPage - 1) * POSTS_PER_PAGE;
+        const displayedPosts = filteredPosts.slice(startIdx, startIdx + POSTS_PER_PAGE);
+        return { totalPages, displayedPosts };
+    }, [filteredPosts, currentPage]);
+
+    // Memoized callbacks
+    const handlePageChange = useCallback((page: number) => {
         setCurrentPage(page);
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    }, []);
 
-    const handleCategoryChange = (category: string) => {
+    const handleCategoryChange = useCallback((category: string) => {
         setSelectedCategory(category);
         setCurrentPage(1);
-    };
+    }, []);
 
     return (
         <section className="blog-list-section">
@@ -56,32 +101,13 @@ const BlogList: React.FC = () => {
 
                 {/* Blog Grid */}
                 <div className="blog-grid">
-                    {displayedPosts.map((post) => (
-                        <article key={post.id} className="blog-card">
-                            <div className="blog-image">
-                                <img
-                                    src={post.image || '/images/blog-placeholder.jpg'}
-                                    alt={post.title}
-                                />
-                                <span className="blog-category">{post.category}</span>
-                            </div>
-                            <div className="blog-content">
-                                <h3 className="blog-title">{post.title}</h3>
-                                <p className="blog-excerpt">{post.excerpt}</p>
-                                <div className="blog-meta">
-                                    <span><FaCalendar /> {new Date(post.date).toLocaleDateString('vi-VN')}</span>
-                                    <span><FaUser /> {post.author}</span>
-                                </div>
-                                <Link to={`/blog/${post.id}`} className="blog-link">
-                                    Đọc thêm →
-                                </Link>
-                            </div>
-                        </article>
+                    {paginationData.displayedPosts.map((post) => (
+                        <BlogCard key={post.id} post={post} />
                     ))}
                 </div>
 
                 {/* Pagination */}
-                {totalPages > 1 && (
+                {paginationData.totalPages > 1 && (
                     <div className="pagination">
                         <button
                             className="pagination-btn"
@@ -92,7 +118,7 @@ const BlogList: React.FC = () => {
                         </button>
 
                         <div className="pagination-numbers">
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            {Array.from({ length: paginationData.totalPages }, (_, i) => i + 1).map((page) => (
                                 <button
                                     key={page}
                                     className={`pagination-number ${currentPage === page ? 'active' : ''}`}
@@ -105,8 +131,8 @@ const BlogList: React.FC = () => {
 
                         <button
                             className="pagination-btn"
-                            onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                            disabled={currentPage === totalPages}
+                            onClick={() => handlePageChange(Math.min(paginationData.totalPages, currentPage + 1))}
+                            disabled={currentPage === paginationData.totalPages}
                         >
                             Trang sau →
                         </button>
@@ -117,4 +143,4 @@ const BlogList: React.FC = () => {
     );
 };
 
-export default BlogList;
+export default React.memo(BlogList);

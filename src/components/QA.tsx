@@ -52,7 +52,11 @@ const QA: React.FC = () => {
             toast.error('Vui lòng đồng ý với chính sách bảo mật');
             return;
         }
-        console.log('Question submitted:', formData);
+        if (!formData.name || !formData.email || !formData.phone || !formData.question) {
+            toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
+            return;
+        }
+        toast.success('Câu hỏi của bạn đã được gửi thành công!');
         setIsSubmitted(true);
         setTimeout(() => {
             setShowForm(false);

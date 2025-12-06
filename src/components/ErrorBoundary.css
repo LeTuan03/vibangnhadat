@@ -1,0 +1,104 @@
+/* Error Boundary Styles */
+.error-boundary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 2rem;
+}
+
+.error-boundary-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    padding: 3rem 2rem;
+    max-width: 500px;
+    text-align: center;
+}
+
+.error-boundary-content h1 {
+    color: #e53e3e;
+    font-size: 1.875rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.error-boundary-content p {
+    color: #718096;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.error-details {
+    background: #f7fafc;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+    font-size: 0.875rem;
+    color: #2d3748;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.error-details summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.error-reset-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 0.5rem;
+}
+
+.error-reset-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.error-home-link {
+    display: inline-block;
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+}
+
+.error-home-link:hover {
+    background: #667eea;
+    color: white;
+}
+
+@media (max-width: 640px) {
+    .error-boundary {
+        padding: 1rem;
+    }
+
+    .error-boundary-content {
+        padding: 2rem 1rem;
+    }
+
+    .error-reset-btn,
+    .error-home-link {
+        display: block;
+        margin: 0.5rem 0;
+        width: 100%;
+    }
+}

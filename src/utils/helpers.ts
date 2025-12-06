@@ -1,4 +1,8 @@
-// Date formatting
+/**
+ * Format date string to Vietnamese locale format
+ * @param dateString - ISO date string
+ * @returns Formatted date string (e.g., "1 tháng 12, 2024")
+ */
 export const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('vi-VN', {
@@ -8,7 +12,11 @@ export const formatDate = (dateString: string): string => {
     }).format(date);
 };
 
-// Phone number formatting
+/**
+ * Format Vietnamese phone number
+ * @param phone - Raw phone number
+ * @returns Formatted phone (e.g., "090 123 4567")
+ */
 export const formatPhoneNumber = (phone: string): string => {
     // Remove all non-digit characters
     const cleaned = phone.replace(/\D/g, '');
@@ -21,19 +29,32 @@ export const formatPhoneNumber = (phone: string): string => {
     return phone;
 };
 
-// Create phone link (tel:)
+/**
+ * Create phone link for tel: protocol
+ * @param phone - Phone number
+ * @returns tel: link with +84 country code
+ */
 export const createPhoneLink = (phone: string): string => {
     const cleaned = phone.replace(/\D/g, '');
     return `tel:+84${cleaned.slice(1)}`;
 };
 
-// Create Zalo link
+/**
+ * Create Zalo messaging link
+ * @param phone - Phone number
+ * @returns Zalo link
+ */
 export const createZaloLink = (phone: string): string => {
     const cleaned = phone.replace(/\D/g, '');
     return `https://zalo.me/${cleaned}`;
 };
 
-// Debounce function for search
+/**
+ * Debounce function to limit function execution frequency
+ * @param func - Function to debounce
+ * @param delay - Delay in milliseconds
+ * @returns Debounced function
+ */
 export const debounce = <T extends (...args: any[]) => any>(
     func: T,
     delay: number
@@ -46,7 +67,11 @@ export const debounce = <T extends (...args: any[]) => any>(
     };
 };
 
-// Scroll to element smoothly
+/**
+ * Scroll to element smoothly with offset
+ * @param elementId - Element ID to scroll to
+ * @param offset - Offset from top (default: 80px for fixed header)
+ */
 export const scrollToElement = (elementId: string, offset: number = 80): void => {
     const element = document.getElementById(elementId);
     if (element) {
@@ -60,18 +85,34 @@ export const scrollToElement = (elementId: string, offset: number = 80): void =>
     }
 };
 
-// Truncate text
+/**
+ * Truncate text to maximum length with ellipsis
+ * @param text - Text to truncate
+ * @param maxLength - Maximum length
+ * @returns Truncated text
+ */
 export const truncateText = (text: string, maxLength: number): string => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + '...';
 };
 
-// Search/filter helper
+/**
+ * Check if text contains query (case-insensitive)
+ * @param text - Text to search in
+ * @param query - Search query
+ * @returns true if found
+ */
 export const searchInText = (text: string, query: string): boolean => {
     return text.toLowerCase().includes(query.toLowerCase());
 };
 
-// Filter array by search query
+/**
+ * Filter array items by search query on multiple fields
+ * @param items - Array of items to filter
+ * @param query - Search query
+ * @param searchFields - Fields to search in
+ * @returns Filtered items
+ */
 export const filterBySearch = <T>(
     items: T[],
     query: string,
@@ -90,32 +131,55 @@ export const filterBySearch = <T>(
     );
 };
 
-// Get reading time estimate
+/**
+ * Calculate estimated reading time in minutes
+ * @param text - Text content
+ * @returns Estimated reading time in minutes
+ */
 export const getReadingTime = (text: string): number => {
     const wordsPerMinute = 200;
     const wordCount = text.split(/\s+/).length;
     return Math.ceil(wordCount / wordsPerMinute);
 };
 
-// Validate email
+/**
+ * Validate email format
+ * @param email - Email to validate
+ * @returns true if valid email
+ */
 export const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 };
 
-// Validate phone number (Vietnamese)
+/**
+ * Validate Vietnamese phone number format
+ * @param phone - Phone to validate
+ * @returns true if valid Vietnamese phone
+ */
 export const isValidPhone = (phone: string): boolean => {
     const cleaned = phone.replace(/\D/g, '');
     return cleaned.length === 10 && cleaned.startsWith('0');
 };
 
-// Generate unique ID
+/**
+ * Generate unique ID
+ * @returns Unique identifier string
+ */
 export const generateId = (): string => {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 };
 
-// Local storage helpers
+/**
+ * Local storage utility object with typed get/set/remove
+ */
 export const storage = {
+    /**
+     * Get item from localStorage with type safety
+     * @param key - Storage key
+     * @param defaultValue - Default value if key not found
+     * @returns Stored value or default
+     */
     get: <T>(key: string, defaultValue: T): T => {
         try {
             const item = localStorage.getItem(key);
@@ -125,6 +189,11 @@ export const storage = {
         }
     },
 
+    /**
+     * Set item in localStorage
+     * @param key - Storage key
+     * @param value - Value to store
+     */
     set: <T>(key: string, value: T): void => {
         try {
             localStorage.setItem(key, JSON.stringify(value));
@@ -133,6 +202,10 @@ export const storage = {
         }
     },
 
+    /**
+     * Remove item from localStorage
+     * @param key - Storage key
+     */
     remove: (key: string): void => {
         try {
             localStorage.removeItem(key);

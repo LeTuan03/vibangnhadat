@@ -1,47 +1,56 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import BlogPage from './pages/BlogPage';
-import ArticlePage from './pages/ArticlePage';
-import DocumentDetailPage from './pages/DocumentDetailPage';
-import QADetailPage from './pages/QADetailPage';
+import LoadingSpinner from './components/LoadingSpinner';
 import Layout from './components/Layout';
 import QALayout from './components/QALayout';
-import ServiceAreaDetailPage from './pages/ServiceAreaDetailPage';
-import FamilyLawPage from './pages/FamilyLawPage';
-import FamilyLawDetailPage from './pages/FamilyLawDetailPage';
 import NotFound from './components/NotFound';
-import './index.css';
-import AdminLogin from './components/AdminLogin';
-import QA from './components/QA';
-import LegalDocuments from './components/LegalDocuments';
 import AdminLayout from './admin/components/AdminLayout';
-import NewAdmin from './admin/news/NewAdmin';
-import VibanAdmin from './admin/viban/VibanAdmin';
-import ServicesAdmin from './admin/services/ServicesAdmin';
-import Category from './admin/category/CategoryAdmin';
-import DocumentsAdmin from './admin/documents/DocumentsAdmin';
-import QAAdmin from './admin/qa/QAAdmin';
-import AdminMenuEditor from './admin/menu/AdminMenuEditor';
 import navigationService from './admin/api/navigationService';
 import { mockNavigation, mockCategories } from './data/mockData';
 import { categoryService } from './admin/api/categoryService';
+import './index.css';
 
+// Lazy load main pages
+const HomePage = React.lazy(() => import('./pages/HomePage'));
+const BlogPage = React.lazy(() => import('./pages/BlogPage'));
+const ArticlePage = React.lazy(() => import('./pages/ArticlePage'));
+const DocumentDetailPage = React.lazy(() => import('./pages/DocumentDetailPage'));
+const QADetailPage = React.lazy(() => import('./pages/QADetailPage'));
+const ServiceAreaDetailPage = React.lazy(() => import('./pages/ServiceAreaDetailPage'));
+const FamilyLawPage = React.lazy(() => import('./pages/FamilyLawPage'));
+const FamilyLawDetailPage = React.lazy(() => import('./pages/FamilyLawDetailPage'));
+
+// Lazy load admin components
+const AdminLogin = React.lazy(() => import('./components/AdminLogin'));
+const QA = React.lazy(() => import('./components/QA'));
+const LegalDocuments = React.lazy(() => import('./components/LegalDocuments'));
+const NewAdmin = React.lazy(() => import('./admin/news/NewAdmin'));
+const VibanAdmin = React.lazy(() => import('./admin/viban/VibanAdmin'));
+const ServicesAdmin = React.lazy(() => import('./admin/services/ServicesAdmin'));
+const Category = React.lazy(() => import('./admin/category/CategoryAdmin'));
+const DocumentsAdmin = React.lazy(() => import('./admin/documents/DocumentsAdmin'));
+const QAAdmin = React.lazy(() => import('./admin/qa/QAAdmin'));
+const AdminMenuEditor = React.lazy(() => import('./admin/menu/AdminMenuEditor'));
+
+/**
+ * Suspense boundary component for lazy-loaded routes
+ */
+const RouteLoader = () => <LoadingSpinner />;
+
+/**
+ * Main App component with routes and lazy loading
+ */
 function App() {
     React.useEffect(() => {
-        // Ensure navigation service is initialized once
+        // Initialize navigation service
         try {
             navigationService.initialize(mockNavigation);
-            // initialize categories for admin forms
-            try {
-                categoryService.initializeCategories(mockCategories as any);
-            } catch (e) {
-                // ignore
-            }
-        } catch (e) {
-            // ignore
+            categoryService.initializeCategories(mockCategories as any);
+        } catch (error) {
+            console.error('Initialization error:', error);
         }
     }, []);
+
     const [isAdminLoggedIn, setIsAdminLoggedIn] = React.useState(() => {
         return localStorage.getItem('adminLoggedIn') === 'true';
     });
@@ -58,66 +67,67 @@ function App() {
 
     return (
         <BrowserRouter>
-            <Routes>
-                {/* Route-level Layout wraps common header/footer and renders children via Outlet */}
-                <Route path="/" element={<Layout />}>
-                    <Route index element={<HomePage />} />
-                    <Route path="blog" element={<BlogPage />} />
-                    <Route path="blog/:id" element={<ArticlePage />} />
-                    <Route path="documents" element={<LegalDocuments />} />
-                    <Route path="documents/:id" element={<DocumentDetailPage />} />
+            <Suspense fallback={<RouteLoader />}>
+                <Routes>
+                    {/* Main public routes */}
+                    <Route path="/" element={<Layout />}>
+                        <Route index element={<HomePage />} />
+                        <Route path="blog" element={<BlogPage />} />
+                        <Route path="blog/:id" element={<ArticlePage />} />
+                        <Route path="documents" element={<LegalDocuments />} />
+                        <Route path="documents/:id" element={<DocumentDetailPage />} />
 
-                    {/* QA routes use a dedicated QA layout (header + outlet) */}
-                    <Route path="qa" element={<QALayout />}>
-                        <Route index element={<QA />} />
-                        <Route path=":id" element={<QADetailPage />} />
+                        {/* QA routes with dedicated layout */}
+                        <Route path="qa" element={<QALayout />}>
+                            <Route index element={<QA />} />
+                            <Route path=":id" element={<QADetailPage />} />
+                        </Route>
+
+                        {/* Service area routes */}
+                        <Route path="service-areas/:id" element={<ServiceAreaDetailPage />} />
+
+                        {/* Family law routes */}
+                        <Route path="family-law" element={<FamilyLawPage />} />
+                        <Route path="family-law/:id" element={<FamilyLawDetailPage />} />
+
+                        {/* 404 fallback */}
+                        <Route path="*" element={<NotFound />} />
                     </Route>
 
-                    {/* Service area detail pages */}
-                    <Route path="service-areas/:id" element={<ServiceAreaDetailPage />} />
+                    {/* Admin routes */}
+                    <Route
+                        path="/admin"
+                        element={
+                            isAdminLoggedIn ? (
+                                <AdminLayout onLogout={handleLogout} />
+                            ) : (
+                                <Navigate to="/admin/login" replace />
+                            )
+                        }
+                    >
+                        <Route index element={<Navigate to="/admin/news" replace />} />
+                        <Route path="news" element={<NewAdmin />} />
+                        <Route path="services" element={<ServicesAdmin />} />
+                        <Route path="viban" element={<VibanAdmin />} />
+                        <Route path="category" element={<Category />} />
+                        <Route path="menu" element={<AdminMenuEditor />} />
+                        <Route path="documents" element={<DocumentsAdmin />} />
+                        <Route path="qa" element={<QAAdmin />} />
+                    </Route>
 
-                    {/* Family law (Hôn nhân – Gia đình) listing and details */}
-                    <Route path="family-law" element={<FamilyLawPage />} />
-                    <Route path="family-law/:id" element={<FamilyLawDetailPage />} />
-
-                    {/* Fallback 404 inside layout so header/footer remain visible */}
-                    <Route path="*" element={<NotFound />} />
-
-                </Route>
-                {/* Admin Routes */}
-                <Route
-                    path="/admin"
-                    element={
-                        isAdminLoggedIn ? (
-                            <AdminLayout onLogout={handleLogout} />
-                        ) : (
-                            <Navigate to="/admin/login" replace />
-                        )
-                    }
-                >
-                    <Route index element={<Navigate to="/admin/news" replace />} />
-                    <Route path="news" element={<NewAdmin />} />
-                    <Route path="services" element={<ServicesAdmin />} />
-                    <Route path="viban" element={<VibanAdmin />} />
-                    <Route path="category" element={<Category />} />
-                    <Route path="menu" element={<AdminMenuEditor />} />
-                    <Route path="documents" element={<DocumentsAdmin />} />
-                    <Route path="qa" element={<QAAdmin />} />
-                </Route>
-
-                <Route
-                    path="/admin/login"
-                    element={
-                        isAdminLoggedIn ? (
-                            <Navigate to="/admin/news" replace />
-                        ) : (
-                            <AdminLogin onLogin={handleLogin} />
-                        )
-                    }
-                />
-
-
-            </Routes>
+                    {/* Admin login route */}
+                    <Route
+                        path="/admin/login"
+                        element={
+                            isAdminLoggedIn ? (
+                                <Navigate to="/admin/news" replace />
+                            ) : (
+                                <AdminLogin onLogin={handleLogin} />
+                            )
+                        }
+                    />
+                </Routes>
+            </Suspense>
         </BrowserRouter>
     );
 }

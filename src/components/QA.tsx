@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaChevronDown } from 'react-icons/fa';
-import { qaService } from '../admin/api/qaService';
-import { mockFAQs } from '../data/mockData';
+import QAFirebaseService from '../services/QAFirebaseService';
 import './QA.css';
 import { toast } from 'react-toastify';
+import LoadingSpinner from './LoadingSpinner';
 
 interface QuestionSubmission {
     name: string;
@@ -27,10 +27,41 @@ const QA: React.FC = () => {
         agreedTerms: false,
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [faqs] = useState(() => {
-        qaService.initializeFAQs(mockFAQs);
-        return qaService.getAllFAQs();
-    });
+    const [faqs, setFaqs] = useState<typeof QAFirebaseService.getAllFAQs extends () => Promise<infer T> ? T : any>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadFAQs = async () => {
+            try {
+                setLoading(true);
+                const data = await QAFirebaseService.getAllFAQs();
+                setFaqs(data);
+            } catch (err) {
+                console.error('Error loading FAQs:', err);
+                setError('Không thể tải câu hỏi. Vui lòng thử lại sau.');
+                toast.error('Lỗi khi tải dữ liệu');
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadFAQs();
+    }, []);
+
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
+    if (error) {
+        return (
+            <section className="qa-section">
+                <div className="container">
+                    <h2>Hỏi & Đáp</h2>
+                    <p style={{ color: 'red' }}>{error}</p>
+                </div>
+            </section>
+        );
+    }
 
     const categories = ['all', ...new Set(faqs.map((f) => f.category))];
     const filteredFAQs =

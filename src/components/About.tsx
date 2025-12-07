@@ -1,18 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaUsers, FaBullseye, FaHeart, FaBriefcase } from 'react-icons/fa';
-import { companyInfoService } from '../admin/api/companyInfoService';
-import { mockCompanyInfo, mockTeamMembers } from '../data/mockData';
+import { getCompanyInfo, getAllTeamMembers } from '../services';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import { scrollToElement } from '../utils/helpers';
 import './About.css';
 
 const About: React.FC = () => {
-    const [companyInfo] = useState(() => {
-        companyInfoService.initializeCompanyInfo(mockCompanyInfo);
-        return companyInfoService.getCompanyInfo() || mockCompanyInfo;
-    });
+    const [companyInfo, setCompanyInfo] = useState<any>({ fullName: '', slogan: '', description: '', values: [], vision: '', mission: '' });
+    const [teamMembers, setTeamMembers] = useState<any[]>([]);
 
-    const [teamMembers] = useState(mockTeamMembers);
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const [company, team] = await Promise.all([
+                    getCompanyInfo(),
+                    getAllTeamMembers()
+                ]);
+
+                if (company) setCompanyInfo(company);
+                if (team && team.length > 0) setTeamMembers(team);
+            } catch (error) {
+                console.error('Lỗi tải dữ liệu:', error);
+                // Keep defaults if Firebase fails
+            }
+        };
+
+        loadData();
+    }, []);
 
     const [activeTab, setActiveTab] = useState<'overview' | 'team' | 'vision' | 'careers'>('overview');
     const [ref, isVisible] = useIntersectionObserver({ threshold: 0.1, freezeOnceVisible: true });
@@ -66,7 +80,7 @@ const About: React.FC = () => {
                                     <div className="values-list">
                                         <h4>Giá trị cốt lõi:</h4>
                                         <ul>
-                                            {companyInfo.values.map((value, index) => (
+                                            {companyInfo.values.map((value: any, index: number) => (
                                                 <li key={index}>{value}</li>
                                             ))}
                                         </ul>

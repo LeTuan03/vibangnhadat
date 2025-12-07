@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { Table, Button, Input, Card, Space, Popconfirm, message } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { mockServices } from '../../data/mockData'
 import { Service } from '../../types'
 import serviceService from '../api/serviceService'
 import { ServiceFormModal } from './ServiceFormModal'
@@ -17,13 +16,17 @@ function ServicesAdmin() {
     const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
-        serviceService.initializeServices(mockServices)
         loadServices()
     }, [])
 
-    const loadServices = () => {
-        const allServices = serviceService.getAllServices()
-        setServicesList(allServices)
+    const loadServices = async () => {
+        try {
+            const allServices = await serviceService.getAllServices()
+            setServicesList(allServices)
+        } catch (error) {
+            console.error('Lỗi tải dịch vụ:', error)
+            message.error('Không thể tải dịch vụ')
+        }
     }
 
     const handleAddNew = () => {
@@ -36,28 +39,38 @@ function ServicesAdmin() {
         setIsModalOpen(true)
     }
 
-    const handleSave = (serviceData: Omit<Service, 'id'> | Service) => {
-        if ('id' in serviceData) {
-            const updated = serviceService.updateService(serviceData.id, serviceData)
-            if (updated) {
-                setServicesList((prev) => prev.map((s) => (s.id === serviceData.id ? updated : s)))
-                message.success('Cập nhật dịch vụ thành công!')
+    const handleSave = async (serviceData: Omit<Service, 'id'> | Service) => {
+        try {
+            if ('id' in serviceData) {
+                const updated = await serviceService.updateService(serviceData.id, serviceData)
+                if (updated) {
+                    setServicesList((prev) => prev.map((s) => (s.id === serviceData.id ? updated : s)))
+                    message.success('Cập nhật dịch vụ thành công!')
+                }
+            } else {
+                const newService = await serviceService.createService(serviceData)
+                setServicesList((prev) => [newService, ...prev])
+                message.success('Thêm dịch vụ mới thành công!')
             }
-        } else {
-            const newService = serviceService.createService(serviceData)
-            setServicesList((prev) => [newService, ...prev])
-            message.success('Thêm dịch vụ mới thành công!')
+            setIsModalOpen(false)
+            setEditingService(null)
+            // Reload to sync with Firebase
+            await loadServices()
+        } catch (error) {
+            console.error('Lỗi lưu dịch vụ:', error)
+            message.error('Không thể lưu dịch vụ')
         }
-        setIsModalOpen(false)
-        setEditingService(null)
     }
 
-    const handleDelete = (id: string) => {
-        const success = serviceService.deleteService(id)
-        if (success) {
+    const handleDelete = async (id: string) => {
+        try {
+            await serviceService.deleteService(id)
             setServicesList((prev) => prev.filter((service) => service.id !== id))
             message.success('Xóa dịch vụ thành công!')
-        } else {
+            // Reload to sync with Firebase
+            await loadServices()
+        } catch (error) {
+            console.error('Lỗi xóa dịch vụ:', error)
             message.error('Xóa thất bại')
         }
     }

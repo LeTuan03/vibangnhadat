@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Form, Input, Select, Button, Table, Space, Typography, Divider, Modal, message, Tag } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, MenuOutlined, LinkOutlined } from '@ant-design/icons';
-import navigationService, { NavItem } from '../api/navigationService';
+import { getAllNavigationItems, createNavigationItem, updateNavigationItem, deleteNavigationItem } from '../../services';
+
+export interface NavItem {
+    id?: string;
+    label: string;
+    href: string;
+    children?: NavItem[];
+}
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -13,25 +20,35 @@ const AdminMenuEditor: React.FC = () => {
     const [form] = Form.useForm();
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [editingItem, setEditingItem] = useState<NavItem | null>(null);
-    const [editForm] = Form.useForm();
-
-    useEffect(() => {
-        navigationService.initialize();
-        const update = () => setItems(navigationService.getAll());
-        update();
-        const unsub = navigationService.subscribe(update);
-        return () => unsub();
+  const [editForm] = Form.useForm();    useEffect(() => {
+        loadNavigation();
     }, []);
 
-    const handleAdd = (values: any) => {
-        const newItem: NavItem = {
-            id: generateId(values.label),
-            label: values.label.trim(),
-            href: values.href.trim()
-        };
-        navigationService.create(newItem, values.parent || undefined);
-        message.success('Thêm mục menu thành công');
-        form.resetFields();
+    const loadNavigation = async () => {
+        try {
+            const data = await getAllNavigationItems();
+            setItems(data || []);
+        } catch (error) {
+            console.error('Lỗi tải menu:', error);
+            message.error('Không thể tải menu');
+        }
+    };
+
+    const handleAdd = async (values: any) => {
+        try {
+            const newItem: NavItem = {
+                id: generateId(values.label),
+                label: values.label.trim(),
+                href: values.href.trim()
+            };
+            await createNavigationItem(newItem);
+            message.success('Thêm mục menu thành công');
+            form.resetFields();
+            loadNavigation();
+        } catch (error) {
+            console.error('Lỗi thêm menu:', error);
+            message.error(`Lỗi: ${error instanceof Error ? error.message : 'Lỗi không xác định'}`);
+        }
     };
 
     const handleDelete = (id: string) => {
@@ -41,9 +58,32 @@ const AdminMenuEditor: React.FC = () => {
             okText: 'Xóa',
             cancelText: 'Hủy',
             okType: 'danger',
-            onOk: () => {
-                navigationService.delete(id);
-                message.success('Xóa mục menu thành công');
+            onOk: async () => {
+                try {
+                    console.log('[menu] Deleting item:', id);
+                    
+                    // Delete from Firebase first (wait for completion)
+                    await deleteNavigationItem(id);
+                    console.log('[menu] Item deleted from Firebase');
+                    
+                    // Wait a moment for Firebase to sync
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Then reload to get fresh data from Firebase
+                    await loadNavigation();
+                    
+                    message.success('Xóa mục menu thành công');
+                } catch (error) {
+                    console.error('Lỗi xóa menu:', error);
+                    message.error('Xóa thất bại');
+                    
+                    // Still try to reload on error to sync with Firebase
+                    try {
+                        await loadNavigation();
+                    } catch (e) {
+                        console.error('Lỗi reload menu:', e);
+                    }
+                }
             }
         });
     };
@@ -57,16 +97,22 @@ const AdminMenuEditor: React.FC = () => {
         setEditModalVisible(true);
     };
 
-    const handleEdit = (values: any) => {
+    const handleEdit = async (values: any) => {
         if (!editingItem) return;
-        navigationService.update(editingItem.id, {
-            label: values.label,
-            href: values.href
-        });
-        message.success('Cập nhật mục menu thành công');
-        setEditModalVisible(false);
-        setEditingItem(null);
-        editForm.resetFields();
+        try {
+            await updateNavigationItem(editingItem.id!, {
+                label: values.label,
+                href: values.href
+            });
+            message.success('Cập nhật mục menu thành công');
+            setEditModalVisible(false);
+            setEditingItem(null);
+            editForm.resetFields();
+            loadNavigation();
+        } catch (error) {
+            console.error('Lỗi cập nhật menu:', error);
+            message.error('Cập nhật thất bại');
+        }
     };
 
     const mainColumns = [
@@ -112,7 +158,7 @@ const AdminMenuEditor: React.FC = () => {
                         type="link"
                         danger
                         icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record.id)}
+                        onClick={() => record.id && handleDelete(record.id)}
                     >
                         Xóa
                     </Button>
@@ -161,7 +207,7 @@ const AdminMenuEditor: React.FC = () => {
                         type="link"
                         danger
                         icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record.id)}
+                        onClick={() => record.id && handleDelete(record.id)}
                     >
                         Xóa
                     </Button>

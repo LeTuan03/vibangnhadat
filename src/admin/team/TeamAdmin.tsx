@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Table, Button, Input, Card, Modal, Form, Space, Popconfirm, message } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { TeamMember } from '../../types'
-import { mockTeamMembers } from '../../data/mockData'
+import { getAllTeamMembers, createTeamMember, updateTeamMember, deleteTeamMember } from '../../services'
 
 const { Search } = Input
 
@@ -12,17 +12,22 @@ const TeamAdmin: React.FC = () => {
     const [editingId, setEditingId] = useState<string | null>(null)
     const [searchTerm, setSearchTerm] = useState('')
     const [form] = Form.useForm()
+    const [_loading, setLoading] = useState(false)
 
     useEffect(() => {
         loadTeamMembers()
     }, [])
 
-    const loadTeamMembers = () => {
-        const saved = localStorage.getItem('team_members')
-        if (saved) {
-            setMembers(JSON.parse(saved))
-        } else {
-            setMembers(mockTeamMembers)
+    const loadTeamMembers = async () => {
+        try {
+            setLoading(true)
+            const data = await getAllTeamMembers()
+            setMembers(data)
+        } catch (error) {
+            console.error('Lỗi tải thành viên đội ngũ:', error)
+            message.error('Không thể tải dữ liệu thành viên đội ngũ')
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -42,28 +47,29 @@ const TeamAdmin: React.FC = () => {
         try {
             const values = await form.validateFields()
             if (editingId) {
-                const newMembers = members.map((m) => (m.id === editingId ? { ...m, ...values } : m))
-                setMembers(newMembers)
-                localStorage.setItem('team_members', JSON.stringify(newMembers))
+                await updateTeamMember(editingId, values)
                 message.success('Cập nhật thành công')
             } else {
-                const newMember: TeamMember = { id: `team-${Date.now()}`, ...values }
-                const newMembers = [...members, newMember]
-                setMembers(newMembers)
-                localStorage.setItem('team_members', JSON.stringify(newMembers))
+                await createTeamMember(values)
                 message.success('Thêm mới thành công')
             }
             setIsModalOpen(false)
+            loadTeamMembers()
         } catch (err) {
-            // validation failed
+            console.error('Lỗi lưu thành viên đội ngũ:', err)
+            message.error(`Lỗi lưu dữ liệu: ${err instanceof Error ? err.message : 'Lỗi không xác định'}`)
         }
     }
 
-    const handleDelete = (id: string) => {
-        const newMembers = members.filter((m) => m.id !== id)
-        setMembers(newMembers)
-        localStorage.setItem('team_members', JSON.stringify(newMembers))
-        message.success('Xóa thành công')
+    const handleDelete = async (id: string) => {
+        try {
+            await deleteTeamMember(id)
+            message.success('Xóa thành công')
+            loadTeamMembers()
+        } catch (error) {
+            console.error('Lỗi xóa thành viên:', error)
+            message.error('Xóa thất bại')
+        }
     }
 
     const filteredMembers = members.filter((member) => member.name.toLowerCase().includes(searchTerm.toLowerCase()))

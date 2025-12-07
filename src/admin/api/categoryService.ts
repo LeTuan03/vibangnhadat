@@ -11,6 +11,8 @@ export type Category = {
     menuItemId?: string;
 };
 
+import { mockCategories } from '../../data/mockData';
+
 const STORAGE_KEY = 'categories_store';
 
 class CategoryService {
@@ -98,3 +100,6 @@ class CategoryService {
 }
 
 export const categoryService = new CategoryService();
+
+// Initialize with mock data
+categoryService.initializeCategories(mockCategories);

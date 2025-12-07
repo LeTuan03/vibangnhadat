@@ -21,6 +21,10 @@ import LegalArticleFirebaseService from './LegalArticleFirebaseService';
 import LawExplanationFirebaseService from './LawExplanationFirebaseService';
 import LegalTermFirebaseService from './LegalTermFirebaseService';
 import ReferenceFirebaseService from './ReferenceFirebaseService';
+import VibanFirebaseService from './VibanFirebaseService';
+import CategoryFirebaseService from './CategoryFirebaseService';
+import CompanyInfoFirebaseService from './CompanyInfoFirebaseService';
+import NavigationFirebaseService from './NavigationFirebaseService';
 
 import { 
   BlogPost, 
@@ -36,7 +40,8 @@ import {
   LegalArticle,
   LawExplanation,
   LegalTerm,
-  Reference
+  Reference,
+  ContactInfo
 } from '../types';
 
 // ============ BLOG SERVICES ============
@@ -63,6 +68,10 @@ export async function deleteBlogPost(id: string): Promise<void> {
 // ============ SERVICE SERVICES ============
 export async function getAllServices(): Promise<Service[]> {
   return ServiceFirebaseService.getAllServices();
+}
+
+export async function getServiceById(id: string): Promise<Service | null> {
+  return ServiceFirebaseService.getServiceById(id);
 }
 
 export async function createService(data: Omit<Service, 'id'>): Promise<Service> {
@@ -97,6 +106,10 @@ export async function deleteTeamMember(id: string): Promise<void> {
 // ============ DOCUMENT SERVICES ============
 export async function getAllDocuments(): Promise<LegalDocument[]> {
   return DocumentFirebaseService.getAllDocuments();
+}
+
+export async function getDocumentById(id: string): Promise<LegalDocument | null> {
+  return DocumentFirebaseService.getById(id);
 }
 
 export async function createDocument(data: Omit<LegalDocument, 'id'>): Promise<LegalDocument> {
@@ -327,4 +340,84 @@ export async function updateReference(id: string, data: Partial<Reference>): Pro
 
 export async function deleteReference(id: string): Promise<void> {
   return ReferenceFirebaseService.deleteReference(id);
+}
+
+// ============ VIBAN SERVICES ============
+export async function getAllVibans() {
+  return VibanFirebaseService.getAllVibans();
+}
+
+export async function createViban(data: any) {
+  return VibanFirebaseService.createViban(data);
+}
+
+export async function updateViban(id: string, data: Partial<any>) {
+  return VibanFirebaseService.updateViban(id, data);
+}
+
+export async function deleteViban(id: string) {
+  return VibanFirebaseService.deleteViban(id);
+}
+
+export async function searchVibans(term: string) {
+  return VibanFirebaseService.searchVibans(term);
+}
+
+// ============ CATEGORY SERVICES ============
+export async function getAllCategories() {
+  return CategoryFirebaseService.getAllCategories();
+}
+
+export async function getCategoryById(id: string) {
+  return CategoryFirebaseService.getCategoryById(id);
+}
+
+export async function createCategory(data: any) {
+  return CategoryFirebaseService.createCategory(data);
+}
+
+export async function updateCategory(id: string, data: Partial<any>) {
+  return CategoryFirebaseService.updateCategory(id, data);
+}
+
+export async function deleteCategory(id: string) {
+  return CategoryFirebaseService.deleteCategory(id);
+}
+
+export async function searchCategories(term: string) {
+  return CategoryFirebaseService.searchCategories(term);
+}
+
+// ============ NAVIGATION SERVICES ============
+export async function getAllNavigationItems() {
+  return NavigationFirebaseService.getAll();
+}
+
+export async function createNavigationItem(data: any) {
+  return NavigationFirebaseService.create(data);
+}
+
+export async function updateNavigationItem(id: string, data: Partial<any>) {
+  return NavigationFirebaseService.update(id, data);
+}
+
+export async function deleteNavigationItem(id: string) {
+  return NavigationFirebaseService.delete(id);
+}
+
+// ============ COMPANY INFO SERVICES ============
+export async function getContactInfo(): Promise<ContactInfo | null> {
+  return CompanyInfoFirebaseService.getContactInfo();
+}
+
+export async function getCompanyInfo() {
+  return CompanyInfoFirebaseService.getCompanyInfo();
+}
+
+export async function updateContactInfo(data: Partial<ContactInfo>) {
+  return CompanyInfoFirebaseService.updateContactInfo(data);
+}
+
+export async function updateCompanyInfo(data: Partial<any>) {
+  return CompanyInfoFirebaseService.updateCompanyInfo(data);
 }

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Card, Tabs, Form, Input, InputNumber, Button, Space, Typography, Divider, message } from 'antd'
 import { PhoneOutlined, MailOutlined, EnvironmentOutlined, ClockCircleOutlined, SaveOutlined } from '@ant-design/icons'
-import { companyInfoService } from '../api/companyInfoService'
-import { mockContactInfo, mockCompanyInfo } from '../../data/mockData'
+import { getContactInfo, getCompanyInfo, updateContactInfo, updateCompanyInfo } from '../../services'
 
 const { TextArea } = Input
 const { Title } = Typography
@@ -10,18 +9,39 @@ const { Title } = Typography
 const CompanyInfoAdmin: React.FC = () => {
     const [contactForm] = Form.useForm()
     const [companyForm] = Form.useForm()
-    const [contactInfo, setContactInfo] = useState(mockContactInfo)
-    const [companyInfo, setCompanyInfo] = useState(mockCompanyInfo)
+    const [_contactData, setContactData] = useState<any>(null)
+    const [companyData, setCompanyData] = useState<any>(null)
 
     useEffect(() => {
-        companyInfoService.initializeContactInfo(mockContactInfo)
-        companyInfoService.initializeCompanyInfo(mockCompanyInfo)
-        contactForm.setFieldsValue(contactInfo)
-        companyForm.setFieldsValue({
-            ...companyInfo,
-            values: companyInfo.values.join('\n')
-        })
+        loadData()
     }, [])
+
+    const loadData = async () => {
+        try {
+            const contact = await getContactInfo()
+            const company = await getCompanyInfo()
+            
+            if (contact) {
+                setContactData(contact)
+                contactForm.setFieldsValue({
+                    ...contact,
+                    lat: contact.coordinates?.lat,
+                    lng: contact.coordinates?.lng
+                })
+            }
+            
+            if (company) {
+                setCompanyData(company)
+                companyForm.setFieldsValue({
+                    ...company,
+                    values: company.values?.join('\n')
+                })
+            }
+        } catch (error) {
+            console.error('Lỗi tải thông tin:', error)
+            message.error('Không thể tải dữ liệu')
+        }
+    }
 
     const handleSaveContact = async (values: any) => {
         try {
@@ -35,11 +55,12 @@ const CompanyInfoAdmin: React.FC = () => {
             delete updatedInfo.lat
             delete updatedInfo.lng
             
-            setContactInfo(updatedInfo)
-            companyInfoService.updateContactInfo(updatedInfo)
+            await updateContactInfo(updatedInfo)
+            setContactData(updatedInfo)
             message.success('Cập nhật thông tin liên hệ thành công')
         } catch (error) {
-            message.error('Có lỗi xảy ra khi cập nhật')
+            console.error('Lỗi cập nhật contact:', error)
+            message.error(`Có lỗi xảy ra: ${error instanceof Error ? error.message : 'Lỗi không xác định'}`)
         }
     }
 
@@ -50,11 +71,12 @@ const CompanyInfoAdmin: React.FC = () => {
                 values: values.values.split('\n').filter((v: string) => v.trim())
             }
             
-            setCompanyInfo(updatedInfo)
-            companyInfoService.updateCompanyInfo(updatedInfo)
+            await updateCompanyInfo(updatedInfo)
+            setCompanyData(updatedInfo)
             message.success('Cập nhật thông tin công ty thành công')
         } catch (error) {
-            message.error('Có lỗi xảy ra khi cập nhật')
+            console.error('Lỗi cập nhật company:', error)
+            message.error(`Có lỗi xảy ra: ${error instanceof Error ? error.message : 'Lỗi không xác định'}`)
         }
     }
 
@@ -64,11 +86,6 @@ const CompanyInfoAdmin: React.FC = () => {
                 form={contactForm}
                 layout="vertical"
                 onFinish={handleSaveContact}
-                initialValues={{
-                    ...contactInfo,
-                    lat: contactInfo.coordinates.lat,
-                    lng: contactInfo.coordinates.lng
-                }}
             >
                 <Title level={4}>Thông Tin Liên Hệ</Title>
                 <Divider />
@@ -178,8 +195,8 @@ const CompanyInfoAdmin: React.FC = () => {
                 layout="vertical"
                 onFinish={handleSaveCompany}
                 initialValues={{
-                    ...companyInfo,
-                    values: companyInfo.values.join('\n')
+                    ...companyData,
+                    values: companyData?.values?.join('\n')
                 }}
             >
                 <Title level={4}>Thông Tin Công Ty</Title>

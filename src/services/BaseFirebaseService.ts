@@ -34,13 +34,16 @@ export class BaseFirebaseService<T extends { id?: string }> {
    */
   async getAll(constraints: QueryConstraint[] = []): Promise<T[]> {
     try {
+      console.log(`[${this.collectionName}] Fetching all documents...`);
       const collectionRef = collection(db, this.collectionName);
       const q = query(collectionRef, ...constraints);
       const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => ({
+      const results = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       } as T));
+      console.log(`[${this.collectionName}] Found ${results.length} documents:`, results);
+      return results;
     } catch (error) {
       console.error(`Error fetching all documents from ${this.collectionName}:`, error);
       throw error;
@@ -72,16 +75,19 @@ export class BaseFirebaseService<T extends { id?: string }> {
    */
   async create(data: Omit<T, 'id'>): Promise<T> {
     try {
+      console.log(`[${this.collectionName}] Creating new document:`, data);
       const collectionRef = collection(db, this.collectionName);
       const docRef = await addDoc(collectionRef, {
         ...data,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       });
-      return {
+      const result = {
         id: docRef.id,
         ...data
       } as T;
+      console.log(`[${this.collectionName}] Document created successfully:`, result);
+      return result;
     } catch (error) {
       console.error(`Error creating document in ${this.collectionName}:`, error);
       throw error;
@@ -93,16 +99,31 @@ export class BaseFirebaseService<T extends { id?: string }> {
    */
   async update(id: string, data: Partial<T>): Promise<T> {
     try {
+      console.log(`[${this.collectionName}] Updating document ${id}:`, data);
       const docRef = doc(db, this.collectionName, id);
+      
+      // Check if document exists before updating
+      const existingDoc = await getDoc(docRef);
+      if (!existingDoc.exists()) {
+        throw new Error(`Document with id ${id} does not exist in ${this.collectionName}`);
+      }
+      
       await updateDoc(docRef, {
         ...data,
         updatedAt: Timestamp.now(),
       });
+      
       const updatedDoc = await getDoc(docRef);
-      return {
+      if (!updatedDoc.exists()) {
+        throw new Error(`Failed to fetch updated document ${id}`);
+      }
+      
+      const result = {
         id: updatedDoc.id,
         ...updatedDoc.data()
       } as T;
+      console.log(`[${this.collectionName}] Document updated successfully:`, result);
+      return result;
     } catch (error) {
       console.error(`Error updating document ${id} in ${this.collectionName}:`, error);
       throw error;
@@ -114,8 +135,17 @@ export class BaseFirebaseService<T extends { id?: string }> {
    */
   async delete(id: string): Promise<void> {
     try {
+      console.log(`[${this.collectionName}] Deleting document ${id}`);
       const docRef = doc(db, this.collectionName, id);
+      
+      // Check if document exists before deleting
+      const existingDoc = await getDoc(docRef);
+      if (!existingDoc.exists()) {
+        throw new Error(`Document with id ${id} does not exist in ${this.collectionName}`);
+      }
+      
       await deleteDoc(docRef);
+      console.log(`[${this.collectionName}] Document deleted successfully: ${id}`);
     } catch (error) {
       console.error(`Error deleting document ${id} from ${this.collectionName}:`, error);
       throw error;

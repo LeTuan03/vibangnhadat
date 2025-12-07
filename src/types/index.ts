@@ -195,6 +195,7 @@ export interface FamilyLawQA extends BaseEntity {
     fullDescription?: string;
     category?: string;
     relatedQAs?: string[];
+    date?: string;
 }
 
 // ============ Gallery Types ============
@@ -206,6 +207,7 @@ export interface GalleryItem extends BaseEntity {
     description: string;
     fullDescription?: string;
     category?: string;
+    order?: number;
 }
 
 // ============ Language Types ============

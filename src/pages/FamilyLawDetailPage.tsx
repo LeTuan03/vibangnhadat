@@ -1,24 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { familyLawService } from '../admin/api/familyLawService';
+import FamilyLawFirebaseService from '../services/FamilyLawFirebaseService';
 import { mockFamilyLawQAs } from '../data/mockData';
 import { FaArrowLeft } from 'react-icons/fa';
+import LoadingSpinner from '../components/LoadingSpinner';
+import type { FamilyLawQA } from '../types';
 import './FamilyLawDetailPage.css';
 
 const FamilyLawDetailPage: React.FC = () => {
+    const [familyLawQAs, setFamilyLawQAs] = useState<FamilyLawQA[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
+    const { id } = useParams<{ id: string }>();
+
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
-    const [familyLawQAs] = useState(() => {
-        familyLawService.initialize(mockFamilyLawQAs);
-        return familyLawService.getAllFamilyLaws();
-    });
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                setLoading(true);
+                const data = await FamilyLawFirebaseService.getAllQAs();
+                setFamilyLawQAs(data);
+                if (!data.find(qa => qa.id === id)) {
+                    setNotFound(true);
+                }
+            } catch (err) {
+                console.error('Error loading family law Q&As:', err);
+                setFamilyLawQAs(mockFamilyLawQAs);
+                if (!mockFamilyLawQAs.find(qa => qa.id === id)) {
+                    setNotFound(true);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadData();
+    }, [id]);
 
-    const { id } = useParams<{ id: string }>();
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
     const item = familyLawQAs.find((f) => f.id === id);
 
-    if (!item) {
+    if (!item || notFound) {
         return (
             <main className="container">
                 <h2>Không tìm thấy nội dung</h2>

@@ -1,74 +1,78 @@
 import type { ServiceArea } from '../../types';
+import {
+    getAllServiceAreas,
+    createServiceArea,
+    updateServiceArea,
+    deleteServiceArea,
+} from '../../services';
 
-const STORAGE_KEY = 'service_areas_data';
-
+/**
+ * ServiceAreaService - Firebase-backed service area management
+ * Uses Firebase Firestore for data persistence
+ */
 class ServiceAreaService {
-    private serviceAreas: ServiceArea[] = [];
     private subscribers: Array<() => void> = [];
 
-    initialize(seed?: ServiceArea[]) {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-            try {
-                this.serviceAreas = JSON.parse(raw) as ServiceArea[];
-            } catch (e) {
-                this.serviceAreas = seed || [];
-                this.persist();
-            }
-        } else {
-            this.serviceAreas = seed || [];
-            this.persist();
+    /**
+     * Initialize service (kept for compatibility)
+     */
+    initialize() {
+        this.notify();
+    }
+
+    /**
+     * Get all service areas from Firebase
+     */
+    async getAllServiceAreas(): Promise<ServiceArea[]> {
+        return getAllServiceAreas();
+    }
+
+    /**
+     * Get service area by ID from Firebase
+     */
+    async getServiceAreaById(id: string): Promise<ServiceArea | undefined> {
+        const areas = await getAllServiceAreas();
+        return areas.find(s => s.id === id);
+    }
+
+    /**
+     * Create new service area in Firebase
+     */
+    async createServiceArea(area: Omit<ServiceArea, 'id'>): Promise<ServiceArea> {
+        const result = await createServiceArea(area);
+        this.notify();
+        return result;
+    }
+
+    /**
+     * Update existing service area in Firebase
+     */
+    async updateServiceArea(id: string, updates: Partial<ServiceArea>): Promise<ServiceArea | null> {
+        try {
+            const result = await updateServiceArea(id, updates);
+            this.notify();
+            return result;
+        } catch (error) {
+            return null;
         }
-        this.notify();
     }
 
-    getAllServiceAreas(): ServiceArea[] {
-        return [...this.serviceAreas];
+    /**
+     * Delete service area from Firebase
+     */
+    async deleteServiceArea(id: string): Promise<boolean> {
+        try {
+            await deleteServiceArea(id);
+            this.notify();
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 
-    getServiceAreaById(id: string): ServiceArea | undefined {
-        return this.serviceAreas.find(s => s.id === id);
-    }
-
-    createServiceArea(area: Omit<ServiceArea, 'id'>): ServiceArea {
-        const newArea: ServiceArea = {
-            ...area,
-            id: `area-${Date.now()}`
-        };
-        this.serviceAreas.push(newArea);
-        this.persist();
-        this.notify();
-        return newArea;
-    }
-
-    updateServiceArea(id: string, updates: Partial<ServiceArea>): ServiceArea | null {
-        const index = this.serviceAreas.findIndex(a => a.id === id);
-        if (index === -1) return null;
-        
-        this.serviceAreas[index] = {
-            ...this.serviceAreas[index],
-            ...updates,
-            id: this.serviceAreas[index].id
-        };
-        this.persist();
-        this.notify();
-        return this.serviceAreas[index];
-    }
-
-    deleteServiceArea(id: string): boolean {
-        const index = this.serviceAreas.findIndex(a => a.id === id);
-        if (index === -1) return false;
-        
-        this.serviceAreas.splice(index, 1);
-        this.persist();
-        this.notify();
-        return true;
-    }
-
-    private persist() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.serviceAreas));
-    }
-
+    /**
+     * Subscribe to changes
+     */
     subscribe(callback: () => void) {
         this.subscribers.push(callback);
         return () => {
@@ -76,6 +80,9 @@ class ServiceAreaService {
         };
     }
 
+    /**
+     * Notify subscribers
+     */
     private notify() {
         this.subscribers.forEach(cb => cb());
     }

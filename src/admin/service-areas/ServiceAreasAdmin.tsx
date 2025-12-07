@@ -3,7 +3,6 @@ import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Image } 
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { ServiceArea } from '../../types'
 import { serviceAreaService } from '../api/serviceAreaService'
-import { mockServiceAreas } from '../../data/mockData'
 
 const ServiceAreasAdmin: React.FC = () => {
   const [areas, setAreas] = useState<ServiceArea[]>([])
@@ -13,11 +12,18 @@ const ServiceAreasAdmin: React.FC = () => {
   const [form] = Form.useForm()
 
   useEffect(() => {
-    serviceAreaService.initialize(mockServiceAreas)
     load()
   }, [])
 
-  const load = () => setAreas(serviceAreaService.getAllServiceAreas())
+  const load = async () => {
+    try {
+      const allAreas = await serviceAreaService.getAllServiceAreas()
+      setAreas(allAreas)
+    } catch (error) {
+      console.error('Lỗi tải service areas:', error)
+      message.error('Không thể tải service areas')
+    }
+  }
 
   const openAdd = () => {
     setEditing(null)
@@ -31,12 +37,19 @@ const ServiceAreasAdmin: React.FC = () => {
     setIsModalOpen(true)
   }
 
-  const handleDelete = (id: string) => {
-    const ok = serviceAreaService.deleteServiceArea(id)
-    if (ok) {
-      message.success('Xóa thành công')
-      load()
-    } else message.error('Xóa thất bại')
+  const handleDelete = async (id: string) => {
+    try {
+      const ok = await serviceAreaService.deleteServiceArea(id)
+      if (ok) {
+        message.success('Xóa thành công')
+        load()
+      } else {
+        message.error('Xóa thất bại')
+      }
+    } catch (error) {
+      console.error('Lỗi xóa service area:', error)
+      message.error('Xóa thất bại')
+    }
   }
 
   const handleSave = async () => {
@@ -44,18 +57,21 @@ const ServiceAreasAdmin: React.FC = () => {
       const values = await form.validateFields()
       const payload = { title: values.title, description: values.description || '', image: values.image || '' }
       if (editing && editing.id) {
-        serviceAreaService.updateServiceArea(editing.id, payload)
+        await serviceAreaService.updateServiceArea(editing.id, payload)
         message.success('Cập nhật thành công')
       } else {
-        serviceAreaService.createServiceArea(payload)
+        await serviceAreaService.createServiceArea(payload)
         message.success('Thêm mới thành công')
       }
       setIsModalOpen(false)
       load()
-    } catch (e) {}
+    } catch (e) {
+      console.error('Lỗi lưu service area:', e)
+      message.error(`Lỗi lưu dữ liệu: ${e instanceof Error ? e.message : 'Lỗi không xác định'}`)
+    }
   }
 
-  const filtered = areas.filter((a) => a.title.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filtered = areas.filter((a) => (a.title || '').toLowerCase().includes((searchTerm || '').toLowerCase()))
 
   const columns = [
     { title: 'Tiêu đề', dataIndex: 'title', key: 'title' },

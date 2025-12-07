@@ -6,7 +6,6 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Button, Input, Card, Space, Popconfirm, message } from 'antd'
 import { BlogFormModal } from './BlogFormModal'
 import { blogService } from '../api/blogService'
-import { mockBlogPosts } from '@/data/mockData'
 
 const { Search } = Input
 
@@ -17,14 +16,18 @@ function NewsAdmin() {
     const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
-        blogService.initializePosts(mockBlogPosts)
         loadPosts()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const loadPosts = () => {
-        const allPosts = blogService.getAllPosts()
-        setPosts(allPosts)
+    const loadPosts = async () => {
+        try {
+            const allPosts = await blogService.getAllPosts()
+            setPosts(allPosts)
+        } catch (error) {
+            console.error('Lỗi tải bài viết:', error)
+            message.error('Không thể tải bài viết')
+        }
     }
 
     const handleAddNew = () => {
@@ -37,28 +40,34 @@ function NewsAdmin() {
         setIsModalOpen(true)
     }
 
-    const handleSave = (postData: Omit<BlogPost, 'id'> | BlogPost) => {
-        if ('id' in postData) {
-            const updated = blogService.updatePost(postData.id, postData)
-            if (updated) {
+    const handleSave = async (postData: Omit<BlogPost, 'id'> | BlogPost) => {
+        try {
+            if ('id' in postData) {
+                const updated = await blogService.updatePost(postData.id, postData)
                 setPosts((prev) => prev.map((p) => (p.id === postData.id ? updated : p)))
                 message.success('Cập nhật bài viết thành công!')
+            } else {
+                const newPost = await blogService.createPost(postData)
+                setPosts((prev) => [newPost, ...prev])
+                message.success('Thêm bài viết mới thành công!')
             }
-        } else {
-            const newPost = blogService.createPost(postData)
-            setPosts((prev) => [newPost, ...prev])
-            message.success('Thêm bài viết mới thành công!')
+            setIsModalOpen(false)
+            setEditingPost(null)
+            // Reload to sync with Firebase
+            await loadPosts()
+        } catch (error) {
+            console.error('Lỗi lưu bài viết:', error)
+            message.error('Không thể lưu bài viết')
         }
-        setIsModalOpen(false)
-        setEditingPost(null)
     }
 
-    const handleDelete = (id: string) => {
-        const success = blogService.deletePost(id)
-        if (success) {
+    const handleDelete = async (id: string) => {
+        try {
+            await blogService.deletePost(id)
             setPosts((prev) => prev.filter((post) => post.id !== id))
             message.success('Xóa bài viết thành công!')
-        } else {
+        } catch (error) {
+            console.error('Lỗi xóa bài viết:', error)
             message.error('Xóa thất bại')
         }
     }

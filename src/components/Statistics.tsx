@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FaAward, FaUsers, FaFileContract, FaCheckCircle } from 'react-icons/fa';
-import { statisticsService } from '../admin/api/statisticsService';
-import { mockStatistics } from '../data/mockData';
+import StatisticsFirebaseService from '../services/StatisticsFirebaseService';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import type { Statistic } from '../types';
 import './Statistics.css';
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -15,10 +15,20 @@ const iconMap: Record<string, React.ReactNode> = {
 const Statistics: React.FC = () => {
     const [ref, isVisible] = useIntersectionObserver({ threshold: 0.3, freezeOnceVisible: true });
     const [counts, setCounts] = useState<Record<string, number>>({});
-    const [statistics] = useState(() => {
-        statisticsService.initialize(mockStatistics);
-        return statisticsService.getAllStatistics();
-    });
+    const [statistics, setStatistics] = useState<Statistic[]>([]);
+
+    useEffect(() => {
+        const loadStatistics = async () => {
+            try {
+                const data = await StatisticsFirebaseService.getAllStatistics();
+                setStatistics(data);
+            } catch (err) {
+                console.error('Error loading statistics:', err);
+                setStatistics([]);
+            }
+        };
+        loadStatistics();
+    }, []);
 
     useEffect(() => {
         if (!isVisible) return;

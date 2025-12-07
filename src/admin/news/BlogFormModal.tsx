@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { BlogPost } from "@/types"
 import { Modal, Form, Input, Select, DatePicker, message } from 'antd'
-import { categoryService } from '../api/categoryService'
+import { getAllCategories } from '../../services'
 import dayjs from 'dayjs'
 
 interface BlogFormModalProps {
@@ -16,12 +16,20 @@ export const BlogFormModal: React.FC<BlogFormModalProps> = ({ isOpen, onClose, o
     const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([])
 
     useEffect(() => {
-        try {
-            setCategories(categoryService.getAllCategories().map((c) => ({ id: c.id, name: c.name })))
-        } catch (e) {
-            setCategories([])
+        const loadCategories = async () => {
+            try {
+                const cats = await getAllCategories()
+                setCategories((cats || []).map((c: any) => ({ id: c.id, name: c.name })))
+            } catch (e) {
+                console.error('Lỗi tải danh mục:', e)
+                setCategories([])
+            }
         }
-    }, [])
+
+        if (isOpen) {
+            loadCategories()
+        }
+    }, [isOpen])
 
     useEffect(() => {
         if (editPost) {

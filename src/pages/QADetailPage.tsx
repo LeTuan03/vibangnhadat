@@ -1,24 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaQuestionCircle, FaArrowLeft } from 'react-icons/fa';
-import { qaService } from '../admin/api/qaService';
+import QAFirebaseService from '../services/QAFirebaseService';
 import { mockFAQs } from '../data/mockData';
+import LoadingSpinner from '../components/LoadingSpinner';
+import type { FAQ } from '../types';
 import './QADetailPage.css';
 
 const QADetailPage: React.FC = () => {
+    const [faqs, setFaqs] = useState<FAQ[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
+    const { id } = useParams<{ id: string }>();
+
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
-    const [faqs] = useState(() => {
-        qaService.initializeFAQs(mockFAQs);
-        return qaService.getAllFAQs();
-    });
+    useEffect(() => {
+        const loadFAQs = async () => {
+            try {
+                setLoading(true);
+                const data = await QAFirebaseService.getAllFAQs();
+                setFaqs(data);
+                if (!data.find(f => f.id === id)) {
+                    setNotFound(true);
+                }
+            } catch (err) {
+                console.error('Error loading FAQs:', err);
+                // Fallback to mock data
+                setFaqs(mockFAQs);
+                if (!mockFAQs.find(f => f.id === id)) {
+                    setNotFound(true);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadFAQs();
+    }, [id]);
 
-    const { id } = useParams<{ id: string }>();
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
     const faq = faqs.find((f) => f.id === id);
 
-    if (!faq) {
+    if (!faq || notFound) {
         return (
             <main className="container">
                 <h2>Câu hỏi không tìm thấy</h2>

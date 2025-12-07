@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
@@ -13,12 +13,29 @@ const firebaseConfig = {
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Validate Firebase config before initializing
+if (!firebaseConfig.projectId || !firebaseConfig.apiKey) {
+  console.error('[firebase] ❌ MISSING FIREBASE CONFIG!', {
+    hasProjectId: !!firebaseConfig.projectId,
+    hasApiKey: !!firebaseConfig.apiKey,
+  });
+  console.error('Check .env.local for VITE_FIREBASE_* environment variables');
+}
+
+// Initialize Firebase (guard against multiple inits during HMR)
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 // Initialize Firebase services
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
+
+// Debug log
+if (import.meta.env.DEV) {
+  console.log('[firebase] ✅ Initialized successfully', {
+    projectId: firebaseConfig.projectId,
+    authDomain: firebaseConfig.authDomain,
+  });
+}
 
 export default app;

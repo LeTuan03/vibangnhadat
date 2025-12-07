@@ -11,12 +11,18 @@ const CategoryAdmin: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
-        categoryService.initializeCategories([] as any)
-        const update = () => setCategories(categoryService.getAllCategories())
-        update()
-        const unsub = categoryService.subscribe(update)
-        return () => unsub()
+        loadCategories()
     }, [])
+
+    const loadCategories = () => {
+        try {
+            const data = categoryService.getAllCategories()
+            setCategories(data)
+        } catch (error) {
+            console.error('Lỗi tải danh mục:', error)
+            message.error('Không thể tải dữ liệu danh mục')
+        }
+    }
 
     const handleAddNew = () => {
         setEditingCat(null)
@@ -29,22 +35,30 @@ const CategoryAdmin: React.FC = () => {
     }
 
     const handleSave = (cat: Category) => {
-        if (cat.id && categoryService.getCategoryById(cat.id)) {
-            const updated = categoryService.updateCategory(cat.id, cat as any)
-            if (updated) {
+        try {
+            if (cat.id) {
+                categoryService.updateCategory(cat.id, cat)
                 message.success('Cập nhật danh mục thành công')
-            }
-        } else {
-            const created = categoryService.createCategory({ ...cat } as any)
-            if (created) {
+            } else {
+                categoryService.createCategory(cat as Omit<Category, 'id'>)
                 message.success('Thêm danh mục thành công')
             }
+            loadCategories()
+        } catch (error) {
+            console.error('Lỗi lưu danh mục:', error)
+            message.error(`Lỗi: ${error instanceof Error ? error.message : 'Lỗi không xác định'}`)
         }
     }
 
     const handleDelete = (id: string) => {
-        const ok = categoryService.deleteCategory(id)
-        if (ok) message.success('Đã xóa danh mục')
+        try {
+            categoryService.deleteCategory(id)
+            message.success('Đã xóa danh mục')
+            loadCategories()
+        } catch (error) {
+            console.error('Lỗi xóa danh mục:', error)
+            message.error('Xóa thất bại')
+        }
     }
 
     const filtered = categories.filter(c =>
@@ -73,7 +87,7 @@ const CategoryAdmin: React.FC = () => {
                     <Popconfirm
                         title="Xóa danh mục"
                         description="Bạn có chắc muốn xóa danh mục này?"
-                        onConfirm={() => handleDelete(record.id)}
+                        onConfirm={() => handleDelete(record.id || '')}
                         okText="Xóa"
                         cancelText="Hủy"
                     >

@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBook, FaDownload, FaFilter } from 'react-icons/fa';
-import { documentService } from '../admin/api/documentService';
+import DocumentFirebaseService from '../services/DocumentFirebaseService';
 import { mockLegalDocuments } from '../data/mockData';
+import type { LegalDocument } from '../types';
 import './LegalDocuments.css';
 
 const LegalDocuments: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
-    const [legalDocuments] = useState(() => {
-        documentService.initializeDocuments(mockLegalDocuments);
-        return documentService.getAllDocuments();
-    });
+    const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>([]);
+
+    useEffect(() => {
+        const loadDocuments = async () => {
+            try {
+                const data = await DocumentFirebaseService.getAllDocuments();
+                setLegalDocuments(data);
+            } catch (err) {
+                console.error('Error loading documents:', err);
+                setLegalDocuments(mockLegalDocuments);
+            }
+        };
+        loadDocuments();
+    }, []);
 
     const categories = ['all', ...new Set(legalDocuments.map((d) => d.category))];
     const filteredDocs =

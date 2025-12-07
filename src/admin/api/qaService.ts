@@ -1,98 +1,51 @@
 import { FAQ } from '../../types';
+import {
+    getAllFAQs,
+    createFAQ,
+    updateFAQ,
+    deleteFAQ,
+} from '../../services';
 
 /**
- * QAService - Manages FAQ/Q&A items with CRUD operations
- * Provides in-memory storage and search functionality
+ * QAService - Firebase-backed FAQ management
+ * Uses Firebase Firestore for data persistence
  */
 class QAService {
-    private faqs: FAQ[] = [];
-
     /**
-     * Initialize service with initial FAQs
-     * @param initialFAQs - Array of FAQs to initialize
+     * Get all FAQs from Firebase
      */
-    initializeFAQs(initialFAQs: FAQ[]): void {
-        this.faqs = JSON.parse(JSON.stringify(initialFAQs));
+    async getAllFAQs(): Promise<FAQ[]> {
+        return getAllFAQs();
     }
 
     /**
-     * Get all FAQs
-     * @returns Copy of all FAQs array
+     * Get FAQ by ID from Firebase
      */
-    getAllFAQs(): FAQ[] {
-        return JSON.parse(JSON.stringify(this.faqs));
+    async getFAQById(id: string): Promise<FAQ | null> {
+        // Using getAllFAQs and filtering since Firebase doesn't have getFAQById
+        const faqs = await getAllFAQs();
+        return faqs.find(f => f.id === id) || null;
     }
 
     /**
-     * Get FAQ by ID
-     * @param id - FAQ ID
-     * @returns FAQ if found, null otherwise
+     * Create new FAQ in Firebase
      */
-    getFAQById(id: string): FAQ | null {
-        return this.faqs.find(f => f.id === id) || null;
+    async createFAQ(faqData: Omit<FAQ, 'id'>): Promise<FAQ> {
+        return createFAQ(faqData);
     }
 
     /**
-     * Create new FAQ
-     * @param faqData - FAQ data without ID
-     * @returns Created FAQ with generated ID
+     * Update existing FAQ in Firebase
      */
-    createFAQ(faqData: Omit<FAQ, 'id'>): FAQ {
-        const id = `faq-${Date.now()}`;
-        const newFAQ: FAQ = { ...faqData, id };
-        this.faqs.unshift(newFAQ);
-        return newFAQ;
+    async updateFAQ(id: string, faqData: Partial<FAQ>): Promise<FAQ> {
+        return updateFAQ(id, faqData);
     }
 
     /**
-     * Update existing FAQ
-     * @param id - FAQ ID
-     * @param faqData - Updated FAQ data
-     * @returns Updated FAQ if found, null otherwise
+     * Delete FAQ from Firebase
      */
-    updateFAQ(id: string, faqData: FAQ): FAQ | null {
-        const index = this.faqs.findIndex(f => f.id === id);
-        if (index !== -1) {
-            this.faqs[index] = faqData;
-            return faqData;
-        }
-        return null;
-    }
-
-    /**
-     * Delete FAQ by ID
-     * @param id - FAQ ID
-     * @returns true if deleted, false if not found
-     */
-    deleteFAQ(id: string): boolean {
-        const index = this.faqs.findIndex(f => f.id === id);
-        if (index !== -1) {
-            this.faqs.splice(index, 1);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Search FAQs by query
-     * @param query - Search query
-     * @returns FAQs matching the query
-     */
-    searchFAQs(query: string): FAQ[] {
-        const q = query.toLowerCase();
-        return this.faqs.filter(f =>
-            f.question.toLowerCase().includes(q) ||
-            f.answer.toLowerCase().includes(q)
-        );
-    }
-
-    /**
-     * Get FAQs by category
-     * @param category - Category name
-     * @returns FAQs in the category
-     */
-    getFAQsByCategory(category: string): FAQ[] {
-        return this.faqs.filter(f => f.category === category);
+    async deleteFAQ(id: string): Promise<void> {
+        return deleteFAQ(id);
     }
 }
 

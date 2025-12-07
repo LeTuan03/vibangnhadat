@@ -1,24 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { serviceAreaService } from '../admin/api/serviceAreaService';
+import ServiceAreaFirebaseService from '../services/ServiceAreaFirebaseService';
 import { mockServiceAreas } from '../data/mockData';
 import { FaArrowLeft } from 'react-icons/fa';
+import LoadingSpinner from '../components/LoadingSpinner';
+import type { ServiceArea } from '../types';
 import './ServiceAreaDetailPage.css';
 
 const ServiceAreaDetailPage: React.FC = () => {
+    const [serviceAreas, setServiceAreas] = useState<ServiceArea[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
+    const { id } = useParams<{ id: string }>();
+
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
-    const [serviceAreas] = useState(() => {
-        serviceAreaService.initialize(mockServiceAreas);
-        return serviceAreaService.getAllServiceAreas();
-    });
+    useEffect(() => {
+        const loadServiceAreas = async () => {
+            try {
+                setLoading(true);
+                const data = await ServiceAreaFirebaseService.getAllServiceAreas();
+                setServiceAreas(data);
+                if (!data.find(s => s.id === id)) {
+                    setNotFound(true);
+                }
+            } catch (err) {
+                console.error('Error loading service areas:', err);
+                setServiceAreas(mockServiceAreas);
+                if (!mockServiceAreas.find(s => s.id === id)) {
+                    setNotFound(true);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadServiceAreas();
+    }, [id]);
 
-    const { id } = useParams<{ id: string }>();
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
     const area = serviceAreas.find((s) => s.id === id);
 
-    if (!area) {
+    if (!area || notFound) {
         return (
             <main className="container">
                 <h2>Không tìm thấy lĩnh vực</h2>

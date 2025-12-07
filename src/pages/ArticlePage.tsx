@@ -1,24 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { blogService } from '../admin/api/blogService';
+import BlogFirebaseService from '../services/BlogFirebaseService';
 import { mockBlogPosts } from '../data/mockData';
 import { formatDate } from '../utils/helpers';
+import LoadingSpinner from '../components/LoadingSpinner';
+import type { BlogPost } from '../types';
 import './ArticlePage.css';
 
 const ArticlePage: React.FC = () => {
+    const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
+    const { id } = useParams<{ id: string }>();
+
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
-    const [blogPosts] = useState(() => {
-        blogService.initializePosts(mockBlogPosts);
-        return blogService.getAllPosts();
-    });
+    useEffect(() => {
+        const loadPosts = async () => {
+            try {
+                setLoading(true);
+                const data = await BlogFirebaseService.getAllPosts();
+                setBlogPosts(data);
+                if (!data.find(p => p.id === id)) {
+                    setNotFound(true);
+                }
+            } catch (err) {
+                console.error('Error loading blog posts:', err);
+                setBlogPosts(mockBlogPosts);
+                if (!mockBlogPosts.find(p => p.id === id)) {
+                    setNotFound(true);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadPosts();
+    }, [id]);
 
-    const { id } = useParams<{ id: string }>();
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
     const post = blogPosts.find((p) => p.id === id);
 
-    if (!post) {
+    if (!post || notFound) {
         return (
             <main className="article-page">
                 <div className="container not-found">

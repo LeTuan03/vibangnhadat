@@ -1,60 +1,50 @@
-
-// ============================================
-// SERVICE SERVICE (Inline)
-
 import { Service } from "@/types";
+import {
+    getAllServices,
+    getServiceById,
+    createService,
+    updateService,
+    deleteService,
+} from "@/services";
 
-// ============================================
-const STORAGE_KEY = 'services_data';
-
+/**
+ * ServiceService - Firebase-backed service management
+ * Uses Firebase Firestore for data persistence
+ */
 const serviceService = {
-    getAllServices: (): Service[] => {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        return stored ? JSON.parse(stored) : [];
+    getAllServices: async (): Promise<Service[]> => {
+        return getAllServices();
     },
 
-    getServiceById: (id: string): Service | undefined => {
-        const services = serviceService.getAllServices();
-        return services.find(service => service.id === id);
+    getServiceById: async (id: string): Promise<Service | undefined> => {
+        const service = await getServiceById(id);
+        return service || undefined;
     },
 
-    createService: (service: Omit<Service, 'id'>): Service => {
-        const services = serviceService.getAllServices();
-        const newService: Service = {
-            ...service,
-            id: Date.now().toString(),
-        };
-        services.push(newService);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(services));
-        return newService;
+    createService: async (service: Omit<Service, 'id'>): Promise<Service> => {
+        return createService(service);
     },
 
-    updateService: (id: string, updatedService: Partial<Service>): Service | null => {
-        const services = serviceService.getAllServices();
-        const index = services.findIndex(service => service.id === id);
-
-        if (index === -1) return null;
-
-        services[index] = { ...services[index], ...updatedService };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(services));
-        return services[index];
-    },
-
-    deleteService: (id: string): boolean => {
-        const services = serviceService.getAllServices();
-        const filteredServices = services.filter(service => service.id !== id);
-
-        if (filteredServices.length === services.length) return false;
-
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredServices));
-        return true;
-    },
-
-    initializeServices: (initialServices: Service[]): void => {
-        const existing = localStorage.getItem(STORAGE_KEY);
-        if (!existing) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(initialServices));
+    updateService: async (id: string, updatedService: Partial<Service>): Promise<Service | null> => {
+        try {
+            return await updateService(id, updatedService);
+        } catch (error) {
+            return null;
         }
+    },
+
+    deleteService: async (id: string): Promise<boolean> => {
+        try {
+            await deleteService(id);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    },
+
+    initializeServices: async (_initialServices: Service[]): Promise<void> => {
+        // Firebase will initialize automatically
+        // This is kept for compatibility
     }
 };
 

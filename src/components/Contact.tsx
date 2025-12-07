@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaPaperPlane } from 'react-icons/fa';
 import { SiZalo } from 'react-icons/si';
-import { companyInfoService } from '../admin/api/companyInfoService';
+import { getContactInfo } from '../services';
 import { mockContactInfo } from '../data/mockData';
 import { createPhoneLink, createZaloLink, formatPhoneNumber, isValidEmail, isValidPhone } from '../utils/helpers';
 import './Contact.css';
 
 const Contact: React.FC = () => {
-    const [contactInfo] = useState(() => {
-        companyInfoService.initializeContactInfo(mockContactInfo);
-        return companyInfoService.getContactInfo() || mockContactInfo;
-    });
+    const [contactInfo, setContactInfo] = useState(mockContactInfo);
+
+    useEffect(() => {
+        const loadContactInfo = async () => {
+            try {
+                const data = await getContactInfo();
+                if (data) {
+                    setContactInfo(data);
+                }
+            } catch (error) {
+                console.error('Lỗi tải thông tin liên hệ:', error);
+                // Fallback to mock data
+            }
+        };
+
+        loadContactInfo();
+    }, []);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -140,7 +153,32 @@ const Contact: React.FC = () => {
                             </div>
                             <div>
                                 <h4>Giờ làm việc</h4>
-                                <p>{contactInfo.workingHours}</p>
+                                {(() => {
+                                    const wh: any = (contactInfo as any).workingHours;
+                                    if (typeof wh === 'string') {
+                                        return <p>{wh}</p>;
+                                    }
+
+                                    if (wh && typeof wh === 'object') {
+                                        const labelMap: Record<string, string> = {
+                                            weekday: 'Thứ trong tuần',
+                                            saturday: 'Thứ 7',
+                                            sunday: 'Chủ nhật'
+                                        };
+
+                                        return (
+                                            <div className="working-hours">
+                                                {Object.entries(wh).map(([key, value]) => (
+                                                    <p key={key}>
+                                                        <strong>{labelMap[key] ?? key}:</strong> {value as any}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        );
+                                    }
+
+                                    return <p>---</p>;
+                                })()}
                             </div>
                         </div>
                     </div>

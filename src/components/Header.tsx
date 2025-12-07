@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { FaBars, FaTimes, FaPhone, FaChevronDown, FaHome } from 'react-icons/fa';
-import navigationService, { NavItem } from '../admin/api/navigationService';
+import { getAllNavigationItems } from '../services';
 import { scrollToElement } from '../utils/helpers';
 import { useScrollSpy } from '../hooks/useScrollSpy';
 import './Header.css';
+
+export interface NavItem {
+  id?: string;
+  label: string;
+  href: string;
+  children?: NavItem[];
+}
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -16,7 +23,24 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [navigationItems, setNavigationItems] = React.useState<NavItem[]>(() => navigationService.getAll());
+  const [navigationItems, setNavigationItems] = useState<NavItem[]>([]);
+
+  // Load navigation from Firebase
+  useEffect(() => {
+    const loadNavigation = async () => {
+      try {
+        const items = await getAllNavigationItems();
+        if (items && items.length > 0) {
+          setNavigationItems(items);
+        }
+      } catch (error) {
+        console.error('Lỗi tải navigation:', error);
+        // Use mock data as fallback
+      }
+    };
+
+    loadNavigation();
+  }, []);
 
   // Chỉ lấy các id của section thật sự (href dạng #id) cho scroll spy
   const sectionIds = [
@@ -39,15 +63,6 @@ const Header: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Subscribe to navigation changes so header updates when admin edits menu
-  useEffect(() => {
-    const update = () => setNavigationItems(navigationService.getAll());
-    const unsub = navigationService.subscribe(update);
-    // ensure initial
-    update();
-    return () => unsub();
   }, []);
 
   // Đóng dropdown khi click ra ngoài
@@ -180,9 +195,9 @@ const Header: React.FC = () => {
           <nav className="header-nav desktop-nav" role="navigation">
             {navigationItems.map((item) => (
               <div
-                key={item.id}
+                key={item.id || item.label}
                 className="nav-item-wrapper"
-                onMouseEnter={() => item.children && handleMouseEnter(item.id)}
+                onMouseEnter={() => item.children && item.id && handleMouseEnter(item.id)}
                 onMouseLeave={() => item.children && handleMouseLeave()}
               >
                 {item.children ? (
@@ -192,7 +207,7 @@ const Header: React.FC = () => {
                       onClick={(e) => {
                         e.stopPropagation();
                         // Toggle dropdown khi click
-                        setOpenDropdown((prev) => (prev === item.id ? null : item.id));
+                        setOpenDropdown((prev) => (prev === item.id ? null : item.id || null));
                         // Nếu muốn đồng thời scroll đến section cha (ví dụ #about)
                         if (item.href.startsWith('#')) {
                           handleNavClick(item.href);
@@ -216,13 +231,13 @@ const Header: React.FC = () => {
                         ref={dropdownRef}
                         className="dropdown-menu"
                         role="menu"
-                        onMouseEnter={() => handleMouseEnter(item.id)}
+                        onMouseEnter={() => item.id && handleMouseEnter(item.id)}
                         onMouseLeave={() => handleMouseLeave()}
                         onClick={(e) => e.stopPropagation()}
                       >
                         {item.children.map((child) => (
                           <button
-                            key={child.id}
+                            key={child.id || child.label}
                             className={`dropdown-item ${isLinkActive(child.href) ? 'active' : ''}`}
                             onClick={() => handleNavClick(child.href)}
                             role="menuitem"
@@ -278,7 +293,7 @@ const Header: React.FC = () => {
         {isMobileMenuOpen && (
           <nav className="mobile-nav" role="navigation">
             {navigationItems.map((item) => (
-              <div key={item.id} className="mobile-nav-item">
+              <div key={item.id || item.label} className="mobile-nav-item">
                 <button
                   className={`mobile-nav-link ${item.children ? isParentActive(item) : isLinkActive(item.href)
                       ? 'active'
@@ -287,7 +302,7 @@ const Header: React.FC = () => {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (item.children) {
-                      toggleMobileDropdown(item.id);
+                      item.id && toggleMobileDropdown(item.id);
                     } else {
                       handleNavClick(item.href);
                     }

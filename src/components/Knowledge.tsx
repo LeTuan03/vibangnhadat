@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaNewspaper, FaQuestionCircle, FaFileAlt, FaChevronDown, FaChevronUp, FaSearch, FaBook, FaLink, FaLightbulb } from 'react-icons/fa';
-import { blogService } from '../admin/api/blogService';
-import { qaService } from '../admin/api/qaService';
-import { documentService } from '../admin/api/documentService';
-import { mockBlogPosts, mockFAQs, mockLegalDocuments } from '../data/mockData';
+import BlogFirebaseService from '../services/BlogFirebaseService';
+import QAFirebaseService from '../services/QAFirebaseService';
+import DocumentFirebaseService from '../services/DocumentFirebaseService';
+// Removed mock fallbacks: data is loaded from Firebase services
 import { legalArticles, mainLaws, legalTerms, usefulReferences } from '../data/legalKnowledge';
 import { formatDate } from '../utils/helpers';
 import BlogDetail from './BlogDetail';
-import type { BlogPost } from '../types';
+import LoadingSpinner from './LoadingSpinner';
+import type { BlogPost, FAQ, LegalDocument } from '../types';
 import './Knowledge.css';
 
 const Knowledge: React.FC = () => {
@@ -16,20 +17,41 @@ const Knowledge: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
 
-    const [blogPosts] = useState(() => {
-        blogService.initializePosts(mockBlogPosts);
-        return blogService.getAllPosts();
-    });
+    const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+    const [faqs, setFaqs] = useState<FAQ[]>([]);
+    const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [_error, setError] = useState<string | null>(null);
 
-    const [faqs] = useState(() => {
-        qaService.initializeFAQs(mockFAQs);
-        return qaService.getAllFAQs();
-    });
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                setLoading(true);
+                const [posts, questions, docs] = await Promise.all([
+                    BlogFirebaseService.getAllPosts(),
+                    QAFirebaseService.getAllFAQs(),
+                    DocumentFirebaseService.getAllDocuments(),
+                ]);
+                setBlogPosts(posts || []);
+                setFaqs(questions || []);
+                setLegalDocuments(docs || []);
+            } catch (err) {
+                console.error('Error loading data:', err);
+                setError('Không thể tải dữ liệu');
+                // Keep empty lists if Firebase fails
+                setBlogPosts([]);
+                setFaqs([]);
+                setLegalDocuments([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadData();
+    }, []);
 
-    const [legalDocuments] = useState(() => {
-        documentService.initializeDocuments(mockLegalDocuments);
-        return documentService.getAllDocuments();
-    });
+    if (loading) {
+        return <LoadingSpinner />;
+    }
 
     const toggleFaq = (id: string) => {
         setExpandedFaq(expandedFaq === id ? null : id);

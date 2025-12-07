@@ -5,9 +5,6 @@ import Layout from './components/Layout';
 import QALayout from './components/QALayout';
 import NotFound from './components/NotFound';
 import AdminLayout from './admin/components/AdminLayout';
-import navigationService from './admin/api/navigationService';
-import { mockNavigation, mockCategories } from './data/mockData';
-import { categoryService } from './admin/api/categoryService';
 import './index.css';
 
 // Lazy load main pages
@@ -47,15 +44,8 @@ const RouteLoader = () => <LoadingSpinner />;
  * Main App component with routes and lazy loading
  */
 function App() {
-    React.useEffect(() => {
-        // Initialize navigation service
-        try {
-            navigationService.initialize(mockNavigation);
-            categoryService.initializeCategories(mockCategories as any);
-        } catch (error) {
-            console.error('Initialization error:', error);
-        }
-    }, []);
+    // Note: All services now load data from Firebase automatically
+    // No need to initialize here
 
     const [isAdminLoggedIn, setIsAdminLoggedIn] = React.useState(() => {
         return localStorage.getItem('adminLoggedIn') === 'true';

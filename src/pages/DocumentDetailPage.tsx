@@ -2,25 +2,52 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaBook, FaDownload, FaCalendar, FaArrowLeft } from 'react-icons/fa';
 // Layout provided by route-level wrapper
-import { documentService } from '../admin/api/documentService';
+import DocumentFirebaseService from '../services/DocumentFirebaseService';
 import { mockLegalDocuments } from '../data/mockData';
 import { formatDate } from '../utils/helpers';
+import LoadingSpinner from '../components/LoadingSpinner';
+import type { LegalDocument } from '../types';
 import './DocumentDetailPage.css';
 
 const DocumentDetailPage: React.FC = () => {
+    const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
+    const { id } = useParams<{ id: string }>();
+
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
-    const [legalDocuments] = useState(() => {
-        documentService.initializeDocuments(mockLegalDocuments);
-        return documentService.getAllDocuments();
-    });
+    useEffect(() => {
+        const loadDocuments = async () => {
+            try {
+                setLoading(true);
+                const data = await DocumentFirebaseService.getAllDocuments();
+                setLegalDocuments(data);
+                if (!data.find(d => d.id === id)) {
+                    setNotFound(true);
+                }
+            } catch (err) {
+                console.error('Error loading documents:', err);
+                setLegalDocuments(mockLegalDocuments);
+                if (!mockLegalDocuments.find(d => d.id === id)) {
+                    setNotFound(true);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadDocuments();
+    }, [id]);
 
-    const { id } = useParams<{ id: string }>();
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
     const document = legalDocuments.find((d) => d.id === id);
 
-    if (!document) {
+    if (!document || notFound) {
         return (
             <main className="container">
                 <h2>Tài liệu không tìm thấy</h2>

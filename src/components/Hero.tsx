@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaPhone, FaArrowRight, FaShieldAlt, FaHeadset, FaClock, FaTrophy } from 'react-icons/fa';
-import { companyInfoService } from '../admin/api/companyInfoService';
-import { mockCompanyInfo, mockContactInfo } from '../data/mockData';
+import { getCompanyInfo, getContactInfo } from '../services';
 import { scrollToElement, createPhoneLink } from '../utils/helpers';
 import './Hero.css';
 
 const Hero: React.FC = () => {
-    const [companyInfo] = useState(() => {
-        companyInfoService.initializeCompanyInfo(mockCompanyInfo);
-        return companyInfoService.getCompanyInfo() || mockCompanyInfo;
-    });
+    const [companyInfo, setCompanyInfo] = React.useState<any>({ fullName: '', slogan: '', description: '' });
+    const [contactInfo, setContactInfo] = React.useState<any>({ phone: '' });
 
-    const [contactInfo] = useState(() => {
-        companyInfoService.initializeContactInfo(mockContactInfo);
-        return companyInfoService.getContactInfo() || mockContactInfo;
-    });
+    React.useEffect(() => {
+        const load = async () => {
+            try {
+                const [company, contact] = await Promise.all([getCompanyInfo(), getContactInfo()]);
+                if (company) setCompanyInfo(company);
+                if (contact) setContactInfo(contact);
+            } catch (err) {
+                console.error('Lỗi tải dữ liệu Hero:', err);
+            }
+        };
+
+        load();
+    }, []);
 
     return (
         <section id="home" className="hero">

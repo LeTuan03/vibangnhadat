@@ -3,7 +3,6 @@ import { Table, Button, Input, Card, Modal, Form, Select, Image, Space, Popconfi
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { GalleryItem } from '../../types'
 import { galleryService } from '../api/galleryService'
-import { mockGalleryItems } from '../../data/mockData'
 
 const { Search } = Input
 
@@ -15,13 +14,17 @@ const GalleryAdmin: React.FC = () => {
     const [form] = Form.useForm()
 
     useEffect(() => {
-        galleryService.initialize(mockGalleryItems)
         loadGallery()
     }, [])
 
-    const loadGallery = () => {
-        const allItems = galleryService.getAllGalleryItems()
-        setItems(allItems)
+    const loadGallery = async () => {
+        try {
+            const allItems = await galleryService.getAllGalleryItems()
+            setItems(allItems)
+        } catch (error) {
+            console.error('Lỗi tải gallery:', error)
+            message.error('Không thể tải gallery')
+        }
     }
 
     const handleAddNew = () => {
@@ -46,25 +49,31 @@ const GalleryAdmin: React.FC = () => {
         try {
             const values = await form.validateFields()
             if (editingId) {
-                galleryService.updateGalleryItem(editingId, values)
+                await galleryService.updateGalleryItem(editingId, values)
                 message.success('Cập nhật thành công')
             } else {
-                galleryService.createGalleryItem(values)
+                await galleryService.createGalleryItem(values)
                 message.success('Thêm mới thành công')
             }
             setIsModalOpen(false)
             loadGallery()
         } catch (e) {
-            // validation error
+            console.error('Lỗi lưu gallery item:', e)
+            message.error(`Lỗi lưu dữ liệu: ${e instanceof Error ? e.message : 'Lỗi không xác định'}`)
         }
     }
 
-    const handleDelete = (id: string) => {
-        const success = galleryService.deleteGalleryItem(id)
-        if (success) {
-            message.success('Xóa thành công')
-            loadGallery()
-        } else {
+    const handleDelete = async (id: string) => {
+        try {
+            const success = await galleryService.deleteGalleryItem(id)
+            if (success) {
+                message.success('Xóa thành công')
+                loadGallery()
+            } else {
+                message.error('Xóa thất bại')
+            }
+        } catch (error) {
+            console.error('Lỗi xóa gallery item:', error)
             message.error('Xóa thất bại')
         }
     }

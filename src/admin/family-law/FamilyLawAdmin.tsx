@@ -3,7 +3,6 @@ import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Image } 
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { FamilyLawQA } from '../../types'
 import { familyLawService } from '../api/familyLawService'
-import { mockFamilyLawQAs } from '../../data/mockData'
 
 const FamilyLawAdmin: React.FC = () => {
   const [laws, setLaws] = useState<FamilyLawQA[]>([])
@@ -13,18 +12,35 @@ const FamilyLawAdmin: React.FC = () => {
   const [form] = Form.useForm()
 
   useEffect(() => {
-    familyLawService.initialize(mockFamilyLawQAs)
     load()
   }, [])
 
-  const load = () => setLaws(familyLawService.getAllFamilyLaws())
+  const load = async () => {
+    try {
+      const allLaws = await familyLawService.getAllFamilyLaws()
+      setLaws(allLaws)
+    } catch (error) {
+      console.error('Lỗi tải family law:', error)
+      message.error('Không thể tải family law')
+    }
+  }
 
   const openAdd = () => { setEditing(null); form.resetFields(); setIsModalOpen(true) }
   const openEdit = (l: FamilyLawQA) => { setEditing(l); form.setFieldsValue({ question: l.question, shortDescription: l.shortDescription, image: l.image }); setIsModalOpen(true) }
 
-  const handleDelete = (id: string) => {
-    const ok = familyLawService.deleteFamilyLaw(id)
-    if (ok) { message.success('Xóa thành công'); load() } else message.error('Xóa thất bại')
+  const handleDelete = async (id: string) => {
+    try {
+      const ok = await familyLawService.deleteFamilyLaw(id)
+      if (ok) {
+        message.success('Xóa thành công')
+        load()
+      } else {
+        message.error('Xóa thất bại')
+      }
+    } catch (error) {
+      console.error('Lỗi xóa family law:', error)
+      message.error('Xóa thất bại')
+    }
   }
 
   const handleSave = async () => {
@@ -32,15 +48,18 @@ const FamilyLawAdmin: React.FC = () => {
       const values = await form.validateFields()
       const payload = { question: values.question, shortDescription: values.shortDescription || '', image: values.image || '' }
       if (editing && editing.id) {
-        familyLawService.updateFamilyLaw(editing.id, payload)
+        await familyLawService.updateFamilyLaw(editing.id, payload)
         message.success('Cập nhật thành công')
       } else {
-        familyLawService.createFamilyLaw(payload)
+        await familyLawService.createFamilyLaw(payload)
         message.success('Thêm mới thành công')
       }
       setIsModalOpen(false)
       load()
-    } catch (e) {}
+    } catch (e) {
+      console.error('Lỗi lưu family law:', e)
+      message.error(`Lỗi lưu dữ liệu: ${e instanceof Error ? e.message : 'Lỗi không xác định'}`)
+    }
   }
 
   const filtered = laws.filter(l => l.question.toLowerCase().includes(searchTerm.toLowerCase()))

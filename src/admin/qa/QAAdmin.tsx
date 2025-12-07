@@ -3,7 +3,6 @@ import { Table, Button, Modal, Form, Input, Space, Popconfirm, message } from 'a
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { FAQ } from '../../types'
 import { qaService } from '../api/qaService'
-import { mockFAQs } from '../../data/mockData'
 
 const QAAdmin: React.FC = () => {
   const [faqs, setFaqs] = useState<FAQ[]>([])
@@ -13,18 +12,31 @@ const QAAdmin: React.FC = () => {
   const [form] = Form.useForm()
 
   useEffect(() => {
-    qaService.initializeFAQs(mockFAQs)
     load()
   }, [])
 
-  const load = () => setFaqs(qaService.getAllFAQs())
+  const load = async () => {
+    try {
+      const allFaqs = await qaService.getAllFAQs()
+      setFaqs(allFaqs)
+    } catch (error) {
+      console.error('Lỗi tải FAQ:', error)
+      message.error('Không thể tải FAQ')
+    }
+  }
 
   const openAdd = () => { setEditing(null); form.resetFields(); setIsModalOpen(true) }
   const openEdit = (f: FAQ) => { setEditing(f); form.setFieldsValue({ question: f.question, answer: f.answer, category: f.category }); setIsModalOpen(true) }
 
-  const handleDelete = (id: string) => {
-    const ok = qaService.deleteFAQ(id)
-    if (ok) { message.success('Xóa câu hỏi thành công'); load() } else message.error('Xóa thất bại')
+  const handleDelete = async (id: string) => {
+    try {
+      await qaService.deleteFAQ(id)
+      message.success('Xóa câu hỏi thành công')
+      load()
+    } catch (error) {
+      console.error('Lỗi xóa FAQ:', error)
+      message.error('Xóa thất bại')
+    }
   }
 
   const handleSave = async () => {
@@ -32,15 +44,18 @@ const QAAdmin: React.FC = () => {
       const values = await form.validateFields()
       const payload = { question: values.question, answer: values.answer, category: values.category }
       if (editing && editing.id) {
-        const updated = qaService.updateFAQ(editing.id, { ...editing, ...payload })
-        if (updated) { message.success('Cập nhật câu hỏi thành công'); load() }
+        await qaService.updateFAQ(editing.id, { ...editing, ...payload })
+        message.success('Cập nhật câu hỏi thành công')
       } else {
-        qaService.createFAQ(payload)
+        await qaService.createFAQ(payload)
         message.success('Thêm câu hỏi mới thành công')
-        load()
       }
+      load()
       setIsModalOpen(false)
-    } catch (e) {}
+    } catch (e) {
+      console.error('Lỗi lưu FAQ:', e)
+      message.error(`Lỗi lưu dữ liệu: ${e instanceof Error ? e.message : 'Lỗi không xác định'}`)
+    }
   }
 
   const filtered = faqs.filter(f => f.question.toLowerCase().includes(searchTerm.toLowerCase()) || f.category.toLowerCase().includes(searchTerm.toLowerCase()))

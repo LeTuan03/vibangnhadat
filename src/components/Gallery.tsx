@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaPlay, FaArrowRight } from 'react-icons/fa';
-import { galleryService } from '../admin/api/galleryService';
-import { mockGalleryItems } from '../data/mockData';
+import GalleryFirebaseService from '../services/GalleryFirebaseService';
+import type { GalleryItem } from '../types';
 import './Gallery.css';
 
 interface VideoModalProps {
@@ -30,10 +30,20 @@ const VideoModal: React.FC<VideoModalProps> = ({ videoId, onClose }) => {
 
 const Gallery: React.FC = () => {
     const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-    const [galleryItems] = useState(() => {
-        galleryService.initialize(mockGalleryItems);
-        return galleryService.getAllGalleryItems();
-    });
+    const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+
+    useEffect(() => {
+        const loadGallery = async () => {
+            try {
+                const data = await GalleryFirebaseService.getAllItems();
+                setGalleryItems(data);
+            } catch (err) {
+                console.error('Error loading gallery items:', err);
+                setGalleryItems([]);
+            }
+        };
+        loadGallery();
+    }, []);
 
     return (
         <section id="gallery" className="gallery-section">

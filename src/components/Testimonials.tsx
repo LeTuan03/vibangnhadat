@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { FaStar, FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { mockTestimonials } from '../data/mockData';
+import TestimonialFirebaseService from '../services/TestimonialFirebaseService';
 import './Testimonials.css';
 
 const Testimonials: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlay, setIsAutoPlay] = useState(true);
-    const [testimonials] = useState(mockTestimonials);
+    const [testimonials, setTestimonials] = useState<any[]>([]);
     const itemsPerSlide = 3;
     const totalSlides = Math.ceil(testimonials.length / itemsPerSlide);
+
+    useEffect(() => {
+        const loadTestimonials = async () => {
+            try {
+                const data = await TestimonialFirebaseService.getAllTestimonials();
+                setTestimonials(data);
+            } catch (err) {
+                console.error('Error loading testimonials:', err);
+                setTestimonials([]);
+            }
+        };
+
+        loadTestimonials();
+    }, []);
 
     useEffect(() => {
         if (!isAutoPlay) return;

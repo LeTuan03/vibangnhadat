@@ -1,74 +1,78 @@
 import type { FamilyLawQA } from '../../types';
+import {
+    getAllFamilyLawQAs,
+    createFamilyLawQA,
+    updateFamilyLawQA,
+    deleteFamilyLawQA,
+} from '../../services';
 
-const STORAGE_KEY = 'family_law_data';
-
+/**
+ * FamilyLawService - Firebase-backed family law management
+ * Uses Firebase Firestore for data persistence
+ */
 class FamilyLawService {
-    private familyLaws: FamilyLawQA[] = [];
     private subscribers: Array<() => void> = [];
 
-    initialize(seed?: FamilyLawQA[]) {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-            try {
-                this.familyLaws = JSON.parse(raw) as FamilyLawQA[];
-            } catch (e) {
-                this.familyLaws = seed || [];
-                this.persist();
-            }
-        } else {
-            this.familyLaws = seed || [];
-            this.persist();
+    /**
+     * Initialize service (kept for compatibility)
+     */
+    initialize() {
+        this.notify();
+    }
+
+    /**
+     * Get all family law QAs from Firebase
+     */
+    async getAllFamilyLaws(): Promise<FamilyLawQA[]> {
+        return getAllFamilyLawQAs();
+    }
+
+    /**
+     * Get family law QA by ID from Firebase
+     */
+    async getFamilyLawById(id: string): Promise<FamilyLawQA | undefined> {
+        const laws = await getAllFamilyLawQAs();
+        return laws.find(f => f.id === id);
+    }
+
+    /**
+     * Create new family law QA in Firebase
+     */
+    async createFamilyLaw(law: Omit<FamilyLawQA, 'id'>): Promise<FamilyLawQA> {
+        const result = await createFamilyLawQA(law);
+        this.notify();
+        return result;
+    }
+
+    /**
+     * Update existing family law QA in Firebase
+     */
+    async updateFamilyLaw(id: string, updates: Partial<FamilyLawQA>): Promise<FamilyLawQA | null> {
+        try {
+            const result = await updateFamilyLawQA(id, updates);
+            this.notify();
+            return result;
+        } catch (error) {
+            return null;
         }
-        this.notify();
     }
 
-    getAllFamilyLaws(): FamilyLawQA[] {
-        return [...this.familyLaws];
+    /**
+     * Delete family law QA from Firebase
+     */
+    async deleteFamilyLaw(id: string): Promise<boolean> {
+        try {
+            await deleteFamilyLawQA(id);
+            this.notify();
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 
-    getFamilyLawById(id: string): FamilyLawQA | undefined {
-        return this.familyLaws.find(f => f.id === id);
-    }
-
-    createFamilyLaw(law: Omit<FamilyLawQA, 'id'>): FamilyLawQA {
-        const newLaw: FamilyLawQA = {
-            ...law,
-            id: `faq-family-${Date.now()}`
-        };
-        this.familyLaws.push(newLaw);
-        this.persist();
-        this.notify();
-        return newLaw;
-    }
-
-    updateFamilyLaw(id: string, updates: Partial<FamilyLawQA>): FamilyLawQA | null {
-        const index = this.familyLaws.findIndex(f => f.id === id);
-        if (index === -1) return null;
-        
-        this.familyLaws[index] = {
-            ...this.familyLaws[index],
-            ...updates,
-            id: this.familyLaws[index].id
-        };
-        this.persist();
-        this.notify();
-        return this.familyLaws[index];
-    }
-
-    deleteFamilyLaw(id: string): boolean {
-        const index = this.familyLaws.findIndex(f => f.id === id);
-        if (index === -1) return false;
-        
-        this.familyLaws.splice(index, 1);
-        this.persist();
-        this.notify();
-        return true;
-    }
-
-    private persist() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.familyLaws));
-    }
-
+    /**
+     * Subscribe to changes
+     */
     subscribe(callback: () => void) {
         this.subscribers.push(callback);
         return () => {
@@ -76,6 +80,9 @@ class FamilyLawService {
         };
     }
 
+    /**
+     * Notify subscribers
+     */
     private notify() {
         this.subscribers.forEach(cb => cb());
     }

@@ -1,74 +1,78 @@
 import type { Statistic } from '../../types';
+import {
+    getAllStatistics,
+    createStatistic,
+    updateStatistic,
+    deleteStatistic,
+} from '../../services';
 
-const STORAGE_KEY = 'statistics_data';
-
+/**
+ * StatisticsService - Firebase-backed statistics management
+ * Uses Firebase Firestore for data persistence
+ */
 class StatisticsService {
-    private statistics: Statistic[] = [];
     private subscribers: Array<() => void> = [];
 
-    initialize(seed?: Statistic[]) {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-            try {
-                this.statistics = JSON.parse(raw) as Statistic[];
-            } catch (e) {
-                this.statistics = seed || [];
-                this.persist();
-            }
-        } else {
-            this.statistics = seed || [];
-            this.persist();
+    /**
+     * Initialize service (kept for compatibility)
+     */
+    initialize() {
+        this.notify();
+    }
+
+    /**
+     * Get all statistics from Firebase
+     */
+    async getAllStatistics(): Promise<Statistic[]> {
+        return getAllStatistics();
+    }
+
+    /**
+     * Get statistic by ID from Firebase
+     */
+    async getStatisticById(id: string): Promise<Statistic | undefined> {
+        const stats = await getAllStatistics();
+        return stats.find(s => s.id === id);
+    }
+
+    /**
+     * Create new statistic in Firebase
+     */
+    async createStatistic(stat: Omit<Statistic, 'id'>): Promise<Statistic> {
+        const result = await createStatistic(stat);
+        this.notify();
+        return result;
+    }
+
+    /**
+     * Update existing statistic in Firebase
+     */
+    async updateStatistic(id: string, updates: Partial<Statistic>): Promise<Statistic | null> {
+        try {
+            const result = await updateStatistic(id, updates);
+            this.notify();
+            return result;
+        } catch (error) {
+            return null;
         }
-        this.notify();
     }
 
-    getAllStatistics(): Statistic[] {
-        return [...this.statistics];
+    /**
+     * Delete statistic from Firebase
+     */
+    async deleteStatistic(id: string): Promise<boolean> {
+        try {
+            await deleteStatistic(id);
+            this.notify();
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 
-    getStatisticById(id: string): Statistic | undefined {
-        return this.statistics.find(s => s.id === id);
-    }
-
-    createStatistic(stat: Omit<Statistic, 'id'>): Statistic {
-        const newStat: Statistic = {
-            ...stat,
-            id: `stat-${Date.now()}`
-        };
-        this.statistics.push(newStat);
-        this.persist();
-        this.notify();
-        return newStat;
-    }
-
-    updateStatistic(id: string, updates: Partial<Statistic>): Statistic | null {
-        const index = this.statistics.findIndex(s => s.id === id);
-        if (index === -1) return null;
-        
-        this.statistics[index] = {
-            ...this.statistics[index],
-            ...updates,
-            id: this.statistics[index].id
-        };
-        this.persist();
-        this.notify();
-        return this.statistics[index];
-    }
-
-    deleteStatistic(id: string): boolean {
-        const index = this.statistics.findIndex(s => s.id === id);
-        if (index === -1) return false;
-        
-        this.statistics.splice(index, 1);
-        this.persist();
-        this.notify();
-        return true;
-    }
-
-    private persist() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.statistics));
-    }
-
+    /**
+     * Subscribe to changes
+     */
     subscribe(callback: () => void) {
         this.subscribers.push(callback);
         return () => {
@@ -76,6 +80,9 @@ class StatisticsService {
         };
     }
 
+    /**
+     * Notify subscribers
+     */
     private notify() {
         this.subscribers.forEach(cb => cb());
     }

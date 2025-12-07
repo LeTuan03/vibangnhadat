@@ -1,74 +1,78 @@
 import type { GalleryItem } from '../../types';
+import {
+    getAllGalleryItems,
+    createGalleryItem,
+    updateGalleryItem,
+    deleteGalleryItem,
+} from '../../services';
 
-const STORAGE_KEY = 'gallery_data';
-
+/**
+ * GalleryService - Firebase-backed gallery management
+ * Uses Firebase Firestore for data persistence
+ */
 class GalleryService {
-    private items: GalleryItem[] = [];
     private subscribers: Array<() => void> = [];
 
-    initialize(seed?: GalleryItem[]) {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-            try {
-                this.items = JSON.parse(raw) as GalleryItem[];
-            } catch (e) {
-                this.items = seed || [];
-                this.persist();
-            }
-        } else {
-            this.items = seed || [];
-            this.persist();
+    /**
+     * Initialize service (kept for compatibility)
+     */
+    initialize() {
+        this.notify();
+    }
+
+    /**
+     * Get all gallery items from Firebase
+     */
+    async getAllGalleryItems(): Promise<GalleryItem[]> {
+        return getAllGalleryItems();
+    }
+
+    /**
+     * Get gallery item by ID from Firebase
+     */
+    async getGalleryItemById(id: string): Promise<GalleryItem | undefined> {
+        const items = await getAllGalleryItems();
+        return items.find(item => item.id === id);
+    }
+
+    /**
+     * Create new gallery item in Firebase
+     */
+    async createGalleryItem(item: Omit<GalleryItem, 'id'>): Promise<GalleryItem> {
+        const result = await createGalleryItem(item);
+        this.notify();
+        return result;
+    }
+
+    /**
+     * Update existing gallery item in Firebase
+     */
+    async updateGalleryItem(id: string, updates: Partial<GalleryItem>): Promise<GalleryItem | null> {
+        try {
+            const result = await updateGalleryItem(id, updates);
+            this.notify();
+            return result;
+        } catch (error) {
+            return null;
         }
-        this.notify();
     }
 
-    getAllGalleryItems(): GalleryItem[] {
-        return [...this.items];
+    /**
+     * Delete gallery item from Firebase
+     */
+    async deleteGalleryItem(id: string): Promise<boolean> {
+        try {
+            await deleteGalleryItem(id);
+            this.notify();
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 
-    getGalleryItemById(id: string): GalleryItem | undefined {
-        return this.items.find(item => item.id === id);
-    }
-
-    createGalleryItem(item: Omit<GalleryItem, 'id'>): GalleryItem {
-        const newItem: GalleryItem = {
-            ...item,
-            id: `gallery-${Date.now()}`
-        };
-        this.items.push(newItem);
-        this.persist();
-        this.notify();
-        return newItem;
-    }
-
-    updateGalleryItem(id: string, updates: Partial<GalleryItem>): GalleryItem | null {
-        const index = this.items.findIndex(item => item.id === id);
-        if (index === -1) return null;
-        
-        this.items[index] = {
-            ...this.items[index],
-            ...updates,
-            id: this.items[index].id
-        };
-        this.persist();
-        this.notify();
-        return this.items[index];
-    }
-
-    deleteGalleryItem(id: string): boolean {
-        const index = this.items.findIndex(item => item.id === id);
-        if (index === -1) return false;
-        
-        this.items.splice(index, 1);
-        this.persist();
-        this.notify();
-        return true;
-    }
-
-    private persist() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.items));
-    }
-
+    /**
+     * Subscribe to changes
+     */
     subscribe(callback: () => void) {
         this.subscribers.push(callback);
         return () => {
@@ -76,6 +80,9 @@ class GalleryService {
         };
     }
 
+    /**
+     * Notify subscribers
+     */
     private notify() {
         this.subscribers.forEach(cb => cb());
     }

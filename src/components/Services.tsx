@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaFileContract, FaEnvelopeOpenText, FaSearchDollar, FaGavel, FaTimes } from 'react-icons/fa';
-import serviceService from '../admin/api/serviceService';
-import { mockServices } from '../data/mockData';
+import ServiceFirebaseService from '../services/ServiceFirebaseService';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import type { Service } from '../types';
 import './Services.css';
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -15,10 +15,20 @@ const iconMap: Record<string, React.ReactNode> = {
 const Services: React.FC = () => {
     const [selectedService, setSelectedService] = useState<string | null>(null);
     const [ref] = useIntersectionObserver({ threshold: 0.1, freezeOnceVisible: true });
-    const [services] = useState(() => {
-        serviceService.initializeServices(mockServices);
-        return serviceService.getAllServices();
-    });
+    const [services, setServices] = useState<Service[]>([]);
+
+    useEffect(() => {
+        const loadServices = async () => {
+            try {
+                const data = await ServiceFirebaseService.getAllServices();
+                setServices(data);
+            } catch (err) {
+                console.error('Error loading services:', err);
+                setServices([]);
+            }
+        };
+        loadServices();
+    }, []);
 
     const selectedServiceData = services.find((s: any) => s.id === selectedService);
 

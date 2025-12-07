@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { familyLawService } from '../admin/api/familyLawService';
+import FamilyLawFirebaseService from '../services/FamilyLawFirebaseService';
 import { mockFamilyLawQAs } from '../data/mockData';
+import type { FamilyLawQA } from '../types';
 import './FamilyLawQA.css';
 
 const FamilyLawQA: React.FC = () => {
-    const [familyLawQAs] = useState(() => {
-        familyLawService.initialize(mockFamilyLawQAs);
-        return familyLawService.getAllFamilyLaws();
-    });
+    const [familyLawQAs, setFamilyLawQAs] = useState<FamilyLawQA[]>([]);
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const data = await FamilyLawFirebaseService.getAllQAs();
+                setFamilyLawQAs(data);
+            } catch (err) {
+                console.error('Error loading family law Q&As:', err);
+                setFamilyLawQAs(mockFamilyLawQAs);
+            }
+        };
+        loadData();
+    }, []);
 
     return (
         <section id="family-law-qa" className="family-law-qa-section">

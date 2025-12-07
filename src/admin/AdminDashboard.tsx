@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Layout, Menu, Table, Button, Space, Popconfirm, Card, Typography, ConfigProvider } from 'antd'
 import { blogService } from './api/blogService'
-import { mockBlogPosts } from '../data/mockData'
 import type { BlogPost } from '../types'
 import CategoryAdmin from './category/CategoryAdmin'
 
@@ -28,10 +27,20 @@ type AdminTab = 'news' | 'category' | 'services' | 'viban' | 'statistics' | 'ser
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     const [activeTab, setActiveTab] = useState<AdminTab>('news')
-    const [posts, setPosts] = useState<BlogPost[]>(() => {
-        blogService.initializePosts(mockBlogPosts)
-        return blogService.getAllPosts()
-    })
+    const [posts, setPosts] = useState<BlogPost[]>([])
+
+    React.useEffect(() => {
+        loadPosts()
+    }, [])
+
+    const loadPosts = async () => {
+        try {
+            const allPosts = await blogService.getAllPosts()
+            setPosts(allPosts)
+        } catch (error) {
+            console.error('Lỗi tải bài viết:', error)
+        }
+    }
 
     const handleDeletePost = (id: string) => {
         setPosts(posts.filter((post) => post.id !== id))

@@ -3,7 +3,6 @@ import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, DatePick
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { LegalDocument } from '../../types'
 import { documentService } from '../api/documentService'
-import { mockLegalDocuments } from '../../data/mockData'
 import dayjs from 'dayjs'
 
 const DocumentsAdmin: React.FC = () => {
@@ -14,11 +13,18 @@ const DocumentsAdmin: React.FC = () => {
   const [form] = Form.useForm()
 
   useEffect(() => {
-    documentService.initializeDocuments(mockLegalDocuments)
     load()
   }, [])
 
-  const load = () => setDocs(documentService.getAllDocuments())
+  const load = async () => {
+    try {
+      const documents = await documentService.getAllDocuments()
+      setDocs(documents)
+    } catch (error) {
+      console.error('Lỗi tải tài liệu:', error)
+      message.error('Không thể tải tài liệu')
+    }
+  }
 
   const openAdd = () => { setEditing(null); form.resetFields(); setIsModalOpen(true) }
   const openEdit = (d: LegalDocument) => {
@@ -33,9 +39,15 @@ const DocumentsAdmin: React.FC = () => {
     setIsModalOpen(true)
   }
 
-  const handleDelete = (id: string) => {
-    const ok = documentService.deleteDocument(id)
-    if (ok) { message.success('Xóa tài liệu thành công'); load() } else message.error('Xóa thất bại')
+  const handleDelete = async (id: string) => {
+    try {
+      await documentService.deleteDocument(id)
+      message.success('Xóa tài liệu thành công')
+      load()
+    } catch (error) {
+      console.error('Lỗi xóa tài liệu:', error)
+      message.error('Xóa thất bại')
+    }
   }
 
   const handleSave = async () => {
@@ -49,15 +61,18 @@ const DocumentsAdmin: React.FC = () => {
         fileUrl: values.fileUrl || ''
       }
       if (editing && editing.id) {
-        const updated = documentService.updateDocument(editing.id, { ...editing, ...payload })
-        if (updated) message.success('Cập nhật tài liệu thành công')
+        await documentService.updateDocument(editing.id, { ...editing, ...payload })
+        message.success('Cập nhật tài liệu thành công')
       } else {
-        documentService.createDocument(payload)
+        await documentService.createDocument(payload)
         message.success('Thêm tài liệu mới thành công')
       }
       setIsModalOpen(false)
       load()
-    } catch (e) {}
+    } catch (e) {
+      console.error('Lỗi lưu tài liệu:', e)
+      message.error(`Lỗi lưu dữ liệu: ${e instanceof Error ? e.message : 'Lỗi không xác định'}`)
+    }
   }
 
   const filtered = docs.filter(d => d.title.toLowerCase().includes(searchTerm.toLowerCase()) || d.category.toLowerCase().includes(searchTerm.toLowerCase()))

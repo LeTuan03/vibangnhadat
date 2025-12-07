@@ -153,25 +153,29 @@ export const mockFAQs: FAQ[] = [
         id: 'faq-1',
         question: 'Hợp đồng lao động phải có những gì?',
         answer: 'Hợp đồng lao động phải có các thông tin cơ bản về hai bên (người sử dụng lao động và người lao động), vị trí việc làm, mức lương, thời gian làm việc, quyền và nghĩa vụ của hai bên.',
-        category: 'Luật lao động'
+        category: 'Luật lao động',
+        views: 125
     },
     {
         id: 'faq-2',
         question: 'Thủ tục ly hôn bao lâu?',
         answer: 'Thủ tục ly hôn thường mất từ 1-3 tháng nếu là ly hôn thỏa thuận, hoặc từ 3-6 tháng nếu là ly hôn tranh chấp tại tòa án.',
-        category: 'Hôn nhân gia đình'
+        category: 'Hôn nhân gia đình',
+        views: 98
     },
     {
         id: 'faq-3',
         question: 'Làm sao để bảo vệ quyền lợi người mua bất động sản?',
         answer: 'Cần kiểm tra giấy tờ pháp lý bất động sản, ký hợp đồng mua bán, thực hiện thủ tục chuyển nhượng tại cơ quan đăng ký đất đai và nhà nước.',
-        category: 'Luật đất đai'
+        category: 'Luật đất đai',
+        views: 87
     },
     {
         id: 'faq-4',
         question: 'Nhân viên có quyền từ chối làm việc ngoài giờ không?',
         answer: 'Theo Luật Lao động, công ty chỉ được yêu cầu nhân viên làm thêm giờ trong những trường hợp cần thiết và phải thanh toán thù lao làm thêm giờ.',
-        category: 'Luật lao động'
+        category: 'Luật lao động',
+        views: 156
     }
 ];
 
@@ -397,37 +401,43 @@ export const mockFamilyLawQAs: FamilyLawQA[] = [
         id: 'faq-family-1',
         question: 'Các quy định pháp lý nào bảo vệ quyền lợi con cái, tài sản sau khi ly hôn?',
         image: '/images/family-qa-1.jpg',
-        shortDescription: 'Quy định pháp lý bảo vệ con cái và tài sản'
+        shortDescription: 'Quy định pháp lý bảo vệ con cái và tài sản',
+        date: '2025-01-15'
     },
     {
         id: 'faq-family-2',
         question: 'Thủ tục ly hôn phương mới nhất: Điều kiện, Hộ số và Thời gian giải quyết',
         image: '/images/family-qa-2.jpg',
-        shortDescription: 'Thủ tục ly hôn theo quy định mới nhất'
+        shortDescription: 'Thủ tục ly hôn theo quy định mới nhất',
+        date: '2025-01-10'
     },
     {
         id: 'faq-family-3',
         question: 'Thủ Tục Đăng Ký Kết Hôn Có Yêu Tố Nước Ngoài 2025',
         image: '/images/family-qa-3.jpg',
-        shortDescription: 'Đăng ký kết hôn có yếu tố nước ngoài'
+        shortDescription: 'Đăng ký kết hôn có yếu tố nước ngoài',
+        date: '2025-01-08'
     },
     {
         id: 'faq-family-4',
         question: 'Chính phủ Đề Xuất Bổ Sung Trường Hợp Thu Hồi Đất',
         image: '/images/family-qa-4.jpg',
-        shortDescription: 'Chính phủ đề xuất về thu hồi đất'
+        shortDescription: 'Chính phủ đề xuất về thu hồi đất',
+        date: '2025-01-05'
     },
     {
         id: 'faq-family-5',
         question: 'LỰ HÔN ĐƠN PHƯƠNG CẦN NHỮNG GIẤY TỜ, THỦ TỤC GÌ?',
         image: '/images/family-qa-5.jpg',
-        shortDescription: 'Ly hôn đơn phương: thủ tục và giấy tờ'
+        shortDescription: 'Ly hôn đơn phương: thủ tục và giấy tờ',
+        date: '2025-01-01'
     },
     {
         id: 'faq-family-6',
         question: 'Thay đổi họ cho con riêng',
         image: '/images/family-qa-6.jpg',
-        shortDescription: 'Thay đổi họ cho con riêng - hướng dẫn'
+        shortDescription: 'Thay đổi họ cho con riêng - hướng dẫn',
+        date: '2024-12-28'
     }
 ];
 
@@ -438,42 +448,48 @@ export const mockGalleryItems: GalleryItem[] = [
         title: 'Hội thuyết truyền hình Tại sao dự án',
         type: 'image',
         thumbnail: '/images/gallery-1.jpg',
-        description: 'Hội thuyết truyền hình'
+        description: 'Hội thuyết truyền hình',
+        order: 1
     },
     {
         id: 'gallery-2',
         title: 'Hội thuyết truyền hình Giao đất cho thương',
         type: 'image',
         thumbnail: '/images/gallery-2.jpg',
-        description: 'Giao đất cho thương mại'
+        description: 'Giao đất cho thương mại',
+        order: 2
     },
     {
         id: 'gallery-3',
         title: 'Hội thuyết truyền hình Một số vấn đề',
         type: 'image',
         thumbnail: '/images/gallery-3.jpg',
-        description: 'Một số vấn đề pháp lý'
+        description: 'Một số vấn đề pháp lý',
+        order: 3
     },
     {
         id: 'gallery-4',
         title: 'Văn phòng Thừa phát lại',
         type: 'image',
         thumbnail: '/images/gallery-4.jpg',
-        description: 'Không gian văn phòng'
+        description: 'Không gian văn phòng',
+        order: 4
     },
     {
         id: 'gallery-5',
         title: 'Luật sư chuyên viên',
         type: 'image',
         thumbnail: '/images/gallery-5.jpg',
-        description: 'Đội ngũ chuyên viên'
+        description: 'Đội ngũ chuyên viên',
+        order: 5
     },
     {
         id: 'gallery-6',
         title: 'Văn phòng làm việc',
         type: 'image',
         thumbnail: '/images/gallery-6.jpg',
-        description: 'Không gian làm việc hiện đại'
+        description: 'Không gian làm việc hiện đại',
+        order: 6
     },
     {
         id: 'gallery-7',
@@ -481,7 +497,8 @@ export const mockGalleryItems: GalleryItem[] = [
         type: 'video',
         thumbnail: '/images/video-1.jpg',
         videoId: 'dQw4w9WgXcQ',
-        description: 'Video hợp thư truyền hình'
+        description: 'Video hợp thư truyền hình',
+        order: 7
     },
     {
         id: 'gallery-8',
@@ -489,7 +506,8 @@ export const mockGalleryItems: GalleryItem[] = [
         type: 'video',
         thumbnail: '/images/video-2.jpg',
         videoId: 'dQw4w9WgXcQ',
-        description: 'Video giao đất'
+        description: 'Video giao đất',
+        order: 8
     }
 ];
 

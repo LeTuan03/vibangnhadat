@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaPhone } from 'react-icons/fa';
 import { SiZalo } from 'react-icons/si';
-import { companyInfoService } from '../admin/api/companyInfoService';
-import { mockContactInfo } from '../data/mockData';
+import { getContactInfo } from '../services';
 import { createPhoneLink, createZaloLink } from '../utils/helpers';
 import './FloatingContact.css';
 
 const FloatingContact: React.FC = () => {
-    const [contactInfo] = useState(() => {
-        companyInfoService.initializeContactInfo(mockContactInfo);
-        return companyInfoService.getContactInfo() || mockContactInfo;
-    });
+    const [contactInfo, setContactInfo] = React.useState<any>({ phone: '' });
+
+    React.useEffect(() => {
+        const load = async () => {
+            try {
+                const c = await getContactInfo();
+                if (c) setContactInfo(c);
+            } catch (err) {
+                console.error('Lỗi tải contact cho FloatingContact:', err);
+            }
+        };
+
+        load();
+    }, []);
 
     return (
         <div className="floating-contact">
@@ -35,3 +44,4 @@ const FloatingContact: React.FC = () => {
 };
 
 export default FloatingContact;
+

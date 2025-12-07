@@ -1,14 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { familyLawService } from '../admin/api/familyLawService';
+import FamilyLawFirebaseService from '../services/FamilyLawFirebaseService';
 import { mockFamilyLawQAs } from '../data/mockData';
+import LoadingSpinner from '../components/LoadingSpinner';
+import type { FamilyLawQA } from '../types';
 import './FamilyLawPage.css';
 
 const FamilyLawPage: React.FC = () => {
-    const [familyLawQAs] = useState(() => {
-        familyLawService.initialize(mockFamilyLawQAs);
-        return familyLawService.getAllFamilyLaws();
-    });
+    const [familyLawQAs, setFamilyLawQAs] = useState<FamilyLawQA[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                setLoading(true);
+                const data = await FamilyLawFirebaseService.getAllQAs();
+                setFamilyLawQAs(data);
+            } catch (err) {
+                console.error('Error loading family law Q&As:', err);
+                setFamilyLawQAs(mockFamilyLawQAs);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadData();
+    }, []);
+
+    if (loading) {
+        return <LoadingSpinner />;
+    }
     return (
         <section className="family-law-page">
             <div className="container">

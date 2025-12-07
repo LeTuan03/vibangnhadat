@@ -1,32 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook } from 'react-icons/fa';
 import { SiZalo } from 'react-icons/si';
-import { companyInfoService } from '../admin/api/companyInfoService';
-import { mockCompanyInfo, mockContactInfo } from '../data/mockData';
-import navigationService, { NavItem } from '../admin/api/navigationService';
+import { getAllNavigationItems, getCompanyInfo, getContactInfo } from '../services';
 import { scrollToElement, formatPhoneNumber, createPhoneLink, createZaloLink } from '../utils/helpers';
 import './Footer.css';
 
-const Footer: React.FC = () => {
-    const [companyInfo] = useState(() => {
-        companyInfoService.initializeCompanyInfo(mockCompanyInfo);
-        return companyInfoService.getCompanyInfo() || mockCompanyInfo;
-    });
+export interface NavItem {
+    id?: string;
+    label: string;
+    href: string;
+    children?: NavItem[];
+}
 
-    const [contactInfo] = useState(() => {
-        companyInfoService.initializeContactInfo(mockContactInfo);
-        return companyInfoService.getContactInfo() || mockContactInfo;
-    });
+const Footer: React.FC = () => {
+    const [companyInfo, setCompanyInfo] = useState<any>({ name: '', fullName: '', slogan: '', description: '', vision: '', mission: '', values: [] });
+    const [contactInfo, setContactInfo] = useState<any>({ phone: '', email: '', address: '', workingHours: '', zaloLink: '', facebookLink: '', googleMapsLink: '', googleMapsEmbed: '', coordinates: { lat: 0, lng: 0 } });
+    const [navItems, setNavItems] = useState<NavItem[]>([]);
 
     const currentYear = new Date().getFullYear();
 
-    const [navItems, setNavItems] = React.useState<NavItem[]>(() => navigationService.getAll());
+    // Load all data from Firebase
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const [company, contact, navigation] = await Promise.all([
+                    getCompanyInfo(),
+                    getContactInfo(),
+                    getAllNavigationItems()
+                ]);
+                
+                if (company) setCompanyInfo(company);
+                if (contact) setContactInfo(contact);
+                if (navigation && navigation.length > 0) setNavItems(navigation);
+            } catch (error) {
+                console.error('Lỗi tải dữ liệu footer:', error);
+                // If Firebase fails, keep the empty defaults or consider using mock data as a last resort
+            }
+        };
 
-    React.useEffect(() => {
-        const update = () => setNavItems(navigationService.getAll());
-        const unsub = navigationService.subscribe(update);
-        update();
-        return () => unsub();
+        loadData();
     }, []);
 
     return (

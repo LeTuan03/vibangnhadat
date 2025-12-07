@@ -2,8 +2,7 @@ import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 import { Table, Button, Input, Card, Space, Popconfirm, message, Modal, Form } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { vibanService } from '../api/vibanService'
-import { mockVibans } from '../../data/mockData'
+import { getAllVibans, createViban, updateViban, deleteViban } from '../../services'
 
 const { Search } = Input
 
@@ -22,15 +21,23 @@ const VibanAdmin: FC = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [editing, setEditing] = useState<Viban | null>(null)
 	const [form] = Form.useForm()
+	const [_loading, setLoading] = useState(false)
 
 	useEffect(() => {
-		vibanService.initializeVibans(mockVibans)
 		loadVibans()
 	}, [])
 
-	const loadVibans = () => {
-		const all = vibanService.getAllVibans()
-		setVibans(all)
+	const loadVibans = async () => {
+		try {
+			setLoading(true)
+			const data = await getAllVibans()
+			setVibans(data)
+		} catch (error) {
+			console.error('Lỗi tải vi bằng:', error)
+			message.error('Không thể tải dữ liệu vi bằng')
+		} finally {
+			setLoading(false)
+		}
 	}
 
 	const openAdd = () => {
@@ -49,13 +56,14 @@ const VibanAdmin: FC = () => {
 		setIsModalOpen(true)
 	}
 
-	const handleDelete = (id?: string) => {
+	const handleDelete = async (id?: string) => {
 		if (!id) return
-		const ok = vibanService.deleteViban(id)
-		if (ok) {
-			setVibans((prev) => prev.filter((p) => p.id !== id))
+		try {
+			await deleteViban(id)
 			message.success('Xóa vi bằng thành công')
-		} else {
+			loadVibans()
+		} catch (error) {
+			console.error('Lỗi xóa vi bằng:', error)
 			message.error('Xóa thất bại')
 		}
 	}
@@ -72,26 +80,27 @@ const VibanAdmin: FC = () => {
 			}
 
 			if (editing && editing.id) {
-				const updated = vibanService.updateViban(editing.id, { ...payload, id: editing.id })
-				if (updated) {
-					setVibans((prev) => prev.map((p) => (p.id === editing.id ? updated : p)))
-					message.success('Cập nhật vi bằng thành công')
-				}
+				await updateViban(editing.id, payload)
+				message.success('Cập nhật vi bằng thành công')
 			} else {
-				const created = vibanService.createViban(payload)
-				setVibans((prev) => [created, ...prev])
+				await createViban(payload)
 				message.success('Thêm vi bằng mới thành công')
 			}
 
 			setIsModalOpen(false)
 			form.resetFields()
 			setEditing(null)
+			loadVibans()
 		} catch (err) {
-			// validation error
+			console.error('Lỗi lưu vi bằng:', err)
+			message.error(`Lỗi lưu dữ liệu: ${err instanceof Error ? err.message : 'Lỗi không xác định'}`)
 		}
 	}
 
-	const filtered = vibans.filter((v) => v.title.toLowerCase().includes(searchTerm.toLowerCase()) || v.description.toLowerCase().includes(searchTerm.toLowerCase()))
+	const filtered = vibans.filter((v) =>
+		(v.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+		(v.description || '').toLowerCase().includes(searchTerm.toLowerCase())
+	)
 
 	const columns = [
 		{ title: 'Tên', dataIndex: 'title', key: 'title' },

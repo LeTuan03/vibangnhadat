@@ -14,3 +14,6 @@ export { default as LawExplanationFirebaseService } from './LawExplanationFireba
 export { default as LegalTermFirebaseService } from './LegalTermFirebaseService';
 export { default as ReferenceFirebaseService } from './ReferenceFirebaseService';
 export { BaseFirebaseService } from './BaseFirebaseService';
+
+// Export all admin services
+export * from './adminServices';

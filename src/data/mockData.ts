@@ -550,3 +550,38 @@ export const mockNavigation = [
         href: '/qa',
     },
 ];
+
+// ============ Mock Legal Articles ============
+export const mockLegalArticles = [
+    {
+        id: 'article-1',
+        title: 'Các loại hợp đồng dân sự',
+        category: 'Luật Dân Sự',
+        content: 'Hợp đồng dân sự là thỏa thuận pháp luật giữa các bên...',
+        datePublished: '2024-01-15',
+        author: 'Luật sư A'
+    }
+];
+
+// ============ Mock Law Explanations ============
+export const mockLawExplanations = [
+    {
+        id: 'explanation-1',
+        title: 'Giải thích Luật Dân Sự',
+        content: 'Luật Dân Sự quy định về các quan hệ dân sự...',
+        relatedLaws: ['Luật Dân Sự 2015'],
+        datePublished: '2024-01-15',
+        author: 'Luật sư B'
+    }
+];
+
+// ============ Mock Legal Terms ============
+export const mockLegalTerms = [
+    {
+        id: 'term-1',
+        term: 'Hợp đồng',
+        definition: 'Thỏa thuận pháp luật giữa hai hay nhiều bên',
+        category: 'Luật Dân Sự',
+        example: 'Hợp đồng mua bán, hợp đồng cho thuê...'
+    }
+];

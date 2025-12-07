@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Button, Space, Modal, Input, Card, Popconfirm, message } from 'antd'
+import { Table, Button, Space, Input, Card, Popconfirm, message } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { CategoryFormModal } from './CategoryFormModal'
 import { categoryService, Category } from '../api/categoryService'

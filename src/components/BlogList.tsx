@@ -1,8 +1,7 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { FaCalendar, FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { blogService } from '../admin/api/blogService';
-import { mockBlogPosts } from '../data/mockData';
+import { BlogFirebaseService } from '../services';
 import { BlogPost } from '../types';
 import './BlogList.css';
 
@@ -42,10 +41,26 @@ BlogCard.displayName = 'BlogCard';
 const BlogList: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
-    const [posts] = useState(() => {
-        blogService.initializePosts(mockBlogPosts);
-        return blogService.getAllPosts();
-    });
+    const [posts, setPosts] = useState<BlogPost[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                setLoading(true);
+                const data = await BlogFirebaseService.getAllPosts();
+                setPosts(data);
+            } catch (err) {
+                console.error('Error fetching posts:', err);
+                setError('Lỗi khi tải bài viết');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPosts();
+    }, []);
 
     // Memoized categories list
     const categories = useMemo(
@@ -86,57 +101,68 @@ const BlogList: React.FC = () => {
                     Cập nhật kiến thức pháp luật, tin tức pháp luật mới nhất
                 </p>
 
-                {/* Category Filter */}
-                <div className="blog-filters">
-                    {categories.map((cat) => (
-                        <button
-                            key={cat}
-                            className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
-                            onClick={() => handleCategoryChange(cat)}
-                        >
-                            {cat === 'all' ? 'Tất cả' : cat}
-                        </button>
-                    ))}
-                </div>
+                {loading && <div className="loading">Đang tải bài viết...</div>}
+                {error && <div className="error">{error}</div>}
 
-                {/* Blog Grid */}
-                <div className="blog-grid">
-                    {paginationData.displayedPosts.map((post) => (
-                        <BlogCard key={post.id} post={post} />
-                    ))}
-                </div>
+                {!loading && !error && posts.length === 0 && (
+                    <div className="no-posts">Chưa có bài viết nào</div>
+                )}
 
-                {/* Pagination */}
-                {paginationData.totalPages > 1 && (
-                    <div className="pagination">
-                        <button
-                            className="pagination-btn"
-                            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                            disabled={currentPage === 1}
-                        >
-                            ← Trang trước
-                        </button>
-
-                        <div className="pagination-numbers">
-                            {Array.from({ length: paginationData.totalPages }, (_, i) => i + 1).map((page) => (
+                {!loading && !error && posts.length > 0 && (
+                    <>
+                        {/* Category Filter */}
+                        <div className="blog-filters">
+                            {categories.map((cat) => (
                                 <button
-                                    key={page}
-                                    className={`pagination-number ${currentPage === page ? 'active' : ''}`}
-                                    onClick={() => handlePageChange(page)}
+                                    key={cat}
+                                    className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
+                                    onClick={() => handleCategoryChange(cat)}
                                 >
-                                    {page}
+                                    {cat === 'all' ? 'Tất cả' : cat}
                                 </button>
                             ))}
                         </div>
 
-                        <button
-                            className="pagination-btn"
-                            onClick={() => handlePageChange(Math.min(paginationData.totalPages, currentPage + 1))}
-                            disabled={currentPage === paginationData.totalPages}
-                        >
-                            Trang sau →
-                        </button>
-                    </div>
+                        {/* Blog Grid */}
+                        <div className="blog-grid">
+                            {paginationData.displayedPosts.map((post) => (
+                                <BlogCard key={post.id} post={post} />
+                            ))}
+                        </div>
+
+                        {/* Pagination */}
+                        {paginationData.totalPages > 1 && (
+                            <div className="pagination">
+                                <button
+                                    className="pagination-btn"
+                                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                                    disabled={currentPage === 1}
+                                >
+                                    ← Trang trước
+                                </button>
+
+                                <div className="pagination-numbers">
+                                    {Array.from({ length: paginationData.totalPages }, (_, i) => i + 1).map((page) => (
+                                        <button
+                                            key={page}
+                                            className={`pagination-number ${currentPage === page ? 'active' : ''}`}
+                                            onClick={() => handlePageChange(page)}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <button
+                                    className="pagination-btn"
+                                    onClick={() => handlePageChange(Math.min(paginationData.totalPages, currentPage + 1))}
+                                    disabled={currentPage === paginationData.totalPages}
+                                >
+                                    Trang sau →
+                                </button>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </section>

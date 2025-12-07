@@ -1,6 +1,6 @@
 import React from 'react'
 import 'antd/dist/reset.css'
-import '../documents/Admin.css'
+import './Admin.css'
 import './AdminLayout.css'
 import { FaFileContract, FaNewspaper, FaUsers, FaQuestionCircle, FaList, FaBook, FaTrophy, FaMapMarkerAlt, FaImage, FaInfo, FaHeart } from 'react-icons/fa'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'

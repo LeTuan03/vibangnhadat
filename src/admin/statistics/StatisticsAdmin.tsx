@@ -1,201 +1,113 @@
-import React, { useState, useEffect } from 'react';
-import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
-import { Statistic } from '../../types';
-import { statisticsService } from '../api/statisticsService';
-import { mockStatistics } from '../../data/mockData';
-import { toast } from 'react-toastify';
-import '../documents/Admin.css';
-
-interface FormData {
-    label: string;
-    value: number;
-    suffix: string;
-    icon: string;
-}
+import React, { useState, useEffect } from 'react'
+import { Table, Button, Modal, Form, Input, InputNumber, Space, Popconfirm, message } from 'antd'
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Statistic } from '../../types'
+import { statisticsService } from '../api/statisticsService'
+import { mockStatistics } from '../../data/mockData'
 
 const StatisticsAdmin: React.FC = () => {
-    const [statistics, setStatistics] = useState<Statistic[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [formData, setFormData] = useState<FormData>({
-        label: '',
-        value: 0,
-        suffix: '',
-        icon: 'FaAward'
-    });
+  const [statistics, setStatistics] = useState<Statistic[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editing, setEditing] = useState<Statistic | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [form] = Form.useForm()
 
-    useEffect(() => {
-        statisticsService.initialize(mockStatistics);
-        loadStatistics();
-    }, []);
+  useEffect(() => {
+    statisticsService.initialize(mockStatistics)
+    load()
+  }, [])
 
-    const loadStatistics = () => {
-        const allStats = statisticsService.getAllStatistics();
-        setStatistics(allStats);
-    };
+  const load = () => setStatistics(statisticsService.getAllStatistics())
 
-    const handleAddNew = () => {
-        setEditingId(null);
-        setFormData({ label: '', value: 0, suffix: '', icon: 'FaAward' });
-        setIsModalOpen(true);
-    };
+  const openAdd = () => {
+    setEditing(null)
+    form.resetFields()
+    setIsModalOpen(true)
+  }
 
-    const handleEdit = (stat: Statistic) => {
-        setEditingId(stat.id);
-        setFormData({
-            label: stat.label,
-            value: stat.value,
-            suffix: stat.suffix,
-            icon: stat.icon
-        });
-        setIsModalOpen(true);
-    };
+  const openEdit = (s: Statistic) => {
+    setEditing(s)
+    form.setFieldsValue({ label: s.label, value: s.value, suffix: s.suffix, icon: s.icon })
+    setIsModalOpen(true)
+  }
 
-    const handleSave = () => {
-        if (!formData.label || formData.value < 0) {
-            toast.error('Vui lòng điền đầy đủ thông tin');
-            return;
-        }
+  const handleDelete = (id: string) => {
+    const ok = statisticsService.deleteStatistic(id)
+    if (ok) {
+      message.success('Xóa thành công')
+      load()
+    } else message.error('Xóa thất bại')
+  }
 
-        if (editingId) {
-            statisticsService.updateStatistic(editingId, formData);
-            toast.success('Cập nhật thành công');
-        } else {
-            statisticsService.createStatistic(formData);
-            toast.success('Thêm mới thành công');
-        }
-        
-        setIsModalOpen(false);
-        loadStatistics();
-    };
+  const handleSave = async () => {
+    try {
+      const values = await form.validateFields()
+      const payload = { label: values.label, value: values.value, suffix: values.suffix || '', icon: values.icon || '' }
+      if (editing && editing.id) {
+        statisticsService.updateStatistic(editing.id, payload)
+        message.success('Cập nhật thành công')
+      } else {
+        statisticsService.createStatistic(payload)
+        message.success('Thêm mới thành công')
+      }
+      setIsModalOpen(false)
+      load()
+    } catch (e) {
+      // validation error
+    }
+  }
 
-    const handleDelete = (id: string) => {
-        if (window.confirm('Bạn chắc chắn muốn xóa?')) {
-            statisticsService.deleteStatistic(id);
-            toast.success('Xóa thành công');
-            loadStatistics();
-        }
-    };
+  const filtered = statistics.filter((s) => s.label.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    const filteredStats = statistics.filter(stat =>
-        stat.label.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const columns = [
+    { title: 'Tiêu đề', dataIndex: 'label', key: 'label' },
+    { title: 'Giá trị', dataIndex: 'value', key: 'value' },
+    { title: 'Hậu tố', dataIndex: 'suffix', key: 'suffix' },
+    { title: 'Biểu tượng', dataIndex: 'icon', key: 'icon' },
+    {
+      title: 'Hành động',
+      key: 'actions',
+      render: (_: any, record: Statistic) => (
+        <Space>
+          <Button icon={<EditOutlined />} onClick={() => openEdit(record)} />
+          <Popconfirm title="Xác nhận xóa?" onConfirm={() => handleDelete(record.id)} okText="Xóa" cancelText="Hủy">
+            <Button danger icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ]
 
-    return (
-        <div className="admin-section">
-            <div className="admin-header">
-                <h2>Quản Lý Thống Kê</h2>
-                <button className="btn btn-primary" onClick={handleAddNew}>
-                    <FaPlus /> Thêm mới
-                </button>
-            </div>
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <h2>Quản Lý Thống Kê</h2>
+        <Space>
+          <Input.Search placeholder="Tìm kiếm..." onSearch={(v) => setSearchTerm(v)} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: 300 }} allowClear />
+          <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>Thêm mới</Button>
+        </Space>
+      </div>
 
-            <div className="search-box">
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-            </div>
+      <Table dataSource={filtered} columns={columns} rowKey={(r: any) => r.id} locale={{ emptyText: 'Không có dữ liệu' }} />
 
-            <div className="admin-table-wrapper">
-                <table className="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Tiêu đề</th>
-                            <th>Giá trị</th>
-                            <th>Hậu tố</th>
-                            <th>Biểu tượng</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredStats.map(stat => (
-                            <tr key={stat.id}>
-                                <td>{stat.label}</td>
-                                <td>{stat.value}</td>
-                                <td>{stat.suffix}</td>
-                                <td>{stat.icon}</td>
-                                <td>
-                                    <button
-                                        className="btn-icon btn-edit"
-                                        onClick={() => handleEdit(stat)}
-                                        title="Sửa"
-                                    >
-                                        <FaEdit />
-                                    </button>
-                                    <button
-                                        className="btn-icon btn-delete"
-                                        onClick={() => handleDelete(stat.id)}
-                                        title="Xóa"
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            {isModalOpen && (
-                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <h3>{editingId ? 'Sửa Thống Kê' : 'Thêm Thống Kê'}</h3>
-                        <div className="form-group">
-                            <label>Tiêu đề</label>
-                            <input
-                                type="text"
-                                value={formData.label}
-                                onChange={(e) => setFormData({ ...formData, label: e.target.value })}
-                                placeholder="VD: Năm kinh nghiệm"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Giá trị</label>
-                            <input
-                                type="number"
-                                value={formData.value}
-                                onChange={(e) => setFormData({ ...formData, value: parseInt(e.target.value) || 0 })}
-                                placeholder="VD: 20"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Hậu tố</label>
-                            <input
-                                type="text"
-                                value={formData.suffix}
-                                onChange={(e) => setFormData({ ...formData, suffix: e.target.value })}
-                                placeholder="VD: +"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Biểu tượng</label>
-                            <select
-                                value={formData.icon}
-                                onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                            >
-                                <option value="FaAward">FaAward</option>
-                                <option value="FaUsers">FaUsers</option>
-                                <option value="FaFileContract">FaFileContract</option>
-                                <option value="FaCheckCircle">FaCheckCircle</option>
-                            </select>
-                        </div>
-                        <div className="modal-actions">
-                            <button className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>
-                                Hủy
-                            </button>
-                            <button className="btn btn-primary" onClick={handleSave}>
-                                Lưu
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
+      <Modal title={editing ? 'Sửa Thống Kê' : 'Thêm Thống Kê'} open={isModalOpen} onOk={handleSave} onCancel={() => { setIsModalOpen(false); form.resetFields(); setEditing(null) }} okText="Lưu" cancelText="Hủy">
+        <Form form={form} layout="vertical">
+          <Form.Item name="label" label="Tiêu đề" rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="value" label="Giá trị" rules={[{ required: true, message: 'Vui lòng nhập giá trị' }]}>
+            <InputNumber style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item name="suffix" label="Hậu tố">
+            <Input />
+          </Form.Item>
+          <Form.Item name="icon" label="Biểu tượng">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  )
+}
 
 export default StatisticsAdmin;

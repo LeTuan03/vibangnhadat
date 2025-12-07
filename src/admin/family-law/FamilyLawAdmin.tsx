@@ -1,184 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
-import { FamilyLawQA } from '../../types';
-import { familyLawService } from '../api/familyLawService';
-import { mockFamilyLawQAs } from '../../data/mockData';
-import { toast } from 'react-toastify';
-import '../documents/Admin.css';
-
-interface FormData {
-    question: string;
-    image: string;
-    shortDescription: string;
-}
+import React, { useState, useEffect } from 'react'
+import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Image } from 'antd'
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { FamilyLawQA } from '../../types'
+import { familyLawService } from '../api/familyLawService'
+import { mockFamilyLawQAs } from '../../data/mockData'
 
 const FamilyLawAdmin: React.FC = () => {
-    const [familyLaws, setFamilyLaws] = useState<FamilyLawQA[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [formData, setFormData] = useState<FormData>({
-        question: '',
-        image: '',
-        shortDescription: ''
-    });
+  const [laws, setLaws] = useState<FamilyLawQA[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editing, setEditing] = useState<FamilyLawQA | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [form] = Form.useForm()
 
-    useEffect(() => {
-        familyLawService.initialize(mockFamilyLawQAs);
-        loadFamilyLaws();
-    }, []);
+  useEffect(() => {
+    familyLawService.initialize(mockFamilyLawQAs)
+    load()
+  }, [])
 
-    const loadFamilyLaws = () => {
-        const allLaws = familyLawService.getAllFamilyLaws();
-        setFamilyLaws(allLaws);
-    };
+  const load = () => setLaws(familyLawService.getAllFamilyLaws())
 
-    const handleAddNew = () => {
-        setEditingId(null);
-        setFormData({ question: '', image: '', shortDescription: '' });
-        setIsModalOpen(true);
-    };
+  const openAdd = () => { setEditing(null); form.resetFields(); setIsModalOpen(true) }
+  const openEdit = (l: FamilyLawQA) => { setEditing(l); form.setFieldsValue({ question: l.question, shortDescription: l.shortDescription, image: l.image }); setIsModalOpen(true) }
 
-    const handleEdit = (law: FamilyLawQA) => {
-        setEditingId(law.id);
-        setFormData({
-            question: law.question,
-            image: law.image,
-            shortDescription: law.shortDescription
-        });
-        setIsModalOpen(true);
-    };
+  const handleDelete = (id: string) => {
+    const ok = familyLawService.deleteFamilyLaw(id)
+    if (ok) { message.success('Xóa thành công'); load() } else message.error('Xóa thất bại')
+  }
 
-    const handleSave = () => {
-        if (!formData.question || !formData.image) {
-            toast.error('Vui lòng điền đầy đủ thông tin');
-            return;
-        }
+  const handleSave = async () => {
+    try {
+      const values = await form.validateFields()
+      const payload = { question: values.question, shortDescription: values.shortDescription || '', image: values.image || '' }
+      if (editing && editing.id) {
+        familyLawService.updateFamilyLaw(editing.id, payload)
+        message.success('Cập nhật thành công')
+      } else {
+        familyLawService.createFamilyLaw(payload)
+        message.success('Thêm mới thành công')
+      }
+      setIsModalOpen(false)
+      load()
+    } catch (e) {}
+  }
 
-        if (editingId) {
-            familyLawService.updateFamilyLaw(editingId, formData);
-            toast.success('Cập nhật thành công');
-        } else {
-            familyLawService.createFamilyLaw(formData);
-            toast.success('Thêm mới thành công');
-        }
-        
-        setIsModalOpen(false);
-        loadFamilyLaws();
-    };
+  const filtered = laws.filter(l => l.question.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    const handleDelete = (id: string) => {
-        if (window.confirm('Bạn chắc chắn muốn xóa?')) {
-            familyLawService.deleteFamilyLaw(id);
-            toast.success('Xóa thành công');
-            loadFamilyLaws();
-        }
-    };
+  const columns = [
+    { title: 'Câu hỏi', dataIndex: 'question', key: 'question' },
+    { title: 'Mô tả ngắn', dataIndex: 'shortDescription', key: 'shortDescription' },
+    { title: 'Hình ảnh', dataIndex: 'image', key: 'image', render: (src: string) => src ? <Image src={src} alt="thumb" width={80} /> : null },
+    {
+      title: 'Hành động',
+      key: 'actions',
+      render: (_: any, record: FamilyLawQA) => (
+        <Space>
+          <Button icon={<EditOutlined />} onClick={() => openEdit(record)} />
+          <Popconfirm title="Xác nhận xóa?" onConfirm={() => handleDelete(record.id)} okText="Xóa" cancelText="Hủy">
+            <Button danger icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ]
 
-    const filteredLaws = familyLaws.filter(law =>
-        law.question.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <h2>Quản Lý Hôn Nhân - Gia Đình</h2>
+        <Space>
+          <Input.Search placeholder="Tìm kiếm..." onSearch={(v) => setSearchTerm(v)} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: 300 }} allowClear />
+          <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>Thêm mới</Button>
+        </Space>
+      </div>
 
-    return (
-        <div className="admin-section">
-            <div className="admin-header">
-                <h2>Quản Lý Hôn Nhân - Gia Đình</h2>
-                <button className="btn btn-primary" onClick={handleAddNew}>
-                    <FaPlus /> Thêm mới
-                </button>
-            </div>
+      <Table dataSource={filtered} columns={columns} rowKey={(r: any) => r.id} locale={{ emptyText: 'Không có dữ liệu' }} />
 
-            <div className="search-box">
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-            </div>
+      <Modal title={editing ? 'Sửa Hôn Nhân - Gia Đình' : 'Thêm Hôn Nhân - Gia Đình'} open={isModalOpen} onOk={handleSave} onCancel={() => { setIsModalOpen(false); form.resetFields(); setEditing(null) }} okText="Lưu" cancelText="Hủy">
+        <Form form={form} layout="vertical">
+          <Form.Item name="question" label="Câu hỏi" rules={[{ required: true, message: 'Vui lòng nhập câu hỏi' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="shortDescription" label="Mô tả ngắn">
+            <Input.TextArea rows={3} />
+          </Form.Item>
+          <Form.Item name="image" label="URL Hình ảnh">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  )
+}
 
-            <div className="admin-table-wrapper">
-                <table className="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Câu hỏi</th>
-                            <th>Mô tả ngắn</th>
-                            <th>Hình ảnh</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredLaws.map(law => (
-                            <tr key={law.id}>
-                                <td>{law.question}</td>
-                                <td>{law.shortDescription}</td>
-                                <td><img src={law.image} alt={law.question} style={{ maxWidth: '50px' }} /></td>
-                                <td>
-                                    <button
-                                        className="btn-icon btn-edit"
-                                        onClick={() => handleEdit(law)}
-                                        title="Sửa"
-                                    >
-                                        <FaEdit />
-                                    </button>
-                                    <button
-                                        className="btn-icon btn-delete"
-                                        onClick={() => handleDelete(law.id)}
-                                        title="Xóa"
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            {isModalOpen && (
-                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <h3>{editingId ? 'Sửa Hôn Nhân - Gia Đình' : 'Thêm Hôn Nhân - Gia Đình'}</h3>
-                        <div className="form-group">
-                            <label>Câu hỏi</label>
-                            <input
-                                type="text"
-                                value={formData.question}
-                                onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                                placeholder="VD: Thủ tục ly hôn"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Mô tả ngắn</label>
-                            <textarea
-                                value={formData.shortDescription}
-                                onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
-                                placeholder="Mô tả ngắn"
-                                rows={3}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>URL Hình ảnh</label>
-                            <input
-                                type="text"
-                                value={formData.image}
-                                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                                placeholder="VD: /images/family-qa-1.jpg"
-                            />
-                        </div>
-                        <div className="modal-actions">
-                            <button className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>
-                                Hủy
-                            </button>
-                            <button className="btn btn-primary" onClick={handleSave}>
-                                Lưu
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
-
-export default FamilyLawAdmin;
+export default FamilyLawAdmin

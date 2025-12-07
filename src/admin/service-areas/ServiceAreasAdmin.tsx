@@ -1,184 +1,107 @@
-import React, { useState, useEffect } from 'react';
-import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
-import { ServiceArea } from '../../types';
-import { serviceAreaService } from '../api/serviceAreaService';
-import { mockServiceAreas } from '../../data/mockData';
-import { toast } from 'react-toastify';
-import '../documents/Admin.css';
-
-interface FormData {
-    title: string;
-    image: string;
-    description: string;
-}
+import React, { useState, useEffect } from 'react'
+import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Image } from 'antd'
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { ServiceArea } from '../../types'
+import { serviceAreaService } from '../api/serviceAreaService'
+import { mockServiceAreas } from '../../data/mockData'
 
 const ServiceAreasAdmin: React.FC = () => {
-    const [serviceAreas, setServiceAreas] = useState<ServiceArea[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [formData, setFormData] = useState<FormData>({
-        title: '',
-        image: '',
-        description: ''
-    });
+  const [areas, setAreas] = useState<ServiceArea[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editing, setEditing] = useState<ServiceArea | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [form] = Form.useForm()
 
-    useEffect(() => {
-        serviceAreaService.initialize(mockServiceAreas);
-        loadServiceAreas();
-    }, []);
+  useEffect(() => {
+    serviceAreaService.initialize(mockServiceAreas)
+    load()
+  }, [])
 
-    const loadServiceAreas = () => {
-        const allAreas = serviceAreaService.getAllServiceAreas();
-        setServiceAreas(allAreas);
-    };
+  const load = () => setAreas(serviceAreaService.getAllServiceAreas())
 
-    const handleAddNew = () => {
-        setEditingId(null);
-        setFormData({ title: '', image: '', description: '' });
-        setIsModalOpen(true);
-    };
+  const openAdd = () => {
+    setEditing(null)
+    form.resetFields()
+    setIsModalOpen(true)
+  }
 
-    const handleEdit = (area: ServiceArea) => {
-        setEditingId(area.id);
-        setFormData({
-            title: area.title,
-            image: area.image,
-            description: area.description
-        });
-        setIsModalOpen(true);
-    };
+  const openEdit = (a: ServiceArea) => {
+    setEditing(a)
+    form.setFieldsValue({ title: a.title, description: a.description, image: a.image })
+    setIsModalOpen(true)
+  }
 
-    const handleSave = () => {
-        if (!formData.title || !formData.image) {
-            toast.error('Vui lòng điền đầy đủ thông tin');
-            return;
-        }
+  const handleDelete = (id: string) => {
+    const ok = serviceAreaService.deleteServiceArea(id)
+    if (ok) {
+      message.success('Xóa thành công')
+      load()
+    } else message.error('Xóa thất bại')
+  }
 
-        if (editingId) {
-            serviceAreaService.updateServiceArea(editingId, formData);
-            toast.success('Cập nhật thành công');
-        } else {
-            serviceAreaService.createServiceArea(formData);
-            toast.success('Thêm mới thành công');
-        }
-        
-        setIsModalOpen(false);
-        loadServiceAreas();
-    };
+  const handleSave = async () => {
+    try {
+      const values = await form.validateFields()
+      const payload = { title: values.title, description: values.description || '', image: values.image || '' }
+      if (editing && editing.id) {
+        serviceAreaService.updateServiceArea(editing.id, payload)
+        message.success('Cập nhật thành công')
+      } else {
+        serviceAreaService.createServiceArea(payload)
+        message.success('Thêm mới thành công')
+      }
+      setIsModalOpen(false)
+      load()
+    } catch (e) {}
+  }
 
-    const handleDelete = (id: string) => {
-        if (window.confirm('Bạn chắc chắn muốn xóa?')) {
-            serviceAreaService.deleteServiceArea(id);
-            toast.success('Xóa thành công');
-            loadServiceAreas();
-        }
-    };
+  const filtered = areas.filter((a) => a.title.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    const filteredAreas = serviceAreas.filter(area =>
-        area.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const columns = [
+    { title: 'Tiêu đề', dataIndex: 'title', key: 'title' },
+    { title: 'Mô tả', dataIndex: 'description', key: 'description' },
+    { title: 'Hình ảnh', dataIndex: 'image', key: 'image', render: (src: string) => src ? <Image src={src} alt="thumb" width={80} /> : null },
+    {
+      title: 'Hành động',
+      key: 'actions',
+      render: (_: any, record: ServiceArea) => (
+        <Space>
+          <Button icon={<EditOutlined />} onClick={() => openEdit(record)} />
+          <Popconfirm title="Xác nhận xóa?" onConfirm={() => handleDelete(record.id)} okText="Xóa" cancelText="Hủy">
+            <Button danger icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ]
 
-    return (
-        <div className="admin-section">
-            <div className="admin-header">
-                <h2>Quản Lý Lĩnh Vực Dịch Vụ</h2>
-                <button className="btn btn-primary" onClick={handleAddNew}>
-                    <FaPlus /> Thêm mới
-                </button>
-            </div>
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <h2>Quản Lý Lĩnh Vực Dịch Vụ</h2>
+        <Space>
+          <Input.Search placeholder="Tìm kiếm..." onSearch={(v) => setSearchTerm(v)} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: 300 }} allowClear />
+          <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>Thêm mới</Button>
+        </Space>
+      </div>
 
-            <div className="search-box">
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-            </div>
+      <Table dataSource={filtered} columns={columns} rowKey={(r: any) => r.id} locale={{ emptyText: 'Không có dữ liệu' }} />
 
-            <div className="admin-table-wrapper">
-                <table className="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Tiêu đề</th>
-                            <th>Mô tả</th>
-                            <th>Hình ảnh</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredAreas.map(area => (
-                            <tr key={area.id}>
-                                <td>{area.title}</td>
-                                <td>{area.description}</td>
-                                <td><img src={area.image} alt={area.title} style={{ maxWidth: '50px' }} /></td>
-                                <td>
-                                    <button
-                                        className="btn-icon btn-edit"
-                                        onClick={() => handleEdit(area)}
-                                        title="Sửa"
-                                    >
-                                        <FaEdit />
-                                    </button>
-                                    <button
-                                        className="btn-icon btn-delete"
-                                        onClick={() => handleDelete(area.id)}
-                                        title="Xóa"
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+      <Modal title={editing ? 'Sửa Lĩnh Vực Dịch Vụ' : 'Thêm Lĩnh Vực Dịch Vụ'} open={isModalOpen} onOk={handleSave} onCancel={() => { setIsModalOpen(false); form.resetFields(); setEditing(null) }} okText="Lưu" cancelText="Hủy">
+        <Form form={form} layout="vertical">
+          <Form.Item name="title" label="Tiêu đề" rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="description" label="Mô tả">
+            <Input />
+          </Form.Item>
+          <Form.Item name="image" label="URL hình ảnh">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  )
+}
 
-            {isModalOpen && (
-                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <h3>{editingId ? 'Sửa Lĩnh Vực Dịch Vụ' : 'Thêm Lĩnh Vực Dịch Vụ'}</h3>
-                        <div className="form-group">
-                            <label>Tiêu đề</label>
-                            <input
-                                type="text"
-                                value={formData.title}
-                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                placeholder="VD: Tư vấn luật đất đai"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Mô tả</label>
-                            <input
-                                type="text"
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                placeholder="Mô tả ngắn"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>URL Hình ảnh</label>
-                            <input
-                                type="text"
-                                value={formData.image}
-                                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                                placeholder="VD: /images/service-land-law.jpg"
-                            />
-                        </div>
-                        <div className="modal-actions">
-                            <button className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>
-                                Hủy
-                            </button>
-                            <button className="btn btn-primary" onClick={handleSave}>
-                                Lưu
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
-
-export default ServiceAreasAdmin;
+export default ServiceAreasAdmin

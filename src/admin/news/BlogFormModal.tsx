@@ -1,194 +1,103 @@
-import { BlogPost } from "@/types";
-import { useEffect, useState } from "react";
-import { categoryService } from '../api/categoryService';
-import { FaTimes } from "react-icons/fa";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from 'react'
+import { BlogPost } from "@/types"
+import { Modal, Form, Input, Select, DatePicker, message } from 'antd'
+import { categoryService } from '../api/categoryService'
+import dayjs from 'dayjs'
 
 interface BlogFormModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSave: (post: Omit<BlogPost, 'id'> | BlogPost) => void;
-    editPost?: BlogPost | null;
+    isOpen: boolean
+    onClose: () => void
+    onSave: (post: Omit<BlogPost, 'id'> | BlogPost) => void
+    editPost?: BlogPost | null
 }
 
 export const BlogFormModal: React.FC<BlogFormModalProps> = ({ isOpen, onClose, onSave, editPost }) => {
-    const [formData, setFormData] = useState<Omit<BlogPost, 'id'>>({
-        title: '',
-        excerpt: '',
-        content: '',
-        author: '',
-        date: new Date().toISOString().split('T')[0],
-        category: '',
-    });
+    const [form] = Form.useForm()
+    const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([])
+
+    useEffect(() => {
+        try {
+            setCategories(categoryService.getAllCategories().map((c) => ({ id: c.id, name: c.name })))
+        } catch (e) {
+            setCategories([])
+        }
+    }, [])
 
     useEffect(() => {
         if (editPost) {
-            setFormData({
+            form.setFieldsValue({
                 title: editPost.title,
                 excerpt: editPost.excerpt,
                 content: editPost.content,
                 author: editPost.author,
-                date: editPost.date,
+                date: dayjs(editPost.date),
                 category: editPost.category,
-            });
+            })
         } else {
-            setFormData({
-                title: '',
-                excerpt: '',
-                content: '',
-                author: '',
-                date: new Date().toISOString().split('T')[0],
-                category: '',
-            });
+            form.resetFields()
+            form.setFieldsValue({ date: dayjs() })
         }
-    }, [editPost, isOpen]);
+    }, [editPost, isOpen, form])
 
-    const [categories, setCategories] = useState<Array<{id: string; name: string}>>([]);
-
-    useEffect(() => {
-        try {
-            setCategories(categoryService.getAllCategories().map(c => ({ id: c.id, name: c.name })));
-        } catch (e) {
-            setCategories([]);
+    const handleFinish = (values: any) => {
+        if (!values.title || !values.excerpt || !values.content || !values.author || !values.date || !values.category) {
+            message.error('Vui lòng điền đầy đủ thông tin!')
+            return
         }
-    }, []);
 
-    const handleSubmit = (e: React.MouseEvent) => {
-        e.preventDefault();
-
-        // Validation
-        if (!formData.title || !formData.excerpt || !formData.content ||
-            !formData.author || !formData.date || !formData.category) {
-            toast.error('Vui lòng điền đầy đủ thông tin!');
-            return;
+        const payload: any = {
+            title: values.title,
+            excerpt: values.excerpt,
+            content: values.content,
+            author: values.author,
+            date: values.date.format ? values.date.format('YYYY-MM-DD') : values.date,
+            category: values.category,
         }
 
         if (editPost) {
-            onSave({ ...formData, id: editPost.id });
+            onSave({ ...payload, id: editPost.id })
+            message.success('Cập nhật bài viết thành công!')
         } else {
-            onSave(formData);
+            onSave(payload)
+            message.success('Thêm bài viết mới thành công!')
         }
-        onClose();
-    };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
-
-    if (!isOpen) return null;
+        onClose()
+    }
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
-                    <h2>{editPost ? 'Chỉnh sửa bài viết' : 'Thêm bài viết mới'}</h2>
-                    <button className="modal-close" onClick={onClose}>
-                        <FaTimes />
-                    </button>
-                </div>
+        <Modal title={editPost ? 'Chỉnh sửa bài viết' : 'Thêm bài viết mới'} open={isOpen} onCancel={onClose} okText={editPost ? 'Cập nhật' : 'Thêm mới'} onOk={() => form.submit()}>
+            <Form form={form} layout="vertical" onFinish={handleFinish}>
+                <Form.Item name="title" label="Tiêu đề" rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}>
+                    <Input placeholder="Nhập tiêu đề bài viết" />
+                </Form.Item>
 
-                <div style={{ padding: '20px' }}>
-                    <div className="form-group">
-                        <label htmlFor="title">Tiêu đề *</label>
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            value={formData.title}
-                            onChange={handleChange}
-                            required
-                            className="form-control"
-                            placeholder="Nhập tiêu đề bài viết"
-                        />
-                    </div>
+                <Form.Item name="excerpt" label="Mô tả ngắn" rules={[{ required: true, message: 'Vui lòng nhập mô tả ngắn' }]}>
+                    <Input.TextArea rows={3} placeholder="Nhập mô tả ngắn về bài viết" />
+                </Form.Item>
 
-                    <div className="form-group">
-                        <label htmlFor="excerpt">Mô tả ngắn *</label>
-                        <textarea
-                            id="excerpt"
-                            name="excerpt"
-                            value={formData.excerpt}
-                            onChange={handleChange}
-                            required
-                            rows={3}
-                            className="form-control"
-                            placeholder="Nhập mô tả ngắn về bài viết"
-                        />
-                    </div>
+                <Form.Item name="content" label="Nội dung" rules={[{ required: true, message: 'Vui lòng nhập nội dung' }]}>
+                    <Input.TextArea rows={8} placeholder="Nhập nội dung chi tiết" />
+                </Form.Item>
 
-                    <div className="form-group">
-                        <label htmlFor="content">Nội dung *</label>
-                        <textarea
-                            id="content"
-                            name="content"
-                            value={formData.content}
-                            onChange={handleChange}
-                            required
-                            rows={10}
-                            className="form-control"
-                            placeholder="Nhập nội dung chi tiết"
-                        />
-                    </div>
+                <Form.Item name="author" label="Tác giả" rules={[{ required: true, message: 'Vui lòng nhập tên tác giả' }]}>
+                    <Input placeholder="Tên tác giả" />
+                </Form.Item>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="author">Tác giả *</label>
-                            <input
-                                type="text"
-                                id="author"
-                                name="author"
-                                value={formData.author}
-                                onChange={handleChange}
-                                required
-                                className="form-control"
-                                placeholder="Tên tác giả"
-                            />
-                        </div>
+                <Form.Item name="date" label="Ngày đăng" rules={[{ required: true, message: 'Vui lòng chọn ngày đăng' }]}>
+                    <DatePicker style={{ width: '100%' }} />
+                </Form.Item>
 
-                        <div className="form-group">
-                            <label htmlFor="date">Ngày đăng *</label>
-                            <input
-                                type="date"
-                                id="date"
-                                name="date"
-                                value={formData.date}
-                                onChange={handleChange}
-                                required
-                                className="form-control"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="category">Danh mục *</label>
-                        <select
-                            id="category"
-                            name="category"
-                            value={formData.category}
-                            onChange={handleChange}
-                            required
-                            className="form-control"
-                        >
-                            <option value="">Chọn danh mục</option>
-                            {categories.map(c => (
-                                <option key={c.id} value={c.name}>{c.name}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" onClick={onClose}>
-                        Hủy
-                    </button>
-                    <button type="button" className="btn btn-primary" onClick={handleSubmit}>
-                        {editPost ? 'Cập nhật' : 'Thêm mới'}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
+                <Form.Item name="category" label="Danh mục" rules={[{ required: true, message: 'Vui lòng chọn danh mục' }]}>
+                    <Select placeholder="Chọn danh mục">
+                        {categories.map((c) => (
+                            <Select.Option key={c.id} value={c.name}>
+                                {c.name}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+            </Form>
+        </Modal>
+    )
+}

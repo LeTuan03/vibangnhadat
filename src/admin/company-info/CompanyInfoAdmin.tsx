@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
-import '../documents/Admin.css';
-import { companyInfoService } from '../api/companyInfoService';
-import { mockContactInfo, mockCompanyInfo } from '../../data/mockData';
+import React, { useState, useEffect } from 'react'
+import { message } from 'antd'
+import { companyInfoService } from '../api/companyInfoService'
+import { mockContactInfo, mockCompanyInfo } from '../../data/mockData'
 
 const CompanyInfoAdmin: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'contact' | 'company'>('contact');
@@ -30,16 +29,16 @@ const CompanyInfoAdmin: React.FC = () => {
 
     const handleSaveContact = () => {
         companyInfoService.updateContactInfo(contactInfo);
-        toast.success('Cập nhật thông tin liên hệ thành công');
+        message.success('Cập nhật thông tin liên hệ thành công');
     };
 
     const handleSaveCompany = () => {
         companyInfoService.updateCompanyInfo(companyInfo);
-        toast.success('Cập nhật thông tin công ty thành công');
+        message.success('Cập nhật thông tin công ty thành công');
     };
 
     return (
-        <div className="admin-section">
+        <div>
             <div className="admin-header">
                 <h2>Quản Lý Thông Tin Công Ty</h2>
             </div>

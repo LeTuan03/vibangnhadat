@@ -1,197 +1,130 @@
-// src/pages/admin/NewsAdmin.tsx
+// src/admin/news/NewAdmin.tsx (refactored to use Ant Design)
 
-import { BlogPost } from "@/types";
-import { useState, useEffect } from "react";
-import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
-import { BlogFormModal } from "./BlogFormModal";
-import { blogService } from "../api/blogService";
-import { mockBlogPosts } from "@/data/mockData";
-import { toast } from "react-toastify";
+import { useEffect, useState } from 'react'
+import { BlogPost } from '@/types'
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Table, Button, Input, Card, Space, Popconfirm, message } from 'antd'
+import { BlogFormModal } from './BlogFormModal'
+import { blogService } from '../api/blogService'
+import { mockBlogPosts } from '@/data/mockData'
+
+const { Search } = Input
 
 function NewsAdmin() {
-    const [posts, setPosts] = useState<BlogPost[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [posts, setPosts] = useState<BlogPost[]>([])
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [editingPost, setEditingPost] = useState<BlogPost | null>(null)
+    const [searchTerm, setSearchTerm] = useState('')
 
-    // Khởi tạo dữ liệu khi component mount
     useEffect(() => {
-        blogService.initializePosts(mockBlogPosts);
-        loadPosts();
-    }, []);
+        blogService.initializePosts(mockBlogPosts)
+        loadPosts()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
-    // Load danh sách bài viết
     const loadPosts = () => {
-        const allPosts = blogService.getAllPosts();
-        setPosts(allPosts);
-    };
+        const allPosts = blogService.getAllPosts()
+        setPosts(allPosts)
+    }
 
-    // Xử lý thêm mới
     const handleAddNew = () => {
-        setEditingPost(null);
-        setIsModalOpen(true);
-    };
+        setEditingPost(null)
+        setIsModalOpen(true)
+    }
 
-    // Xử lý chỉnh sửa
     const handleEdit = (post: BlogPost) => {
-        setEditingPost(post);
-        setIsModalOpen(true);
-    };
+        setEditingPost(post)
+        setIsModalOpen(true)
+    }
 
-    // Xử lý lưu (thêm mới hoặc cập nhật)
     const handleSave = (postData: Omit<BlogPost, 'id'> | BlogPost) => {
         if ('id' in postData) {
-            // Cập nhật
-            const updated = blogService.updatePost(postData.id, postData);
+            const updated = blogService.updatePost(postData.id, postData)
             if (updated) {
-                setPosts(posts.map(p => p.id === postData.id ? updated : p));
-                toast.success('Cập nhật bài viết thành công!');
+                setPosts((prev) => prev.map((p) => (p.id === postData.id ? updated : p)))
+                message.success('Cập nhật bài viết thành công!')
             }
         } else {
-            // Thêm mới
-            const newPost = blogService.createPost(postData);
-            setPosts([newPost, ...posts]);
-            toast.success('Thêm bài viết mới thành công!');
+            const newPost = blogService.createPost(postData)
+            setPosts((prev) => [newPost, ...prev])
+            message.success('Thêm bài viết mới thành công!')
         }
-        setIsModalOpen(false);
-        setEditingPost(null);
-    };
+        setIsModalOpen(false)
+        setEditingPost(null)
+    }
 
-    // Xử lý xóa
     const handleDelete = (id: string) => {
-        if (window.confirm('Bạn có chắc muốn xóa bài viết này?')) {
-            const success = blogService.deletePost(id);
-            if (success) {
-                setPosts(posts.filter(post => post.id !== id));
-                toast.success('Xóa bài viết thành công!');
-            }
+        const success = blogService.deletePost(id)
+        if (success) {
+            setPosts((prev) => prev.filter((post) => post.id !== id))
+            message.success('Xóa bài viết thành công!')
+        } else {
+            message.error('Xóa thất bại')
         }
-    };
+    }
 
-    // Lọc bài viết theo từ khóa tìm kiếm
-    const filteredPosts = posts.filter(post =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredPosts = posts.filter(
+        (post) =>
+            post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.category.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
+
+    const columns = [
+        {
+            title: 'Tiêu đề',
+            dataIndex: 'title',
+            key: 'title',
+            render: (text: string, record: BlogPost) => (
+                <div style={{ maxWidth: 400 }}>
+                    <strong>{text}</strong>
+                    <div style={{ color: '#6b7280', marginTop: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{record.excerpt}</div>
+                </div>
+            ),
+        },
+        { title: 'Tác giả', dataIndex: 'author', key: 'author' },
+        { title: 'Ngày đăng', dataIndex: 'date', key: 'date', render: (d: string) => new Date(d).toLocaleDateString('vi-VN') },
+        { title: 'Danh mục', dataIndex: 'category', key: 'category' },
+        {
+            title: 'Thao tác',
+            key: 'actions',
+            render: (_: any, record: BlogPost) => (
+                <Space>
+                    <Button icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+                    <Popconfirm title="Bạn có chắc muốn xóa bài viết này?" onConfirm={() => handleDelete(record.id)} okText="Xóa" cancelText="Hủy">
+                        <Button danger icon={<DeleteOutlined />} />
+                    </Popconfirm>
+                </Space>
+            ),
+        },
+    ]
 
     return (
         <div>
-            <div className="admin-header">
-                <h1>Quản lý Tin tức & Blog</h1>
-                <button className="btn btn-primary" onClick={handleAddNew}>
-                    <FaPlus /> Thêm mới
-                </button>
-            </div>
-
-            {/* Search Bar */}
-            <div style={{ marginBottom: '20px' }}>
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm theo tiêu đề, tác giả, danh mục..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="form-control"
-                    style={{ maxWidth: '400px' }}
-                />
-            </div>
-
-            <div className="admin-content">
-                <div className="admin-table-wrapper">
-                    <table className="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Tiêu đề</th>
-                                <th>Tác giả</th>
-                                <th>Ngày đăng</th>
-                                <th>Danh mục</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredPosts.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} style={{ textAlign: 'center', padding: '40px' }}>
-                                        {searchTerm ? 'Không tìm thấy bài viết phù hợp' : 'Chưa có bài viết nào'}
-                                    </td>
-                                </tr>
-                            ) : (
-                                filteredPosts.map((post) => (
-                                    <tr key={post.id}>
-                                        <td>
-                                            <div style={{ maxWidth: '300px' }}>
-                                                <strong>{post.title}</strong>
-                                                <div style={{
-                                                    fontSize: '0.875rem',
-                                                    color: '#6b7280',
-                                                    marginTop: '4px',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    whiteSpace: 'nowrap'
-                                                }}>
-                                                    {post.excerpt}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{post.author}</td>
-                                        <td>{new Date(post.date).toLocaleDateString('vi-VN')}</td>
-                                        <td>
-                                            <span className="badge">{post.category}</span>
-                                        </td>
-                                        <td>
-                                            <div className="action-buttons">
-                                                <button
-                                                    className="btn-icon btn-edit"
-                                                    title="Sửa"
-                                                    onClick={() => handleEdit(post)}
-                                                >
-                                                    <FaEdit />
-                                                </button>
-                                                <button
-                                                    className="btn-icon btn-delete"
-                                                    title="Xóa"
-                                                    onClick={() => handleDelete(post.id)}
-                                                >
-                                                    <FaTrash />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* Statistics */}
-                <div style={{
-                    marginTop: '20px',
-                    padding: '16px',
-                    background: '#f9fafb',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                }}>
-                    <div style={{ color: '#6b7280' }}>
-                        Tổng số bài viết: <strong>{posts.length}</strong>
-                        {searchTerm && ` | Kết quả tìm kiếm: ${filteredPosts.length}`}
-                    </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h2>Quản lý Tin tức & Blog</h2>
+                <div>
+                    <Space>
+                        <Search placeholder="Tìm kiếm theo tiêu đề, tác giả, danh mục..." onSearch={(v) => setSearchTerm(v)} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: 320 }} allowClear />
+                        <Button type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>
+                            Thêm mới
+                        </Button>
+                    </Space>
                 </div>
             </div>
 
-            {/* Modal thêm/sửa */}
-            {<BlogFormModal
-                isOpen={isModalOpen}
-                onClose={() => {
-                    setIsModalOpen(false);
-                    setEditingPost(null);
-                }}
-                onSave={handleSave}
-                editPost={editingPost}
-            />}
+            <Card>
+                <Table dataSource={filteredPosts} columns={columns} rowKey="id" locale={{ emptyText: searchTerm ? 'Không tìm thấy bài viết phù hợp' : 'Chưa có bài viết nào' }} />
+
+                <div style={{ marginTop: 16, color: '#6b7280' }}>
+                    Tổng số bài viết: <strong>{posts.length}</strong>
+                    {searchTerm && ` | Kết quả tìm kiếm: ${filteredPosts.length}`}
+                </div>
+            </Card>
+
+            <BlogFormModal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setEditingPost(null); }} onSave={handleSave} editPost={editingPost} />
         </div>
-    );
+    )
 }
 
-export default NewsAdmin;
+export default NewsAdmin

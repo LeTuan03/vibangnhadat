@@ -1,128 +1,81 @@
-import React from 'react';
-import { FaFileContract, FaHome, FaNewspaper, FaSignOutAlt, FaUsers, FaQuestionCircle, FaList, FaBook, FaTrophy, FaMapMarkerAlt, FaImage, FaInfo, FaHeart } from 'react-icons/fa';
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import '../AdminDashboard.css';
+import React from 'react'
+import 'antd/dist/reset.css'
+import '../documents/Admin.css'
+import './AdminLayout.css'
+import { FaFileContract, FaNewspaper, FaUsers, FaQuestionCircle, FaList, FaBook, FaTrophy, FaMapMarkerAlt, FaImage, FaInfo, FaHeart } from 'react-icons/fa'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Layout, Menu, Space, Button, Typography } from 'antd'
+
+const { Sider, Content } = Layout
+const { Title, Text } = Typography
 
 interface LayoutProps {
-    children?: React.ReactNode;
-    onLogout?: () => void;
+    children?: React.ReactNode
+    onLogout?: () => void
 }
 
-const AdminLayout: React.FC<LayoutProps> = ({ children, onLogout }) => {
-    const location = useLocation();
+const menuConfig: Array<{ key: string; path: string; label: string; icon: React.ReactNode }> = [
+    { key: 'news', path: '/admin/news', label: 'Tin tức & Blog', icon: <FaNewspaper /> },
+    { key: 'services', path: '/admin/services', label: 'Dịch vụ', icon: <FaFileContract /> },
+    { key: 'viban', path: '/admin/viban', label: 'Vi bằng', icon: <FaUsers /> },
+    { key: 'category', path: '/admin/category', label: 'Danh mục', icon: <FaList /> },
+    { key: 'documents', path: '/admin/documents', label: 'Tài liệu', icon: <FaBook /> },
+    { key: 'qa', path: '/admin/qa', label: 'Hỏi & Đáp', icon: <FaQuestionCircle /> },
+    { key: 'statistics', path: '/admin/statistics', label: 'Thống kê', icon: <FaTrophy /> },
+    { key: 'service-areas', path: '/admin/service-areas', label: 'Lĩnh vực dịch vụ', icon: <FaMapMarkerAlt /> },
+    { key: 'family-law', path: '/admin/family-law', label: 'Hôn nhân - Gia đình', icon: <FaHeart /> },
+    { key: 'gallery', path: '/admin/gallery', label: 'Thư viện ảnh & Video', icon: <FaImage /> },
+    { key: 'team', path: '/admin/team', label: 'Đội ngũ', icon: <FaUsers /> },
+    { key: 'company-info', path: '/admin/company-info', label: 'Thông tin công ty', icon: <FaInfo /> },
+    { key: 'menu', path: '/admin/menu', label: 'Menu Client', icon: <FaList /> },
+]
 
-    const isActive = (path: string) => location.pathname.includes(path);
+const AdminLayout: React.FC<LayoutProps> = ({ children, onLogout }) => {
+    const location = useLocation()
+    const navigate = useNavigate()
+
+    const getSelectedKey = () => {
+        const found = menuConfig.find((m) => location.pathname.startsWith(m.path))
+        return found ? found.key : 'news'
+    }
 
     return (
-        <div className="admin-dashboard">
-            <aside className="admin-sidebar">
-                <div className="admin-logo">
-                    <h2>Admin Panel</h2>
-                    <p>Văn phòng Thừa phát lại</p>
+        <Layout style={{ minHeight: '100vh' }}>
+            <Sider width={240} className="custom-admin-sider" style={{ background: 'linear-gradient(180deg, #b91c1c, #7f1d1d)', borderRight: 'none' }}>
+                <div style={{ padding: 16, textAlign: 'center', borderBottom: "1px solid white" }}>
+                    <Title level={4} style={{ margin: 0, color: '#fff' }}>
+                        Admin Panel
+                    </Title>
+                    <Text style={{ color: 'rgba(255,255,255,0.9)' }}>Văn phòng Thừa phát lại</Text>
                 </div>
 
-                <nav className="admin-nav">
-                    <Link
-                        to="/admin/news"
-                        className={`admin-nav-item ${isActive('/admin/news') ? 'active' : ''}`}
-                    >
-                        <FaNewspaper /> Tin tức & Blog
-                    </Link>
-                    <Link
-                        to="/admin/services"
-                        className={`admin-nav-item ${isActive('/admin/services') ? 'active' : ''}`}
-                    >
-                        <FaFileContract /> Dịch vụ
-                    </Link>
-                    <Link
-                        to="/admin/viban"
-                        className={`admin-nav-item ${isActive('/admin/viban') ? 'active' : ''}`}
-                    >
-                        <FaUsers /> Vi bằng
-                    </Link>
-                    <Link
-                        to="/admin/category"
-                        className={`admin-nav-item ${isActive('/admin/category') ? 'active' : ''}`}
-                    >
-                        <FaList /> Danh mục
-                    </Link>
-                    <Link
-                        to="/admin/documents"
-                        className={`admin-nav-item ${isActive('/admin/documents') ? 'active' : ''}`}
-                    >
-                        <FaBook /> Tài liệu
-                    </Link>
-                    <Link
-                        to="/admin/qa"
-                        className={`admin-nav-item ${isActive('/admin/qa') ? 'active' : ''}`}
-                    >
-                        <FaQuestionCircle /> Hỏi & Đáp
-                    </Link>
+                <Menu
+                    mode="inline"
+                    theme="dark"
+                    selectedKeys={[getSelectedKey()]}
+                    style={{ border: 'none', background: 'transparent', color: '#fff' }}
+                    onClick={(info) => {
+                        const item = menuConfig.find(m => m.key === String(info.key))
+                        if (item) navigate(item.path)
+                    }}
+                    items={menuConfig.map(m => ({ key: m.key, icon: m.icon, label: m.label }))}
+                />
 
-                    {/* Divider */}
-                    <div style={{ borderTop: '1px solid #ddd', margin: '10px 0' }}></div>
-
-                    {/* New admin sections */}
-                    <Link
-                        to="/admin/statistics"
-                        className={`admin-nav-item ${isActive('/admin/statistics') ? 'active' : ''}`}
-                    >
-                        <FaTrophy /> Thống kê
-                    </Link>
-                    <Link
-                        to="/admin/service-areas"
-                        className={`admin-nav-item ${isActive('/admin/service-areas') ? 'active' : ''}`}
-                    >
-                        <FaMapMarkerAlt /> Lĩnh vực dịch vụ
-                    </Link>
-                    <Link
-                        to="/admin/family-law"
-                        className={`admin-nav-item ${isActive('/admin/family-law') ? 'active' : ''}`}
-                    >
-                        <FaHeart /> Hôn nhân - Gia đình
-                    </Link>
-                    <Link
-                        to="/admin/gallery"
-                        className={`admin-nav-item ${isActive('/admin/gallery') ? 'active' : ''}`}
-                    >
-                        <FaImage /> Thư viện ảnh & Video
-                    </Link>
-                    <Link
-                        to="/admin/team"
-                        className={`admin-nav-item ${isActive('/admin/team') ? 'active' : ''}`}
-                    >
-                        <FaUsers /> Đội ngũ
-                    </Link>
-                    <Link
-                        to="/admin/company-info"
-                        className={`admin-nav-item ${isActive('/admin/company-info') ? 'active' : ''}`}
-                    >
-                        <FaInfo /> Thông tin công ty
-                    </Link>
-                    <Link
-                        to="/admin/menu"
-                        className={`admin-nav-item ${isActive('/admin/menu') ? 'active' : ''}`}
-                    >
-                        <FaList /> Menu Client
-                    </Link>
-                </nav>
-
-                <div className="admin-sidebar-footer">
-                    <Link to="/" className="admin-nav-item">
-                        <FaHome /> Về trang chủ
-                    </Link>
-                    <button className="admin-nav-item logout-btn" onClick={onLogout}>
-                        <FaSignOutAlt /> Đăng xuất
-                    </button>
+                <div style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                        <Button type="link" style={{ color: 'rgba(255,255,255,0.95)' }} onClick={() => navigate('/')}>Về trang chủ</Button>
+                        <Button block onClick={onLogout} style={{ background: '#fff', color: '#b91c1c', borderRadius: 6 }}>Đăng xuất</Button>
+                    </Space>
                 </div>
-            </aside>
+            </Sider>
 
-            {/* Main Content */}
-            <main className="admin-main">
-                {children ?? <Outlet />}
-            </main>
-        </div>
-    );
-};
+            <Layout>
+                <Content style={{ padding: 24, height: '100vh', backgroundColor: '#f3f4f6', overflow: 'auto' }}>
+                    {children ?? <Outlet />}
+                </Content>
+            </Layout>
+        </Layout >
+    )
+}
 
-export default AdminLayout;
+export default AdminLayout

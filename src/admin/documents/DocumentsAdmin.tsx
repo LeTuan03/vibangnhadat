@@ -1,214 +1,118 @@
-import React, { useState, useEffect } from 'react';
-import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
-import { LegalDocument } from '../../types';
-import { documentService } from '../api/documentService';
-import { mockLegalDocuments } from '../../data/mockData';
-import { toast } from 'react-toastify';
-import './Admin.css';
+import React, { useState, useEffect } from 'react'
+import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, DatePicker } from 'antd'
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { LegalDocument } from '../../types'
+import { documentService } from '../api/documentService'
+import { mockLegalDocuments } from '../../data/mockData'
+import dayjs from 'dayjs'
 
 const DocumentsAdmin: React.FC = () => {
-    const [documents, setDocuments] = useState<LegalDocument[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingDoc, setEditingDoc] = useState<LegalDocument | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [formData, setFormData] = useState({
-        title: '',
-        description: '',
-        category: '',
-        publishDate: '',
-        fileUrl: ''
-    });
+  const [docs, setDocs] = useState<LegalDocument[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editing, setEditing] = useState<LegalDocument | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [form] = Form.useForm()
 
-    useEffect(() => {
-        documentService.initializeDocuments(mockLegalDocuments);
-        loadDocuments();
-    }, []);
+  useEffect(() => {
+    documentService.initializeDocuments(mockLegalDocuments)
+    load()
+  }, [])
 
-    const loadDocuments = () => {
-        const allDocs = documentService.getAllDocuments();
-        setDocuments(allDocs);
-    };
+  const load = () => setDocs(documentService.getAllDocuments())
 
-    const handleAddNew = () => {
-        setEditingDoc(null);
-        setFormData({
-            title: '',
-            description: '',
-            category: '',
-            publishDate: '',
-            fileUrl: ''
-        });
-        setIsModalOpen(true);
-    };
+  const openAdd = () => { setEditing(null); form.resetFields(); setIsModalOpen(true) }
+  const openEdit = (d: LegalDocument) => {
+    setEditing(d)
+    form.setFieldsValue({
+      title: d.title,
+      description: d.description,
+      category: d.category,
+      publishDate: d.publishDate ? dayjs(d.publishDate) : undefined,
+      fileUrl: d.fileUrl || ''
+    })
+    setIsModalOpen(true)
+  }
 
-    const handleEdit = (doc: LegalDocument) => {
-        setEditingDoc(doc);
-        setFormData({
-            title: doc.title,
-            description: doc.description,
-            category: doc.category,
-            publishDate: doc.publishDate,
-            fileUrl: doc.fileUrl || ''
-        });
-        setIsModalOpen(true);
-    };
+  const handleDelete = (id: string) => {
+    const ok = documentService.deleteDocument(id)
+    if (ok) { message.success('Xóa tài liệu thành công'); load() } else message.error('Xóa thất bại')
+  }
 
-    const handleSave = () => {
-        if (!formData.title || !formData.category) {
-            toast.error('Vui lòng điền tất cả các trường bắt buộc');
-            return;
-        }
+  const handleSave = async () => {
+    try {
+      const values = await form.validateFields()
+      const payload = {
+        title: values.title,
+        description: values.description || '',
+        category: values.category,
+        publishDate: values.publishDate ? values.publishDate.format('YYYY-MM-DD') : '',
+        fileUrl: values.fileUrl || ''
+      }
+      if (editing && editing.id) {
+        const updated = documentService.updateDocument(editing.id, { ...editing, ...payload })
+        if (updated) message.success('Cập nhật tài liệu thành công')
+      } else {
+        documentService.createDocument(payload)
+        message.success('Thêm tài liệu mới thành công')
+      }
+      setIsModalOpen(false)
+      load()
+    } catch (e) {}
+  }
 
-        if (editingDoc) {
-            const updated = documentService.updateDocument(editingDoc.id, {
-                ...editingDoc,
-                ...formData
-            });
-            if (updated) {
-                setDocuments(documents.map(d => d.id === editingDoc.id ? updated : d));
-                toast.success('Cập nhật tài liệu thành công!');
-            }
-        } else {
-            const newDoc = documentService.createDocument(formData);
-            setDocuments([newDoc, ...documents]);
-            toast.success('Thêm tài liệu mới thành công!');
-        }
-        setIsModalOpen(false);
-    };
+  const filtered = docs.filter(d => d.title.toLowerCase().includes(searchTerm.toLowerCase()) || d.category.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    const handleDelete = (id: string) => {
-        if (window.confirm('Bạn có chắc muốn xóa tài liệu này?')) {
-            const success = documentService.deleteDocument(id);
-            if (success) {
-                setDocuments(documents.filter(d => d.id !== id));
-                toast.success('Xóa tài liệu thành công!');
-            }
-        }
-    };
+  const columns = [
+    { title: 'Tiêu đề', dataIndex: 'title', key: 'title' },
+    { title: 'Danh mục', dataIndex: 'category', key: 'category' },
+    { title: 'Ngày phát hành', dataIndex: 'publishDate', key: 'publishDate', render: (date: string) => date ? new Date(date).toLocaleDateString('vi-VN') : '' },
+    {
+      title: 'Hành động',
+      key: 'actions',
+      render: (_: any, record: LegalDocument) => (
+        <Space>
+          <Button icon={<EditOutlined />} onClick={() => openEdit(record)} />
+          <Popconfirm title="Xác nhận xóa?" onConfirm={() => handleDelete(record.id)} okText="Xóa" cancelText="Hủy">
+            <Button danger icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ]
 
-    const filteredDocs = documents.filter(doc =>
-        doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doc.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <h2>Quản lý Tài liệu Pháp luật</h2>
+        <Space>
+          <Input.Search placeholder="Tìm kiếm tài liệu..." onSearch={(v) => setSearchTerm(v)} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: 300 }} allowClear />
+          <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>Thêm mới</Button>
+        </Space>
+      </div>
 
-    return (
-        <div className="admin-section">
-            <div className="admin-header">
-                <h2>Quản lý Tài liệu Pháp luật</h2>
-                <button className="btn-primary" onClick={handleAddNew}>
-                    <FaPlus /> Thêm mới
-                </button>
-            </div>
+      <Table dataSource={filtered} columns={columns} rowKey={(r: any) => r.id} locale={{ emptyText: 'Không có dữ liệu' }} />
 
-            <div className="admin-search">
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm tài liệu..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="search-input"
-                />
-            </div>
+      <Modal title={editing ? 'Chỉnh sửa tài liệu' : 'Thêm tài liệu mới'} open={isModalOpen} onOk={handleSave} onCancel={() => { setIsModalOpen(false); form.resetFields(); setEditing(null) }} okText="Lưu" cancelText="Hủy">
+        <Form form={form} layout="vertical">
+          <Form.Item name="title" label="Tiêu đề" rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="description" label="Mô tả">
+            <Input.TextArea rows={3} />
+          </Form.Item>
+          <Form.Item name="category" label="Danh mục" rules={[{ required: true, message: 'Vui lòng nhập danh mục' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="publishDate" label="Ngày phát hành">
+            <DatePicker />
+          </Form.Item>
+          <Form.Item name="fileUrl" label="Link file">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  )
+}
 
-            <div className="admin-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tiêu đề</th>
-                            <th>Danh mục</th>
-                            <th>Ngày phát hành</th>
-                            <th>Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredDocs.length > 0 ? (
-                            filteredDocs.map(doc => (
-                                <tr key={doc.id}>
-                                    <td>{doc.title}</td>
-                                    <td>{doc.category}</td>
-                                    <td>{new Date(doc.publishDate).toLocaleDateString('vi-VN')}</td>
-                                    <td className="action-buttons">
-                                        <button className="btn-edit" onClick={() => handleEdit(doc)}>
-                                            <FaEdit /> Sửa
-                                        </button>
-                                        <button className="btn-delete" onClick={() => handleDelete(doc.id)}>
-                                            <FaTrash /> Xóa
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={4} className="text-center">Không có dữ liệu</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-
-            {isModalOpen && (
-                <div className="admin-modal-overlay" onClick={() => setIsModalOpen(false)}>
-                    <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-                        <h3>{editingDoc ? 'Chỉnh sửa tài liệu' : 'Thêm tài liệu mới'}</h3>
-                        
-                        <div className="form-group">
-                            <label>Tiêu đề *</label>
-                            <input
-                                type="text"
-                                value={formData.title}
-                                onChange={(e) => setFormData({...formData, title: e.target.value})}
-                                placeholder="Nhập tiêu đề"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Mô tả</label>
-                            <textarea
-                                value={formData.description}
-                                onChange={(e) => setFormData({...formData, description: e.target.value})}
-                                placeholder="Nhập mô tả"
-                                rows={3}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Danh mục *</label>
-                            <input
-                                type="text"
-                                value={formData.category}
-                                onChange={(e) => setFormData({...formData, category: e.target.value})}
-                                placeholder="Nhập danh mục"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Ngày phát hành</label>
-                            <input
-                                type="date"
-                                value={formData.publishDate}
-                                onChange={(e) => setFormData({...formData, publishDate: e.target.value})}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Link file</label>
-                            <input
-                                type="text"
-                                value={formData.fileUrl}
-                                onChange={(e) => setFormData({...formData, fileUrl: e.target.value})}
-                                placeholder="Nhập đường dẫn file"
-                            />
-                        </div>
-
-                        <div className="modal-actions">
-                            <button className="btn-cancel" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                            <button className="btn-save" onClick={handleSave}>Lưu</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
-
-export default DocumentsAdmin;
+export default DocumentsAdmin

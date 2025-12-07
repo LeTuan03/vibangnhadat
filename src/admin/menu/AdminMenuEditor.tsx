@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import navigationService, { NavItem } from '../api/navigationService';
-import '../../admin/documents/Admin.css';
+// Admin styles are loaded centrally in AdminLayout
 
 const generateId = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
 

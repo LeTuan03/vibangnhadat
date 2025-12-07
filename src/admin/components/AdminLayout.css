@@ -1,0 +1,40 @@
+.custom-admin-sider {
+    /* Slightly muted red sidebar with readable text */
+    --sider-text: rgba(255, 255, 255, 0.95);
+}
+
+.custom-admin-sider .ant-layout-sider-children {
+    background: transparent !important;
+}
+
+.custom-admin-sider .ant-menu,
+.custom-admin-sider .ant-menu-dark {
+    background: transparent !important;
+    border: none;
+}
+
+.custom-admin-sider .ant-menu-item {
+    color: var(--sider-text) !important;
+}
+
+.custom-admin-sider .ant-menu-item .anticon {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.custom-admin-sider .ant-menu-item:hover {
+    background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.custom-admin-sider .ant-menu-item-selected,
+.custom-admin-sider .ant-menu-item-active {
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.custom-admin-sider .ant-menu-item > span,
+.custom-admin-sider .ant-menu-title-content {
+    color: var(--sider-text) !important;
+}
+
+.custom-admin-sider .ant-btn {
+    box-shadow: none;
+}

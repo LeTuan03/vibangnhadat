@@ -1,187 +1,93 @@
-import React, { useState, useEffect } from 'react';
-import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
-import { FAQ } from '../../types';
-import { qaService } from '../api/qaService';
-import { mockFAQs } from '../../data/mockData';
-import { toast } from 'react-toastify';
-import '../documents/Admin.css';
+import React, { useState, useEffect } from 'react'
+import { Table, Button, Modal, Form, Input, Space, Popconfirm, message } from 'antd'
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { FAQ } from '../../types'
+import { qaService } from '../api/qaService'
+import { mockFAQs } from '../../data/mockData'
 
 const QAAdmin: React.FC = () => {
-    const [faqs, setFaqs] = useState<FAQ[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingFaq, setEditingFaq] = useState<FAQ | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [formData, setFormData] = useState({
-        question: '',
-        answer: '',
-        category: ''
-    });
+  const [faqs, setFaqs] = useState<FAQ[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editing, setEditing] = useState<FAQ | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [form] = Form.useForm()
 
-    useEffect(() => {
-        qaService.initializeFAQs(mockFAQs);
-        loadFAQs();
-    }, []);
+  useEffect(() => {
+    qaService.initializeFAQs(mockFAQs)
+    load()
+  }, [])
 
-    const loadFAQs = () => {
-        const allFaqs = qaService.getAllFAQs();
-        setFaqs(allFaqs);
-    };
+  const load = () => setFaqs(qaService.getAllFAQs())
 
-    const handleAddNew = () => {
-        setEditingFaq(null);
-        setFormData({
-            question: '',
-            answer: '',
-            category: ''
-        });
-        setIsModalOpen(true);
-    };
+  const openAdd = () => { setEditing(null); form.resetFields(); setIsModalOpen(true) }
+  const openEdit = (f: FAQ) => { setEditing(f); form.setFieldsValue({ question: f.question, answer: f.answer, category: f.category }); setIsModalOpen(true) }
 
-    const handleEdit = (faq: FAQ) => {
-        setEditingFaq(faq);
-        setFormData({
-            question: faq.question,
-            answer: faq.answer,
-            category: faq.category
-        });
-        setIsModalOpen(true);
-    };
+  const handleDelete = (id: string) => {
+    const ok = qaService.deleteFAQ(id)
+    if (ok) { message.success('Xóa câu hỏi thành công'); load() } else message.error('Xóa thất bại')
+  }
 
-    const handleSave = () => {
-        if (!formData.question || !formData.answer || !formData.category) {
-            toast.error('Vui lòng điền tất cả các trường bắt buộc');
-            return;
-        }
+  const handleSave = async () => {
+    try {
+      const values = await form.validateFields()
+      const payload = { question: values.question, answer: values.answer, category: values.category }
+      if (editing && editing.id) {
+        const updated = qaService.updateFAQ(editing.id, { ...editing, ...payload })
+        if (updated) { message.success('Cập nhật câu hỏi thành công'); load() }
+      } else {
+        qaService.createFAQ(payload)
+        message.success('Thêm câu hỏi mới thành công')
+        load()
+      }
+      setIsModalOpen(false)
+    } catch (e) {}
+  }
 
-        if (editingFaq) {
-            const updated = qaService.updateFAQ(editingFaq.id, {
-                ...editingFaq,
-                ...formData
-            });
-            if (updated) {
-                setFaqs(faqs.map(f => f.id === editingFaq.id ? updated : f));
-                toast.success('Cập nhật câu hỏi thành công!');
-            }
-        } else {
-            const newFaq = qaService.createFAQ(formData);
-            setFaqs([newFaq, ...faqs]);
-            toast.success('Thêm câu hỏi mới thành công!');
-        }
-        setIsModalOpen(false);
-    };
+  const filtered = faqs.filter(f => f.question.toLowerCase().includes(searchTerm.toLowerCase()) || f.category.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    const handleDelete = (id: string) => {
-        if (window.confirm('Bạn có chắc muốn xóa câu hỏi này?')) {
-            const success = qaService.deleteFAQ(id);
-            if (success) {
-                setFaqs(faqs.filter(f => f.id !== id));
-                toast.success('Xóa câu hỏi thành công!');
-            }
-        }
-    };
+  const columns = [
+    { title: 'Câu hỏi', dataIndex: 'question', key: 'question' },
+    { title: 'Danh mục', dataIndex: 'category', key: 'category' },
+    {
+      title: 'Hành động', key: 'actions', render: (_: any, record: FAQ) => (
+        <Space>
+          <Button icon={<EditOutlined />} onClick={() => openEdit(record)} />
+          <Popconfirm title="Xác nhận xóa?" onConfirm={() => handleDelete(record.id)} okText="Xóa" cancelText="Hủy">
+            <Button danger icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </Space>
+      )
+    }
+  ]
 
-    const filteredFaqs = faqs.filter(faq =>
-        faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        faq.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <h2>Quản lý Hỏi & Đáp</h2>
+        <Space>
+          <Input.Search placeholder="Tìm kiếm câu hỏi..." onSearch={(v) => setSearchTerm(v)} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: 300 }} allowClear />
+          <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>Thêm mới</Button>
+        </Space>
+      </div>
 
-    return (
-        <div className="admin-section">
-            <div className="admin-header">
-                <h2>Quản lý Hỏi & Đáp</h2>
-                <button className="btn-primary" onClick={handleAddNew}>
-                    <FaPlus /> Thêm mới
-                </button>
-            </div>
+      <Table dataSource={filtered} columns={columns} rowKey={(r: any) => r.id} locale={{ emptyText: 'Không có dữ liệu' }} />
 
-            <div className="admin-search">
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm câu hỏi..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="search-input"
-                />
-            </div>
+      <Modal title={editing ? 'Chỉnh sửa câu hỏi' : 'Thêm câu hỏi mới'} open={isModalOpen} onOk={handleSave} onCancel={() => { setIsModalOpen(false); form.resetFields(); setEditing(null) }} okText="Lưu" cancelText="Hủy">
+        <Form form={form} layout="vertical">
+          <Form.Item name="question" label="Câu hỏi" rules={[{ required: true, message: 'Vui lòng nhập câu hỏi' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="answer" label="Trả lời" rules={[{ required: true, message: 'Vui lòng nhập trả lời' }]}>
+            <Input.TextArea rows={4} />
+          </Form.Item>
+          <Form.Item name="category" label="Danh mục" rules={[{ required: true, message: 'Vui lòng nhập danh mục' }]}>
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  )
+}
 
-            <div className="admin-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Câu hỏi</th>
-                            <th>Danh mục</th>
-                            <th>Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredFaqs.length > 0 ? (
-                            filteredFaqs.map(faq => (
-                                <tr key={faq.id}>
-                                    <td>{faq.question}</td>
-                                    <td>{faq.category}</td>
-                                    <td className="action-buttons">
-                                        <button className="btn-edit" onClick={() => handleEdit(faq)}>
-                                            <FaEdit /> Sửa
-                                        </button>
-                                        <button className="btn-delete" onClick={() => handleDelete(faq.id)}>
-                                            <FaTrash /> Xóa
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={3} className="text-center">Không có dữ liệu</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+export default QAAdmin
 
-            {isModalOpen && (
-                <div className="admin-modal-overlay" onClick={() => setIsModalOpen(false)}>
-                    <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-                        <h3>{editingFaq ? 'Chỉnh sửa câu hỏi' : 'Thêm câu hỏi mới'}</h3>
-                        
-                        <div className="form-group">
-                            <label>Câu hỏi *</label>
-                            <input
-                                type="text"
-                                value={formData.question}
-                                onChange={(e) => setFormData({...formData, question: e.target.value})}
-                                placeholder="Nhập câu hỏi"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Trả lời *</label>
-                            <textarea
-                                value={formData.answer}
-                                onChange={(e) => setFormData({...formData, answer: e.target.value})}
-                                placeholder="Nhập câu trả lời"
-                                rows={4}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Danh mục *</label>
-                            <input
-                                type="text"
-                                value={formData.category}
-                                onChange={(e) => setFormData({...formData, category: e.target.value})}
-                                placeholder="Nhập danh mục"
-                            />
-                        </div>
-
-                        <div className="modal-actions">
-                            <button className="btn-cancel" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                            <button className="btn-save" onClick={handleSave}>Lưu</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
-
-export default QAAdmin;

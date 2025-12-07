@@ -1,213 +1,137 @@
-import React, { useState, useEffect } from 'react';
-import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
-import { GalleryItem } from '../../types';
-import { galleryService } from '../api/galleryService';
-import { mockGalleryItems } from '../../data/mockData';
-import { toast } from 'react-toastify';
-import '../documents/Admin.css';
+import { useEffect, useState } from 'react'
+import { Table, Button, Input, Card, Modal, Form, Select, Image, Space, Popconfirm, message } from 'antd'
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { GalleryItem } from '../../types'
+import { galleryService } from '../api/galleryService'
+import { mockGalleryItems } from '../../data/mockData'
 
-interface FormData {
-    title: string;
-    type: 'image' | 'video';
-    thumbnail: string;
-    videoId?: string;
-    description: string;
-}
+const { Search } = Input
 
 const GalleryAdmin: React.FC = () => {
-    const [items, setItems] = useState<GalleryItem[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [formData, setFormData] = useState<FormData>({
-        title: '',
-        type: 'image',
-        thumbnail: '',
-        videoId: '',
-        description: ''
-    });
+    const [items, setItems] = useState<GalleryItem[]>([])
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [editingId, setEditingId] = useState<string | null>(null)
+    const [searchTerm, setSearchTerm] = useState('')
+    const [form] = Form.useForm()
 
     useEffect(() => {
-        galleryService.initialize(mockGalleryItems);
-        loadGallery();
-    }, []);
+        galleryService.initialize(mockGalleryItems)
+        loadGallery()
+    }, [])
 
     const loadGallery = () => {
-        const allItems = galleryService.getAllGalleryItems();
-        setItems(allItems);
-    };
+        const allItems = galleryService.getAllGalleryItems()
+        setItems(allItems)
+    }
 
     const handleAddNew = () => {
-        setEditingId(null);
-        setFormData({ title: '', type: 'image', thumbnail: '', videoId: '', description: '' });
-        setIsModalOpen(true);
-    };
+        setEditingId(null)
+        form.resetFields()
+        setIsModalOpen(true)
+    }
 
     const handleEdit = (item: GalleryItem) => {
-        setEditingId(item.id);
-        setFormData({
+        setEditingId(item.id)
+        form.setFieldsValue({
             title: item.title,
             type: item.type,
             thumbnail: item.thumbnail,
-            videoId: item.videoId || '',
-            description: item.description
-        });
-        setIsModalOpen(true);
-    };
+            videoId: item.videoId,
+            description: item.description,
+        })
+        setIsModalOpen(true)
+    }
 
-    const handleSave = () => {
-        if (!formData.title || !formData.thumbnail) {
-            toast.error('Vui lòng điền đầy đủ thông tin');
-            return;
+    const handleSave = async () => {
+        try {
+            const values = await form.validateFields()
+            if (editingId) {
+                galleryService.updateGalleryItem(editingId, values)
+                message.success('Cập nhật thành công')
+            } else {
+                galleryService.createGalleryItem(values)
+                message.success('Thêm mới thành công')
+            }
+            setIsModalOpen(false)
+            loadGallery()
+        } catch (e) {
+            // validation error
         }
-
-        if (editingId) {
-            galleryService.updateGalleryItem(editingId, formData);
-            toast.success('Cập nhật thành công');
-        } else {
-            galleryService.createGalleryItem(formData);
-            toast.success('Thêm mới thành công');
-        }
-        
-        setIsModalOpen(false);
-        loadGallery();
-    };
+    }
 
     const handleDelete = (id: string) => {
-        if (window.confirm('Bạn chắc chắn muốn xóa?')) {
-            galleryService.deleteGalleryItem(id);
-            toast.success('Xóa thành công');
-            loadGallery();
+        const success = galleryService.deleteGalleryItem(id)
+        if (success) {
+            message.success('Xóa thành công')
+            loadGallery()
+        } else {
+            message.error('Xóa thất bại')
         }
-    };
+    }
 
-    const filteredItems = items.filter(item =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredItems = items.filter((item) => item.title.toLowerCase().includes(searchTerm.toLowerCase()))
+
+    const columns = [
+        { title: 'Tiêu đề', dataIndex: 'title', key: 'title' },
+        { title: 'Loại', dataIndex: 'type', key: 'type', render: (t: string) => (t === 'image' ? '📷 Hình' : '🎥 Video') },
+        { title: 'Mô tả', dataIndex: 'description', key: 'description' },
+        { title: 'Thumbnail', dataIndex: 'thumbnail', key: 'thumbnail', render: (src: string) => <Image src={src} width={60} /> },
+        {
+            title: 'Thao tác',
+            key: 'actions',
+            render: (_: any, record: GalleryItem) => (
+                <Space>
+                    <Button icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+                    <Popconfirm title="Bạn có chắc muốn xóa?" onConfirm={() => handleDelete(record.id)} okText="Xóa" cancelText="Hủy">
+                        <Button danger icon={<DeleteOutlined />} />
+                    </Popconfirm>
+                </Space>
+            ),
+        },
+    ]
 
     return (
-        <div className="admin-section">
-            <div className="admin-header">
+        <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <h2>Quản Lý Thư Viện Hình Ảnh & Video</h2>
-                <button className="btn btn-primary" onClick={handleAddNew}>
-                    <FaPlus /> Thêm mới
-                </button>
+                <Space>
+                    <Search placeholder="Tìm kiếm..." onSearch={(v) => setSearchTerm(v)} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: 240 }} allowClear />
+                    <Button type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>Thêm mới</Button>
+                </Space>
             </div>
 
-            <div className="search-box">
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-            </div>
+            <Card>
+                <Table dataSource={filteredItems} columns={columns} rowKey="id" />
+            </Card>
 
-            <div className="admin-table-wrapper">
-                <table className="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Tiêu đề</th>
-                            <th>Loại</th>
-                            <th>Mô tả</th>
-                            <th>Thumbnail</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredItems.map(item => (
-                            <tr key={item.id}>
-                                <td>{item.title}</td>
-                                <td><span className="badge">{item.type === 'image' ? '📷 Hình' : '🎥 Video'}</span></td>
-                                <td>{item.description}</td>
-                                <td><img src={item.thumbnail} alt={item.title} style={{ maxWidth: '50px' }} /></td>
-                                <td>
-                                    <button
-                                        className="btn-icon btn-edit"
-                                        onClick={() => handleEdit(item)}
-                                        title="Sửa"
-                                    >
-                                        <FaEdit />
-                                    </button>
-                                    <button
-                                        className="btn-icon btn-delete"
-                                        onClick={() => handleDelete(item.id)}
-                                        title="Xóa"
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <Modal title={editingId ? 'Sửa Hình Ảnh/Video' : 'Thêm Hình Ảnh/Video'} open={isModalOpen} onCancel={() => setIsModalOpen(false)} onOk={handleSave} okText="Lưu">
+                <Form form={form} layout="vertical">
+                    <Form.Item name="title" label="Tiêu đề" rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}>
+                        <Input />
+                    </Form.Item>
 
-            {isModalOpen && (
-                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <h3>{editingId ? 'Sửa Hình Ảnh/Video' : 'Thêm Hình Ảnh/Video'}</h3>
-                        <div className="form-group">
-                            <label>Tiêu đề</label>
-                            <input
-                                type="text"
-                                value={formData.title}
-                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                placeholder="Tiêu đề"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Loại</label>
-                            <select
-                                value={formData.type}
-                                onChange={(e) => setFormData({ ...formData, type: e.target.value as 'image' | 'video' })}
-                            >
-                                <option value="image">Hình ảnh</option>
-                                <option value="video">Video</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label>URL Thumbnail</label>
-                            <input
-                                type="text"
-                                value={formData.thumbnail}
-                                onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                                placeholder="VD: /images/gallery-1.jpg"
-                            />
-                        </div>
-                        {formData.type === 'video' && (
-                            <div className="form-group">
-                                <label>ID Video (YouTube)</label>
-                                <input
-                                    type="text"
-                                    value={formData.videoId || ''}
-                                    onChange={(e) => setFormData({ ...formData, videoId: e.target.value })}
-                                    placeholder="VD: dQw4w9WgXcQ"
-                                />
-                            </div>
-                        )}
-                        <div className="form-group">
-                            <label>Mô tả</label>
-                            <input
-                                type="text"
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                placeholder="Mô tả"
-                            />
-                        </div>
-                        <div className="modal-actions">
-                            <button className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>
-                                Hủy
-                            </button>
-                            <button className="btn btn-primary" onClick={handleSave}>
-                                Lưu
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                    <Form.Item name="type" label="Loại" initialValue="image" rules={[{ required: true }]}>
+                        <Select>
+                            <Select.Option value="image">Hình ảnh</Select.Option>
+                            <Select.Option value="video">Video</Select.Option>
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item name="thumbnail" label="URL Thumbnail" rules={[{ required: true, message: 'Vui lòng nhập URL thumbnail' }]}>
+                        <Input placeholder="VD: /images/gallery-1.jpg" />
+                    </Form.Item>
+
+                    <Form.Item name="videoId" label="ID Video (YouTube)">
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item name="description" label="Mô tả">
+                        <Input />
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
-    );
-};
+    )
+}
 
-export default GalleryAdmin;
+export default GalleryAdmin

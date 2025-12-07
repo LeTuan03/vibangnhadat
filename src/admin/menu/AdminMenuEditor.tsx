@@ -20,7 +20,7 @@ const AdminMenuEditor: React.FC = () => {
     const [form] = Form.useForm();
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [editingItem, setEditingItem] = useState<NavItem | null>(null);
-  const [editForm] = Form.useForm();    useEffect(() => {
+    const [editForm] = Form.useForm(); useEffect(() => {
         loadNavigation();
     }, []);
 
@@ -61,22 +61,22 @@ const AdminMenuEditor: React.FC = () => {
             onOk: async () => {
                 try {
                     console.log('[menu] Deleting item:', id);
-                    
+
                     // Delete from Firebase first (wait for completion)
                     await deleteNavigationItem(id);
                     console.log('[menu] Item deleted from Firebase');
-                    
+
                     // Wait a moment for Firebase to sync
                     await new Promise(resolve => setTimeout(resolve, 500));
-                    
+
                     // Then reload to get fresh data from Firebase
                     await loadNavigation();
-                    
+
                     message.success('Xóa mục menu thành công');
                 } catch (error) {
                     console.error('Lỗi xóa menu:', error);
                     message.error('Xóa thất bại');
-                    
+
                     // Still try to reload on error to sync with Firebase
                     try {
                         await loadNavigation();
@@ -217,101 +217,99 @@ const AdminMenuEditor: React.FC = () => {
     ];
 
     return (
-        <div style={{ padding: '24px', background: '#f0f2f5', minHeight: '100vh' }}>
-            <Card style={{ maxWidth: 1400, margin: '0 auto' }}>
-                <Title level={3}>Quản lý Menu Client</Title>
-                <Divider />
+        <div style={{ padding: '16px', background: '#f0f2f5', minHeight: '100vh' }}>
+            <Title level={3}>Quản lý Menu Client</Title>
+            <Divider />
 
-                <Card
-                    title={<span><PlusOutlined /> Thêm mục mới</span>}
-                    style={{ marginBottom: 24 }}
-                    type="inner"
+            <Card
+                title={<span><PlusOutlined /> Thêm mục mới</span>}
+                style={{ marginBottom: 24 }}
+                type="inner"
+            >
+                <Form
+                    form={form}
+                    layout="inline"
+                    onFinish={handleAdd}
+                    style={{ width: '100%' }}
                 >
-                    <Form
-                        form={form}
-                        layout="inline"
-                        onFinish={handleAdd}
-                        style={{ width: '100%' }}
+                    <Form.Item
+                        name="label"
+                        rules={[{ required: true, message: 'Vui lòng nhập nhãn' }]}
+                        style={{ flex: 1, minWidth: 200 }}
                     >
-                        <Form.Item
-                            name="label"
-                            rules={[{ required: true, message: 'Vui lòng nhập nhãn' }]}
-                            style={{ flex: 1, minWidth: 200 }}
+                        <Input
+                            placeholder="Nhãn (label)"
+                            prefix={<MenuOutlined />}
+                            size="large"
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="href"
+                        rules={[{ required: true, message: 'Vui lòng nhập liên kết' }]}
+                        style={{ flex: 1, minWidth: 200 }}
+                    >
+                        <Input
+                            placeholder="Liên kết (href)"
+                            prefix={<LinkOutlined />}
+                            size="large"
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="parent"
+                        style={{ minWidth: 200 }}
+                    >
+                        <Select
+                            placeholder="-- Top level --"
+                            allowClear
+                            size="large"
                         >
-                            <Input
-                                placeholder="Nhãn (label)"
-                                prefix={<MenuOutlined />}
-                                size="large"
-                            />
-                        </Form.Item>
+                            {items.map((it) => (
+                                <Option key={it.id} value={it.id}>
+                                    {it.label}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
 
-                        <Form.Item
-                            name="href"
-                            rules={[{ required: true, message: 'Vui lòng nhập liên kết' }]}
-                            style={{ flex: 1, minWidth: 200 }}
+                    <Form.Item>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            icon={<PlusOutlined />}
+                            size="large"
                         >
-                            <Input
-                                placeholder="Liên kết (href)"
-                                prefix={<LinkOutlined />}
-                                size="large"
-                            />
-                        </Form.Item>
+                            Thêm
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Card>
 
-                        <Form.Item
-                            name="parent"
-                            style={{ minWidth: 200 }}
-                        >
-                            <Select
-                                placeholder="-- Top level --"
-                                allowClear
-                                size="large"
-                            >
-                                {items.map((it) => (
-                                    <Option key={it.id} value={it.id}>
-                                        {it.label}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+            <Card title="Danh sách menu" type="inner">
+                <Table
+                    columns={mainColumns}
+                    dataSource={items}
+                    rowKey="id"
+                    pagination={false}
+                    bordered
+                />
 
-                        <Form.Item>
-                            <Button
-                                type="primary"
-                                htmlType="submit"
-                                icon={<PlusOutlined />}
-                                size="large"
-                            >
-                                Thêm
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                </Card>
-
-                <Card title="Danh sách menu" type="inner">
-                    <Table
-                        columns={mainColumns}
-                        dataSource={items}
-                        rowKey="id"
-                        pagination={false}
-                        bordered
-                    />
-
-                    {items.map((it) => it.children && it.children.length > 0 && (
-                        <div key={it.id} style={{ marginTop: 24 }}>
-                            <Title level={5}>
-                                <Tag color="blue">Mục con của: {it.label}</Tag>
-                            </Title>
-                            <Table
-                                columns={childColumns}
-                                dataSource={it.children}
-                                rowKey="id"
-                                pagination={false}
-                                bordered
-                                size="small"
-                            />
-                        </div>
-                    ))}
-                </Card>
+                {items.map((it) => it.children && it.children.length > 0 && (
+                    <div key={it.id} style={{ marginTop: 24 }}>
+                        <Title level={5}>
+                            <Tag color="blue">Mục con của: {it.label}</Tag>
+                        </Title>
+                        <Table
+                            columns={childColumns}
+                            dataSource={it.children}
+                            rowKey="id"
+                            pagination={false}
+                            bordered
+                            size="small"
+                        />
+                    </div>
+                ))}
             </Card>
 
             <Modal

@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { Card, Form, Input, Select, Button, Table, Space, Typography, Divider, Modal, message, Tag } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, MenuOutlined, LinkOutlined } from '@ant-design/icons';
 import navigationService, { NavItem } from '../api/navigationService';
-// Admin styles are loaded centrally in AdminLayout
+
+const { Title } = Typography;
+const { Option } = Select;
 
 const generateId = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
 
 const AdminMenuEditor: React.FC = () => {
     const [items, setItems] = useState<NavItem[]>([]);
-    const [label, setLabel] = useState('');
-    const [href, setHref] = useState('');
-    const [parent, setParent] = useState<string | undefined>(undefined);
+    const [form] = Form.useForm();
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [editingItem, setEditingItem] = useState<NavItem | null>(null);
+    const [editForm] = Form.useForm();
 
     useEffect(() => {
         navigationService.initialize();
@@ -18,91 +23,307 @@ const AdminMenuEditor: React.FC = () => {
         return () => unsub();
     }, []);
 
-    const handleAdd = () => {
-        if (!label || !href) return;
-        const newItem: NavItem = { id: generateId(label), label: label.trim(), href: href.trim() };
-        navigationService.create(newItem, parent);
-        setLabel('');
-        setHref('');
-        setParent(undefined);
+    const handleAdd = (values: any) => {
+        const newItem: NavItem = {
+            id: generateId(values.label),
+            label: values.label.trim(),
+            href: values.href.trim()
+        };
+        navigationService.create(newItem, values.parent || undefined);
+        message.success('Thêm mục menu thành công');
+        form.resetFields();
     };
 
     const handleDelete = (id: string) => {
-        if (!confirm('Xác nhận xóa mục menu này?')) return;
-        navigationService.delete(id);
+        Modal.confirm({
+            title: 'Xác nhận xóa',
+            content: 'Bạn có chắc chắn muốn xóa mục menu này?',
+            okText: 'Xóa',
+            cancelText: 'Hủy',
+            okType: 'danger',
+            onOk: () => {
+                navigationService.delete(id);
+                message.success('Xóa mục menu thành công');
+            }
+        });
     };
 
-    const handleEdit = (id: string) => {
-        const it = navigationService.findById(id);
-        if (!it) return;
-        const newLabel = prompt('Nhập nhãn mới', it.label) ?? it.label;
-        const newHref = prompt('Nhập liên kết mới', it.href) ?? it.href;
-        navigationService.update(id, { label: newLabel, href: newHref });
+    const showEditModal = (item: NavItem) => {
+        setEditingItem(item);
+        editForm.setFieldsValue({
+            label: item.label,
+            href: item.href
+        });
+        setEditModalVisible(true);
     };
+
+    const handleEdit = (values: any) => {
+        if (!editingItem) return;
+        navigationService.update(editingItem.id, {
+            label: values.label,
+            href: values.href
+        });
+        message.success('Cập nhật mục menu thành công');
+        setEditModalVisible(false);
+        setEditingItem(null);
+        editForm.resetFields();
+    };
+
+    const mainColumns = [
+        {
+            title: 'Nhãn',
+            dataIndex: 'label',
+            key: 'label',
+            render: (text: string, record: NavItem) => (
+                <Space>
+                    <MenuOutlined style={{ color: '#1890ff' }} />
+                    <span style={{ fontWeight: 600 }}>{text}</span>
+                    {record.children && record.children.length > 0 && (
+                        <Tag color="blue">{record.children.length} mục con</Tag>
+                    )}
+                </Space>
+            )
+        },
+        {
+            title: 'Liên kết',
+            dataIndex: 'href',
+            key: 'href',
+            render: (text: string) => (
+                <Space>
+                    <LinkOutlined style={{ color: '#52c41a' }} />
+                    <span style={{ color: '#666' }}>{text}</span>
+                </Space>
+            )
+        },
+        {
+            title: 'Hành động',
+            key: 'action',
+            width: 150,
+            render: (_: any, record: NavItem) => (
+                <Space size="small">
+                    <Button
+                        type="link"
+                        icon={<EditOutlined />}
+                        onClick={() => showEditModal(record)}
+                    >
+                        Sửa
+                    </Button>
+                    <Button
+                        type="link"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDelete(record.id)}
+                    >
+                        Xóa
+                    </Button>
+                </Space>
+            )
+        }
+    ];
+
+    const childColumns = [
+        {
+            title: 'Nhãn',
+            dataIndex: 'label',
+            key: 'label',
+            render: (text: string) => (
+                <Space style={{ paddingLeft: 24 }}>
+                    <span style={{ color: '#999' }}>└─</span>
+                    <span>{text}</span>
+                </Space>
+            )
+        },
+        {
+            title: 'Liên kết',
+            dataIndex: 'href',
+            key: 'href',
+            render: (text: string) => (
+                <Space>
+                    <LinkOutlined style={{ color: '#52c41a' }} />
+                    <span style={{ color: '#666' }}>{text}</span>
+                </Space>
+            )
+        },
+        {
+            title: 'Hành động',
+            key: 'action',
+            width: 150,
+            render: (_: any, record: NavItem) => (
+                <Space size="small">
+                    <Button
+                        type="link"
+                        icon={<EditOutlined />}
+                        onClick={() => showEditModal(record)}
+                    >
+                        Sửa
+                    </Button>
+                    <Button
+                        type="link"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDelete(record.id)}
+                    >
+                        Xóa
+                    </Button>
+                </Space>
+            )
+        }
+    ];
 
     return (
-        <div className="admin-page admin-menu-editor">
-            <h2>Quản lý Menu Client</h2>
+        <div style={{ padding: '24px', background: '#f0f2f5', minHeight: '100vh' }}>
+            <Card style={{ maxWidth: 1400, margin: '0 auto' }}>
+                <Title level={3}>Quản lý Menu Client</Title>
+                <Divider />
 
-            <section style={{ marginBottom: '1rem' }}>
-                <h4>Thêm mục mới</h4>
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                    <input placeholder="Nhãn (label)" value={label} onChange={(e) => setLabel(e.target.value)} />
-                    <input placeholder="Liên kết (href)" value={href} onChange={(e) => setHref(e.target.value)} />
-                    <select value={parent ?? ''} onChange={(e) => setParent(e.target.value || undefined)}>
-                        <option value="">-- Top level --</option>
-                        {items.map((it) => (
-                            <option key={it.id} value={it.id}>{it.label}</option>
-                        ))}
-                    </select>
-                    <button onClick={handleAdd}>Thêm</button>
-                </div>
-            </section>
+                <Card
+                    title={<span><PlusOutlined /> Thêm mục mới</span>}
+                    style={{ marginBottom: 24 }}
+                    type="inner"
+                >
+                    <Form
+                        form={form}
+                        layout="inline"
+                        onFinish={handleAdd}
+                        style={{ width: '100%' }}
+                    >
+                        <Form.Item
+                            name="label"
+                            rules={[{ required: true, message: 'Vui lòng nhập nhãn' }]}
+                            style={{ flex: 1, minWidth: 200 }}
+                        >
+                            <Input
+                                placeholder="Nhãn (label)"
+                                prefix={<MenuOutlined />}
+                                size="large"
+                            />
+                        </Form.Item>
 
-            <section>
-                <h4>Danh sách menu</h4>
-                <div className="admin-table">
-                    <div className="admin-table-row admin-table-header">
-                        <div>Nhãn</div>
-                        <div>Liên kết</div>
-                        <div>Hành động</div>
-                    </div>
-                    {items.map((it) => (
-                        <div key={it.id} className="admin-table-row">
-                            <div style={{ fontWeight: 600 }}>{it.label}</div>
-                            <div>{it.href}</div>
-                            <div>
-                                <button onClick={() => handleEdit(it.id)}>Sửa</button>
-                                <button onClick={() => handleDelete(it.id)} style={{ marginLeft: '0.5rem' }}>Xóa</button>
-                            </div>
+                        <Form.Item
+                            name="href"
+                            rules={[{ required: true, message: 'Vui lòng nhập liên kết' }]}
+                            style={{ flex: 1, minWidth: 200 }}
+                        >
+                            <Input
+                                placeholder="Liên kết (href)"
+                                prefix={<LinkOutlined />}
+                                size="large"
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="parent"
+                            style={{ minWidth: 200 }}
+                        >
+                            <Select
+                                placeholder="-- Top level --"
+                                allowClear
+                                size="large"
+                            >
+                                {items.map((it) => (
+                                    <Option key={it.id} value={it.id}>
+                                        {it.label}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                icon={<PlusOutlined />}
+                                size="large"
+                            >
+                                Thêm
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Card>
+
+                <Card title="Danh sách menu" type="inner">
+                    <Table
+                        columns={mainColumns}
+                        dataSource={items}
+                        rowKey="id"
+                        pagination={false}
+                        bordered
+                    />
+
+                    {items.map((it) => it.children && it.children.length > 0 && (
+                        <div key={it.id} style={{ marginTop: 24 }}>
+                            <Title level={5}>
+                                <Tag color="blue">Mục con của: {it.label}</Tag>
+                            </Title>
+                            <Table
+                                columns={childColumns}
+                                dataSource={it.children}
+                                rowKey="id"
+                                pagination={false}
+                                bordered
+                                size="small"
+                            />
                         </div>
                     ))}
-                </div>
+                </Card>
+            </Card>
 
-                {/* children display */}
-                {items.map((it) => it.children && it.children.length > 0 && (
-                    <div key={it.id} style={{ marginTop: '0.75rem' }}>
-                        <h5>Con của: {it.label}</h5>
-                        <div className="admin-table">
-                            <div className="admin-table-row admin-table-header">
-                                <div>Nhãn</div>
-                                <div>Liên kết</div>
-                                <div>Hành động</div>
-                            </div>
-                            {it.children!.map((ch) => (
-                                <div key={ch.id} className="admin-table-row">
-                                    <div>{ch.label}</div>
-                                    <div>{ch.href}</div>
-                                    <div>
-                                        <button onClick={() => handleEdit(ch.id)}>Sửa</button>
-                                        <button onClick={() => handleDelete(ch.id)} style={{ marginLeft: '0.5rem' }}>Xóa</button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </section>
+            <Modal
+                title={<span><EditOutlined /> Chỉnh sửa mục menu</span>}
+                open={editModalVisible}
+                onCancel={() => {
+                    setEditModalVisible(false);
+                    setEditingItem(null);
+                    editForm.resetFields();
+                }}
+                footer={null}
+                width={600}
+            >
+                <Form
+                    form={editForm}
+                    layout="vertical"
+                    onFinish={handleEdit}
+                >
+                    <Form.Item
+                        label="Nhãn"
+                        name="label"
+                        rules={[{ required: true, message: 'Vui lòng nhập nhãn' }]}
+                    >
+                        <Input
+                            placeholder="Nhãn (label)"
+                            prefix={<MenuOutlined />}
+                            size="large"
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Liên kết"
+                        name="href"
+                        rules={[{ required: true, message: 'Vui lòng nhập liên kết' }]}
+                    >
+                        <Input
+                            placeholder="Liên kết (href)"
+                            prefix={<LinkOutlined />}
+                            size="large"
+                        />
+                    </Form.Item>
+
+                    <Form.Item style={{ marginBottom: 0, marginTop: 24 }}>
+                        <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+                            <Button onClick={() => {
+                                setEditModalVisible(false);
+                                setEditingItem(null);
+                                editForm.resetFields();
+                            }}>
+                                Hủy
+                            </Button>
+                            <Button type="primary" htmlType="submit" icon={<EditOutlined />}>
+                                Cập nhật
+                            </Button>
+                        </Space>
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
     );
 };

@@ -23,6 +23,7 @@ import {
   mockGalleryItems,
   mockNavigation
 } from '../src/data/mockData';
+import { qaSeedData } from '../src/data/qaSeedData';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -95,7 +96,11 @@ async function seedFirebase() {
     await seedCollection('services', mockServices);
     await seedCollection('categories', mockCategories);
     await seedCollection('vibans', mockVibans);
-    await seedCollection('faqs', mockFAQs);
+    
+    // Seed FAQ data - combine mockFAQs with qaSeedData
+    const allFAQs = [...(mockFAQs || []), ...qaSeedData];
+    await seedCollection('faqs', allFAQs);
+    
     await seedCollection('testimonials', mockTestimonials);
     await seedCollection('legalDocuments', mockLegalDocuments);
     await seedCollection('teamMembers', mockTeamMembers);

@@ -1,4 +1,4 @@
 .qa-layout { padding: 2rem 0; }
-.qa-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+/* .qa-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; } */
 .qa-nav a { margin-left:1rem; color:var(--text); text-decoration:none; }
 .qa-content { min-height:400px; }

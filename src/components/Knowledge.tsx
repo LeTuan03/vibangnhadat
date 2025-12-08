@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { FaNewspaper, FaQuestionCircle, FaFileAlt, FaChevronDown, FaChevronUp, FaSearch, FaBook, FaLink, FaLightbulb } from 'react-icons/fa';
+import { FaNewspaper, FaFileAlt, FaChevronDown, FaChevronUp, FaSearch, FaBook, FaLink, FaLightbulb } from 'react-icons/fa';
 import BlogFirebaseService from '../services/BlogFirebaseService';
-import QAFirebaseService from '../services/QAFirebaseService';
 import DocumentFirebaseService from '../services/DocumentFirebaseService';
 // Removed mock fallbacks: data is loaded from Firebase services
 import { legalArticles, mainLaws, legalTerms, usefulReferences } from '../data/legalKnowledge';
 import { formatDate } from '../utils/helpers';
 import BlogDetail from './BlogDetail';
 import LoadingSpinner from './LoadingSpinner';
-import type { BlogPost, FAQ, LegalDocument } from '../types';
+import type { BlogPost, LegalDocument } from '../types';
 import './Knowledge.css';
 
 const Knowledge: React.FC = () => {
@@ -18,7 +17,6 @@ const Knowledge: React.FC = () => {
     const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
 
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-    const [faqs, setFaqs] = useState<FAQ[]>([]);
     const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>([]);
     const [loading, setLoading] = useState(true);
     const [_error, setError] = useState<string | null>(null);
@@ -27,20 +25,17 @@ const Knowledge: React.FC = () => {
         const loadData = async () => {
             try {
                 setLoading(true);
-                const [posts, questions, docs] = await Promise.all([
+                const [posts, docs] = await Promise.all([
                     BlogFirebaseService.getAllPosts(),
-                    QAFirebaseService.getAllFAQs(),
                     DocumentFirebaseService.getAllDocuments(),
                 ]);
                 setBlogPosts(posts || []);
-                setFaqs(questions || []);
                 setLegalDocuments(docs || []);
             } catch (err) {
                 console.error('Error loading data:', err);
                 setError('Không thể tải dữ liệu');
                 // Keep empty lists if Firebase fails
                 setBlogPosts([]);
-                setFaqs([]);
                 setLegalDocuments([]);
             } finally {
                 setLoading(false);
@@ -57,10 +52,6 @@ const Knowledge: React.FC = () => {
         setExpandedFaq(expandedFaq === id ? null : id);
     };
 
-    const filteredFaqs = faqs.filter(faq =>
-        faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
-    );
 
     const filteredDocs = legalDocuments.filter(doc =>
         doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -108,12 +99,6 @@ const Knowledge: React.FC = () => {
                         <FaLink /> Tài Liệu Tham Khảo
                     </button>
                     <button
-                        className={`tab-btn ${activeTab === 'faq' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('faq')}
-                    >
-                        <FaQuestionCircle /> Hỏi đáp (FAQ)
-                    </button>
-                    <button
                         className={`tab-btn ${activeTab === 'legal' ? 'active' : ''}`}
                         onClick={() => setActiveTab('legal')}
                     >
@@ -149,45 +134,6 @@ const Knowledge: React.FC = () => {
                                         </div>
                                     </article>
                                 ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* FAQ Tab */}
-                    {activeTab === 'faq' && (
-                        <div className="tab-panel animate-fadeIn">
-                            <div className="faq-search">
-                                <FaSearch />
-                                <input
-                                    type="text"
-                                    placeholder="Tìm kiếm câu hỏi..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="search-input"
-                                />
-                            </div>
-
-                            <div className="faq-list">
-                                {filteredFaqs.length > 0 ? (
-                                    filteredFaqs.map((faq) => (
-                                        <div key={faq.id} className="faq-item">
-                                            <button
-                                                className={`faq-question ${expandedFaq === faq.id ? 'active' : ''}`}
-                                                onClick={() => toggleFaq(faq.id)}
-                                            >
-                                                <span>{faq.question}</span>
-                                                {expandedFaq === faq.id ? <FaChevronUp /> : <FaChevronDown />}
-                                            </button>
-                                            {expandedFaq === faq.id && (
-                                                <div className="faq-answer animate-fadeIn">
-                                                    <p>{faq.answer}</p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p className="no-results">Không tìm thấy câu hỏi phù hợp.</p>
-                                )}
                             </div>
                         </div>
                     )}

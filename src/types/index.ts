@@ -70,6 +70,25 @@ export interface FAQ extends BaseEntity {
     helpfulCount?: number;
     views?: number;
     fullDescription?: string;
+    // Chi tiết và tài liệu pháp luật
+    relatedLaws?: string[];
+    examples?: string[];
+    detailedExplanation?: string;
+    relatedDocuments?: string[];
+    relatedTerms?: string[];
+    caseStudies?: Array<{
+        title: string;
+        description: string;
+        context?: string;
+    }>;
+    references?: Array<{
+        title: string;
+        url?: string;
+        description?: string;
+    }>;
+    isImportant?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 // ============ Legal Document Types ============

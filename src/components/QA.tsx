@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaChevronDown } from 'react-icons/fa';
+import { FaTag, FaBook, FaLightbulb } from 'react-icons/fa';
 import QAFirebaseService from '../services/QAFirebaseService';
+import { FAQ } from '../types';
 import './QA.css';
 import { toast } from 'react-toastify';
 import LoadingSpinner from './LoadingSpinner';
@@ -18,6 +18,8 @@ interface QuestionSubmission {
 const QA: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
     const [showForm, setShowForm] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [expandedId, setExpandedId] = useState<string | null>(null);
     const [formData, setFormData] = useState<QuestionSubmission>({
         name: '',
         email: '',
@@ -27,7 +29,7 @@ const QA: React.FC = () => {
         agreedTerms: false,
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [faqs, setFaqs] = useState<typeof QAFirebaseService.getAllFAQs extends () => Promise<infer T> ? T : any>([]);
+    const [faqs, setFaqs] = useState<FAQ[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -37,6 +39,12 @@ const QA: React.FC = () => {
                 setLoading(true);
                 const data = await QAFirebaseService.getAllFAQs();
                 setFaqs(data);
+                // Increment views for important FAQs
+                data.forEach((faq) => {
+                    if (faq.isImportant) {
+                        QAFirebaseService.incrementViews(faq.id);
+                    }
+                });
             } catch (err) {
                 console.error('Error loading FAQs:', err);
                 setError('Không thể tải câu hỏi. Vui lòng thử lại sau.');
@@ -64,8 +72,14 @@ const QA: React.FC = () => {
     }
 
     const categories = ['all', ...new Set(faqs.map((f) => f.category))];
-    const filteredFAQs =
-        selectedCategory === 'all' ? faqs : faqs.filter((f) => f.category === selectedCategory);
+    
+    const filteredFAQs = faqs.filter((f) => {
+        const matchCategory = selectedCategory === 'all' || f.category === selectedCategory;
+        const matchSearch =
+            f.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            f.answer.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchCategory && matchSearch;
+    });
 
     const handleFormInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -103,13 +117,31 @@ const QA: React.FC = () => {
         }, 2000);
     };
 
+    const toggleExpand = (id: string) => {
+        setExpandedId(expandedId === id ? null : id);
+        if (expandedId !== id) {
+            QAFirebaseService.incrementViews(id);
+        }
+    };
+
     return (
         <section id="qa" className="qa-section">
             <div className="container">
                 <h2 className="section-title">Hỏi Đáp</h2>
                 <p className="section-subtitle">
-                    Các câu hỏi thường gặp từ khách hàng
+                    Các câu hỏi thường gặp và tư vấn pháp lý chi tiết từ các chuyên gia
                 </p>
+
+                {/* Search Bar */}
+                <div className="qa-search-container">
+                    <input
+                        type="text"
+                        className="qa-search"
+                        placeholder="Tìm kiếm câu hỏi, từ khóa..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
 
                 {/* Category Filter */}
                 <div className="qa-filters">
@@ -126,24 +158,110 @@ const QA: React.FC = () => {
 
                 {/* Q&A List */}
                 <div className="qa-list">
-                    {filteredFAQs.map((faq) => (
-                        <Link
-                            key={faq.id}
-                            to={`/qa/${faq.id}`}
-                            className="qa-item"
-                        >
-                            <div className="qa-question">
-                                <span>{faq.question}</span>
-                                <FaChevronDown style={{ marginLeft: 'auto' }} />
+                    {filteredFAQs.length > 0 ? (
+                        filteredFAQs.map((faq) => (
+                            <div
+                                key={faq.id}
+                                className={`qa-item ${expandedId === faq.id ? 'expanded' : ''}`}
+                            >
+                                <div
+                                    className="qa-question"
+                                    onClick={() => toggleExpand(faq.id)}
+                                >
+                                    <div className="qa-header">
+                                        {faq.isImportant && (
+                                            <span className="qa-important">
+                                                <FaLightbulb /> Quan trọng
+                                            </span>
+                                        )}
+                                        <span className="qa-question-text">{faq.question}</span>
+                                    </div>
+                                    {/* <FaChevronDown
+                                        className={`qa-icon ${expandedId === faq.id ? 'rotated' : ''}`}
+                                    /> */}
+                                </div>
+
+                                {expandedId === faq.id && (
+                                    <div className="qa-answer">
+                                        <div className="qa-answer-content">
+                                            <p className="qa-answer-short">{faq.answer}</p>
+
+                                            {faq.detailedExplanation && (
+                                                <div className="qa-detailed">
+                                                    <h5>Giải thích chi tiết</h5>
+                                                    <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                                                        {faq.detailedExplanation}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {faq.examples && faq.examples.length > 0 && (
+                                                <div className="qa-examples">
+                                                    <h5>
+                                                        <FaLightbulb /> Ví dụ thực tế
+                                                    </h5>
+                                                    <ul>
+                                                        {faq.examples.map((example, idx) => (
+                                                            <li key={idx}>{example}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            {faq.relatedLaws && faq.relatedLaws.length > 0 && (
+                                                <div className="qa-laws">
+                                                    <h5>
+                                                        <FaBook /> Văn bản pháp luật liên quan
+                                                    </h5>
+                                                    <ul>
+                                                        {faq.relatedLaws.map((law, idx) => (
+                                                            <li key={idx}>{law}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            {faq.tags && faq.tags.length > 0 && (
+                                                <div className="qa-tags">
+                                                    {faq.tags.map((tag) => (
+                                                        <span key={tag} className="qa-tag">
+                                                            <FaTag /> {tag}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="qa-footer">
+                                            <button
+                                                className="qa-helpful"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    QAFirebaseService.incrementHelpful(faq.id);
+                                                    toast.success('Cảm ơn phản hồi của bạn!');
+                                                }}
+                                            >
+                                                👍 Hữu ích ({faq.helpfulCount || 0})
+                                            </button>
+                                            <span className="qa-views">
+                                                👁 {faq.views || 0} lượt xem
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                        </Link>
-                    ))}
+                        ))
+                    ) : (
+                        <div className="qa-empty">
+                            <p>Không tìm thấy câu hỏi nào. Vui lòng thử tìm kiếm khác.</p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Submit Question */}
                 <div className="qa-submit-section">
                     <h3>Không tìm thấy câu trả lời?</h3>
-                    <p>Gửi câu hỏi của bạn cho luật sư tư vấn</p>
+                    <p>Gửi câu hỏi của bạn cho luật sư tư vấn. Chúng tôi sẽ phản hồi trong 24 giờ.</p>
                     <button
                         className="btn btn-primary btn-lg"
                         onClick={() => setShowForm(!showForm)}

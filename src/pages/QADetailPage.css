@@ -1,3 +1,6 @@
+.qa-detail-page {
+    margin-top: 2rem;
+}
 .qa-detail-container {
     padding: var(--spacing-4xl) 0;
 }

@@ -77,8 +77,9 @@ export class BaseFirebaseService<T extends { id?: string }> {
     try {
       console.log(`[${this.collectionName}] Creating new document:`, data);
       const collectionRef = collection(db, this.collectionName);
+      const sanitized = this.sanitizeForFirestore(data as any);
       const docRef = await addDoc(collectionRef, {
-        ...data,
+        ...sanitized,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       });
@@ -108,8 +109,9 @@ export class BaseFirebaseService<T extends { id?: string }> {
         throw new Error(`Document with id ${id} does not exist in ${this.collectionName}`);
       }
       
+      const sanitized = this.sanitizeForFirestore(data as any);
       await updateDoc(docRef, {
-        ...data,
+        ...sanitized,
         updatedAt: Timestamp.now(),
       });
       
@@ -128,6 +130,17 @@ export class BaseFirebaseService<T extends { id?: string }> {
       console.error(`Error updating document ${id} in ${this.collectionName}:`, error);
       throw error;
     }
+  }
+
+  /**
+   * Remove undefined values from an object so Firestore won't reject them.
+   */
+  private sanitizeForFirestore(obj: Record<string, any>): Record<string, any> {
+    const result: Record<string, any> = {};
+    Object.entries(obj || {}).forEach(([k, v]) => {
+      if (v !== undefined) result[k] = v;
+    });
+    return result;
   }
 
   /**

@@ -4,6 +4,11 @@ import { Layout, Menu, Table, Button, Space, Popconfirm, Card, Typography, Confi
 import { blogService } from './api/blogService'
 import type { BlogPost } from '../types'
 import CategoryAdmin from './category/CategoryAdmin'
+import TestimonialsAdmin from './testimonials/TestimonialsAdmin'
+import LegalArticlesAdmin from './legal-articles/LegalArticlesAdmin'
+import LegalTermsAdmin from './legal-terms/LegalTermsAdmin'
+import LawExplanationsAdmin from './law-explanations/LawExplanationsAdmin'
+import ReferencesAdmin from './references/ReferencesAdmin'
 
 const { Sider, Content } = Layout
 const { Title, Text } = Typography
@@ -23,7 +28,8 @@ interface AdminDashboardProps {
     onLogout: () => void
 }
 
-type AdminTab = 'news' | 'category' | 'services' | 'viban' | 'statistics' | 'serviceAreas' | 'familyLaw' | 'gallery' | 'team' | 'company'
+type AdminTab = 'news' | 'category' | 'services' | 'viban' | 'statistics' | 'serviceAreas' | 'familyLaw' | 'gallery' | 'team' | 'company' | 'testimonials'
+    | 'legalArticles' | 'legalTerms' | 'lawExplanations' | 'references'
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     const [activeTab, setActiveTab] = useState<AdminTab>('news')
@@ -55,6 +61,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         { key: 'serviceAreas', label: 'Lĩnh vực dịch vụ' },
         { key: 'familyLaw', label: 'Hôn nhân - Gia đình' },
         { key: 'gallery', label: 'Thư viện' },
+        { key: 'testimonials', label: 'Lời chứng thực' },
+        { key: 'legalArticles', label: 'Bài viết pháp luật' },
+        { key: 'legalTerms', label: 'Thuật ngữ pháp luật' },
+        { key: 'lawExplanations', label: 'Giải thích văn bản' },
+        { key: 'references', label: 'Tài liệu tham khảo' },
         { key: 'team', label: 'Đội ngũ' },
         { key: 'company', label: 'Thông tin công ty' },
     ]
@@ -128,6 +139,26 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
                     {activeTab === 'category' && (
                         <CategoryAdmin />
+                    )}
+
+                    {activeTab === 'testimonials' && (
+                        <TestimonialsAdmin />
+                    )}
+
+                    {activeTab === 'legalArticles' && (
+                        <LegalArticlesAdmin />
+                    )}
+
+                    {activeTab === 'legalTerms' && (
+                        <LegalTermsAdmin />
+                    )}
+
+                    {activeTab === 'lawExplanations' && (
+                        <LawExplanationsAdmin />
+                    )}
+
+                    {activeTab === 'references' && (
+                        <ReferencesAdmin />
                     )}
 
                     {activeTab !== 'news' && activeTab !== 'category' && (

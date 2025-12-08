@@ -83,7 +83,7 @@
 
 .modal-content {
     background: white;
-    /* border-radius: var(--radius-2xl); */
+    border-radius: var(--radius-2xl);
     /* max-width: 700px; */
     width: 100%;
     max-height: 90vh;
@@ -175,7 +175,6 @@
 
 .modal-list li {
     padding: var(--spacing-sm) 0;
-    padding-left: var(--spacing-xl);
     position: relative;
     color: var(--color-text);
     line-height: 1.6;
@@ -192,6 +191,7 @@
 .benefits-list li::before {
     content: '★';
     color: var(--color-secondary);
+    left: -27px;
 }
 
 /* Responsive */

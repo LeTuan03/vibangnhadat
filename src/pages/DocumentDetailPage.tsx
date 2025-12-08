@@ -3,11 +3,12 @@ import { useParams, Link } from 'react-router-dom';
 import { FaBook, FaDownload, FaCalendar, FaArrowLeft } from 'react-icons/fa';
 // Layout provided by route-level wrapper
 import DocumentFirebaseService from '../services/DocumentFirebaseService';
-import { mockLegalDocuments } from '../data/mockData';
 import { formatDate } from '../utils/helpers';
 import LoadingSpinner from '../components/LoadingSpinner';
 import type { LegalDocument } from '../types';
 import './DocumentDetailPage.css';
+
+// Note: Fetches from Firebase; mockLegalDocuments is fallback
 
 const DocumentDetailPage: React.FC = () => {
     const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>([]);
@@ -30,10 +31,8 @@ const DocumentDetailPage: React.FC = () => {
                 }
             } catch (err) {
                 console.error('Error loading documents:', err);
-                setLegalDocuments(mockLegalDocuments);
-                if (!mockLegalDocuments.find(d => d.id === id)) {
-                    setNotFound(true);
-                }
+                setLegalDocuments([]);
+                setNotFound(true);
             } finally {
                 setLoading(false);
             }

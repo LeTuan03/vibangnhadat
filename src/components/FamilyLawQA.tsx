@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import FamilyLawFirebaseService from '../services/FamilyLawFirebaseService';
-import { mockFamilyLawQAs } from '../data/mockData';
 import type { FamilyLawQA } from '../types';
 import './FamilyLawQA.css';
+
+// Note: Fetches from Firebase; mockFamilyLawQAs is fallback
 
 const FamilyLawQA: React.FC = () => {
     const [familyLawQAs, setFamilyLawQAs] = useState<FamilyLawQA[]>([]);
@@ -16,7 +17,7 @@ const FamilyLawQA: React.FC = () => {
                 setFamilyLawQAs(data);
             } catch (err) {
                 console.error('Error loading family law Q&As:', err);
-                setFamilyLawQAs(mockFamilyLawQAs);
+                setFamilyLawQAs([]);
             }
         };
         loadData();

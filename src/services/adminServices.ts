@@ -390,7 +390,13 @@ export async function searchCategories(term: string) {
 
 // ============ NAVIGATION SERVICES ============
 export async function getAllNavigationItems() {
-  return NavigationFirebaseService.getAll();
+  const items = await NavigationFirebaseService.getAll();
+  // Sort by order field if it exists, otherwise maintain original order
+  return items.sort((a, b) => {
+    const orderA = a.order ?? Infinity;
+    const orderB = b.order ?? Infinity;
+    return orderA - orderB;
+  });
 }
 
 export async function createNavigationItem(data: any) {

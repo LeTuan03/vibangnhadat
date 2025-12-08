@@ -19,11 +19,14 @@ export const ServiceFormModal: React.FC<ServiceFormModalProps> = ({ isOpen, onCl
     const [form] = Form.useForm()
     const [details, setDetails] = useState<string[]>([])
     const [detailInput, setDetailInput] = useState('')
+    const [benefits, setBenefits] = useState<string[]>([])
+    const [benefitInput, setBenefitInput] = useState('')
 
     useEffect(() => {
         if (editService) {
             form.setFieldsValue({ title: editService.title, description: editService.description, icon: editService.icon })
             setDetails(editService.details || [])
+            setBenefits(editService.benefits || [])
         } else {
             form.resetFields()
             setDetails([])
@@ -46,7 +49,7 @@ export const ServiceFormModal: React.FC<ServiceFormModalProps> = ({ isOpen, onCl
                 message.error('Vui lòng điền đầy đủ thông tin!')
                 return
             }
-            const payload: any = { ...values, details }
+            const payload: any = { ...values, details, benefits }
             if (editService) {
                 onSave({ ...payload, id: editService.id })
                 message.success('Cập nhật dịch vụ thành công!')
@@ -84,6 +87,20 @@ export const ServiceFormModal: React.FC<ServiceFormModalProps> = ({ isOpen, onCl
                         {details.map((d, i) => (
                             <Tag key={i} closable onClose={() => removeDetail(i)} style={{ marginBottom: 8 }} icon={<DeleteOutlined />}>
                                 {d}
+                            </Tag>
+                        ))}
+                    </div>
+                </Form.Item>
+
+                <Form.Item label="Lợi ích (Mỗi lợi ích nhấn Enter)">
+                    <Space style={{ marginBottom: 8 }}>
+                        <Input value={benefitInput} onChange={(e) => setBenefitInput(e.target.value)} onPressEnter={(e) => { e.preventDefault(); if (benefitInput.trim()) { setBenefits(prev => [...prev, benefitInput.trim()]); setBenefitInput('') } }} placeholder="Nhập lợi ích và nhấn Enter" />
+                        <Button onClick={() => { if (benefitInput.trim()) { setBenefits(prev => [...prev, benefitInput.trim()]); setBenefitInput('') } }}>Thêm</Button>
+                    </Space>
+                    <div>
+                        {benefits.map((b, i) => (
+                            <Tag key={i} closable onClose={() => setBenefits(prev => prev.filter((_, idx) => idx !== i))} style={{ marginBottom: 8 }} icon={<DeleteOutlined />}>
+                                {b}
                             </Tag>
                         ))}
                     </div>

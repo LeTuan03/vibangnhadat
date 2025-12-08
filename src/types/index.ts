@@ -69,6 +69,7 @@ export interface FAQ extends BaseEntity {
     relatedFAQs?: string[];
     helpfulCount?: number;
     views?: number;
+    fullDescription?: string;
 }
 
 // ============ Legal Document Types ============
@@ -185,6 +186,10 @@ export interface ServiceArea extends BaseEntity {
     description: string;
     details?: string[];
     icon?: string;
+    benefits?: string[];
+    servicesOffered?: { title: string; description?: string }[];
+    processSteps?: string[];
+    contactCTA?: { phone?: string; email?: string; ctaText?: string };
 }
 
 // ============ Family Law Types ============
@@ -196,6 +201,31 @@ export interface FamilyLawQA extends BaseEntity {
     category?: string;
     relatedQAs?: string[];
     date?: string;
+    // Chi tiết nội dung
+    overview?: string;
+    definition?: string;
+    relatedLaws?: string[];
+    processSteps?: Array<{
+        title: string;
+        description: string;
+    }>;
+    tips?: string[];
+    updatedAt?: string;
+}
+
+// ============ Viban (Notary) Types ============
+export interface Viban extends BaseEntity {
+    title: string;
+    description: string;
+    image?: string;
+    requirements: string[];
+    process: string[];
+    fees: string;
+    benefits?: string[];
+    relatedDocuments?: string[];
+    category?: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 // ============ Gallery Types ============

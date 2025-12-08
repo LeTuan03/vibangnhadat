@@ -349,49 +349,230 @@ export const mockServiceAreas: ServiceArea[] = [
         id: 'area-1',
         title: 'Tư Vấn Luật Đất Đai Chuyên Sâu: Giải Pháp Pháp Lý Toàn Diện',
         image: '/images/service-land-law.jpg',
-        description: 'Dịch vụ tư vấn đất đai chuyên sâu'
+        description: 'Dịch vụ tư vấn đất đai chuyên sâu, hỗ trợ kiểm tra pháp lý, chuyển nhượng và giải quyết tranh chấp.',
+        details: [
+            'Tư vấn quyền sử dụng đất và hồ sơ pháp lý',
+            'Kiểm tra sổ đỏ, giấy tờ liên quan',
+            'Soạn thảo và kiểm tra hợp đồng chuyển nhượng',
+            'Hỗ trợ giải quyết tranh chấp đất đai tại cơ quan và tòa án'
+        ],
+        servicesOffered: [
+            { title: 'Kiểm tra pháp lý bất động sản', description: 'Xác minh nguồn gốc, hạn chế và rủi ro pháp lý.' },
+            { title: 'Soạn thảo hợp đồng mua bán', description: 'Soạn thảo hợp đồng bảo đảm tính pháp lý và quyền lợi khách hàng.' },
+            { title: 'Hỗ trợ chuyển nhượng', description: 'Thực hiện thủ tục chuyển nhượng tại cơ quan đăng ký đất đai.' }
+        ],
+        processSteps: [
+            'Tiếp nhận yêu cầu và hồ sơ khách hàng',
+            'Kiểm tra tài liệu và đánh giá pháp lý',
+            'Soạn thảo/hoàn thiện hồ sơ',
+            'Nộp hồ sơ và theo dõi tại cơ quan có thẩm quyền'
+        ],
+        benefits: [
+            'Giảm rủi ro giao dịch',
+            'Thủ tục nhanh chóng, chính xác',
+            'Hỗ trợ pháp lý toàn diện từ A-Z'
+        ],
+        contactCTA: { phone: '0901234567', email: 'datdai@viban.vn', ctaText: 'Tư vấn đất đai miễn phí' }
     },
     {
         id: 'area-2',
         title: 'Dịch vụ quản lý và thu hồi nợ',
         image: '/images/service-debt-recovery.jpg',
-        description: 'Giải pháp toàn diện cho thu hồi nợ'
+        description: 'Giải pháp toàn diện cho thu hồi nợ, từ thương lượng đến kiện tụng.',
+        details: [
+            'Thẩm định khả năng thu hồi nợ',
+            'Soạn thảo yêu cầu thanh toán và hợp đồng bảo đảm',
+            'Đàm phán, thương lượng với con nợ',
+            'Thực hiện thủ tục khởi kiện khi cần thiết'
+        ],
+        servicesOffered: [
+            { title: 'Đánh giá nợ và khả năng thu hồi', description: 'Đánh giá thực tế và đề xuất phương án.' },
+            { title: 'Thương lượng và hòa giải', description: 'Đại diện thương lượng để thu hồi tối đa.' },
+            { title: 'Khởi kiện, thi hành án', description: 'Hỗ trợ thủ tục tố tụng và thi hành án.' }
+        ],
+        processSteps: [
+            'Thu thập hồ sơ và bằng chứng nợ',
+            'Gửi thông báo và yêu cầu thanh toán',
+            'Thương lượng/đàm phán',
+            'Khởi kiện và theo dõi thi hành án (nếu cần)'
+        ],
+        benefits: [
+            'Tăng tỉ lệ thu hồi nợ',
+            'Tiết kiệm thời gian cho doanh nghiệp',
+            'Hạn chế rủi ro pháp lý khi xử lý nợ'
+        ],
+        contactCTA: { phone: '0902345678', email: 'thuno@viban.vn', ctaText: 'Yêu cầu thu hồi nợ' }
     },
     {
         id: 'area-3',
         title: 'Dịch vụ tư vấn đầu tư',
         image: '/images/service-investment.jpg',
-        description: 'Hỗ trợ tư vấn đầu tư kinh doanh'
+        description: 'Hỗ trợ tư vấn đầu tư kinh doanh, thành lập công ty và thực hiện thủ tục pháp lý.',
+        details: [
+            'Tư vấn cấu trúc đầu tư',
+            'Phân tích rủi ro pháp lý',
+            'Chuẩn bị hồ sơ thành lập doanh nghiệp',
+            'Hỗ trợ đàm phán hợp đồng đầu tư'
+        ],
+        servicesOffered: [
+            { title: 'Tư vấn thành lập doanh nghiệp', description: 'Hướng dẫn lựa chọn loại hình và thủ tục.' },
+            { title: 'Tư vấn đầu tư nước ngoài', description: 'Hỗ trợ thủ tục, giấy phép và tuân thủ.' },
+            { title: 'Soạn thảo hợp đồng đầu tư', description: 'Bảo vệ quyền lợi nhà đầu tư và doanh nghiệp.' }
+        ],
+        processSteps: [
+            'Thu thập thông tin dự án',
+            'Đánh giá pháp lý và rủi ro',
+            'Soạn thảo hồ sơ và hợp đồng',
+            'Hỗ trợ xin phép và triển khai thủ tục' 
+        ],
+        benefits: [
+            'Giảm rủi ro pháp lý cho dự án',
+            'Tối ưu cấu trúc đầu tư',
+            'Hỗ trợ nhanh và chuyên nghiệp'
+        ],
+        contactCTA: { phone: '0903456789', email: 'dautu@viban.vn', ctaText: 'Nhận tư vấn đầu tư' }
     },
     {
         id: 'area-4',
         title: 'Dịch vụ mua bán, sáp nhập, tái cơ cấu doanh nghiệp',
         image: '/images/service-ma.jpg',
-        description: 'M&A và tái cơ cấu doanh nghiệp'
+        description: 'Hỗ trợ M&A, mua bán và tái cấu trúc doanh nghiệp toàn diện.',
+        details: [
+            'Thẩm định pháp lý (Legal Due Diligence)',
+            'Soạn thảo và đàm phán hợp đồng M&A',
+            'Tư vấn cấu trúc giao dịch',
+            'Hỗ trợ hậu giao dịch và tái cấu trúc'
+        ],
+        servicesOffered: [
+            { title: 'Due Diligence', description: 'Kiểm tra toàn diện hồ sơ pháp lý và rủi ro.' },
+            { title: 'Soạn thảo hợp đồng M&A', description: 'Chuẩn hoá điều khoản bảo vệ bên mua/bên bán.' },
+            { title: 'Hỗ trợ hậu M&A', description: 'Tư vấn tái cấu trúc tổ chức và pháp lý.' }
+        ],
+        processSteps: [
+            'Khảo sát ban đầu và thu thập tài liệu',
+            'Thực hiện due diligence',
+            'Đàm phán điều khoản và ký kết hợp đồng',
+            'Hoàn thiện thủ tục chuyển nhượng và điều chỉnh nội bộ'
+        ],
+        benefits: [
+            'Bảo đảm giao dịch an toàn pháp lý',
+            'Tối ưu giá trị thương vụ',
+            'Hỗ trợ thực thi và tái cấu trúc sau giao dịch'
+        ],
+        contactCTA: { phone: '0904567890', email: 'ma@viban.vn', ctaText: 'Liên hệ chuyên viên M&A' }
     },
     {
         id: 'area-5',
         title: 'Dịch vụ đăng ký doanh nghiệp',
         image: '/images/service-registration.jpg',
-        description: 'Thủ tục đăng ký doanh nghiệp'
+        description: 'Thủ tục đăng ký kinh doanh, thay đổi giấy phép và đăng ký chi nhánh.',
+        details: [
+            'Tư vấn loại hình doanh nghiệp phù hợp',
+            'Soạn hồ sơ thành lập và nộp hồ sơ',
+            'Đăng ký mã số thuế và con dấu',
+            'Hướng dẫn thủ tục sau đăng ký'
+        ],
+        servicesOffered: [
+            { title: 'Thành lập công ty', description: 'Hoàn thiện hồ sơ & nộp cơ quan đăng ký.' },
+            { title: 'Đăng ký thay đổi giấy phép', description: 'Hỗ trợ thay đổi giấy phép, vốn, trụ sở.' },
+            { title: 'Đăng ký mã số thuế', description: 'Hướng dẫn hoàn thiện nghĩa vụ thuế ban đầu.' }
+        ],
+        processSteps: [
+            'Tư vấn lựa chọn loại hình và chuẩn bị hồ sơ',
+            'Nộp hồ sơ và theo dõi',
+            'Nhận giấy chứng nhận và hoàn tất thủ tục sau đăng ký'
+        ],
+        benefits: [
+            'Tiết kiệm thời gian thủ tục',
+            'Hướng dẫn cụ thể cho bước tiếp theo',
+            'Cam kết hồ sơ chính xác, hợp lệ'
+        ],
+        contactCTA: { phone: '0905678901', email: 'dangky@viban.vn', ctaText: 'Bắt đầu thành lập doanh nghiệp' }
     },
     {
         id: 'area-6',
         title: 'Dịch vụ giấy phép con',
         image: '/images/service-license.jpg',
-        description: 'Cấp giấy phép con kinh doanh'
+        description: 'Hỗ trợ xin các giấy phép chuyên ngành (giấy phép con) cho hoạt động kinh doanh.',
+        details: [
+            'Đánh giá giấy phép cần thiết cho ngành nghề',
+            'Chuẩn bị và nộp hồ sơ xin cấp phép',
+            'Theo dõi tiến trình cấp phép',
+            'Hỗ trợ trả lời yêu cầu bổ sung từ cơ quan cấp phép'
+        ],
+        servicesOffered: [
+            { title: 'Tư vấn giấy phép chuyên ngành', description: 'Xác định giấy phép cần thiết theo ngành nghề.' },
+            { title: 'Nộp hồ sơ xin phép', description: 'Soạn thảo và đại diện nộp hồ sơ tại cơ quan nhà nước.' }
+        ],
+        processSteps: [
+            'Khảo sát yêu cầu pháp lý theo ngành',
+            'Chuẩn bị hồ sơ và giấy tờ liên quan',
+            'Nộp hồ sơ và theo dõi',
+            'Nhận và bàn giao giấy phép'
+        ],
+        benefits: [
+            'Giảm sai sót hồ sơ',
+            'Tiết kiệm thời gian xử lý',
+            'Đảm bảo tuân thủ quy định chuyên ngành'
+        ],
+        contactCTA: { phone: '0906789012', email: 'giayphep@viban.vn', ctaText: 'Yêu cầu xin phép' }
     },
     {
         id: 'area-7',
         title: 'Dịch vụ sở hữu trí tuệ',
         image: '/images/service-ip.jpg',
-        description: 'Bảo vệ sở hữu trí tuệ'
+        description: 'Bảo vệ sở hữu trí tuệ: đăng ký thương hiệu, sáng chế, bản quyền và xử lý xâm phạm.',
+        details: [
+            'Đăng ký nhãn hiệu và bảo hộ thương hiệu',
+            'Tư vấn sáng chế và giải pháp kỹ thuật',
+            'Bảo vệ bản quyền tác giả và nội dung',
+            'Xử lý xâm phạm quyền sở hữu trí tuệ'
+        ],
+        servicesOffered: [
+            { title: 'Đăng ký nhãn hiệu', description: 'Hỗ trợ tra cứu, nộp đơn và bảo hộ nhãn hiệu.' },
+            { title: 'Bảo vệ bản quyền', description: 'Tư vấn đăng ký quyền tác giả và nội dung.' },
+            { title: 'Xử lý xâm phạm', description: 'Đại diện khiếu nại và khởi kiện hành vi xâm phạm.' }
+        ],
+        processSteps: [
+            'Tra cứu khả năng bảo hộ',
+            'Chuẩn bị tài liệu và nộp đơn',
+            'Theo dõi thẩm định và hoàn tất bảo hộ',
+            'Xử lý khi có tranh chấp hoặc xâm phạm'
+        ],
+        benefits: [
+            'Bảo vệ quyền sáng tạo và thương hiệu',
+            'Giảm rủi ro xâm phạm',
+            'Hỗ trợ bảo vệ thị trường và giá trị thương mại'
+        ],
+        contactCTA: { phone: '0907890123', email: 'sothuutri tue@viban.vn', ctaText: 'Bảo hộ thương hiệu' }
     },
     {
         id: 'area-8',
         title: 'Dịch vụ pháp lý thường xuyên',
         image: '/images/service-legal-services.jpg',
-        description: 'Tư vấn pháp lý thường xuyên'
+        description: 'Tư vấn pháp lý thường xuyên cho doanh nghiệp và cá nhân, gói dịch vụ thuê luật sư cố định.',
+        details: [
+            'Tư vấn pháp lý định kỳ theo gói',
+            'Soạn thảo và rà soát hợp đồng hàng tháng',
+            'Hỗ trợ giải quyết tranh chấp phát sinh',
+            'Đào tạo nội bộ và soạn thảo quy định công ty'
+        ],
+        servicesOffered: [
+            { title: 'Gói tư vấn định kỳ', description: 'Dịch vụ tư vấn pháp lý theo tháng/quý.' },
+            { title: 'Rà soát hợp đồng định kỳ', description: 'Bảo đảm hợp đồng phù hợp pháp luật.' }
+        ],
+        processSteps: [
+            'Ký hợp đồng dịch vụ pháp lý',
+            'Thiết lập kênh liên lạc và lịch tư vấn',
+            'Thực hiện tư vấn và hỗ trợ theo yêu cầu',
+            'Đánh giá định kỳ và điều chỉnh hợp đồng'
+        ],
+        benefits: [
+            'Tiếp cận tư vấn nhanh chóng',
+            'Chi phí hợp lý cho dịch vụ dài hạn',
+            'Ưu tiên hỗ trợ khi có tranh chấp'
+        ],
+        contactCTA: { phone: '0908901234', email: 'phaply@viban.vn', ctaText: 'Đăng ký gói pháp lý' }
     }
 ];
 

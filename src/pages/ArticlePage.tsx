@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import BlogFirebaseService from '../services/BlogFirebaseService';
-import { mockBlogPosts } from '../data/mockData';
 import { formatDate } from '../utils/helpers';
 import LoadingSpinner from '../components/LoadingSpinner';
 import type { BlogPost } from '../types';
@@ -28,10 +27,8 @@ const ArticlePage: React.FC = () => {
                 }
             } catch (err) {
                 console.error('Error loading blog posts:', err);
-                setBlogPosts(mockBlogPosts);
-                if (!mockBlogPosts.find(p => p.id === id)) {
-                    setNotFound(true);
-                }
+                setBlogPosts([]);
+                setNotFound(true);
             } finally {
                 setLoading(false);
             }

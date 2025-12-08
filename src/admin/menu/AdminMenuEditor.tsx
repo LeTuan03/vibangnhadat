@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Form, Input, Select, Button, Table, Space, Typography, Divider, Modal, message, Tag } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, MenuOutlined, LinkOutlined } from '@ant-design/icons';
+import { Card, Form, Input, Select, Button, Space, Typography, Divider, Modal, message, Tag, Empty } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, MenuOutlined, LinkOutlined, DragOutlined } from '@ant-design/icons';
 import { getAllNavigationItems, createNavigationItem, updateNavigationItem, deleteNavigationItem } from '../../services';
 
 export interface NavItem {
@@ -8,6 +8,7 @@ export interface NavItem {
     label: string;
     href: string;
     children?: NavItem[];
+    order?: number;
 }
 
 const { Title } = Typography;
@@ -20,17 +21,89 @@ const AdminMenuEditor: React.FC = () => {
     const [form] = Form.useForm();
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [editingItem, setEditingItem] = useState<NavItem | null>(null);
-    const [editForm] = Form.useForm(); useEffect(() => {
+    const [editForm] = Form.useForm();
+    const [draggedItem, setDraggedItem] = useState<NavItem | null>(null);
+    const [draggedOverItem, setDraggedOverItem] = useState<NavItem | null>(null);
+
+    useEffect(() => {
         loadNavigation();
     }, []);
 
     const loadNavigation = async () => {
         try {
             const data = await getAllNavigationItems();
-            setItems(data || []);
+            if (data && data.length > 0) {
+                // Initialize order field if missing
+                const itemsWithOrder = data.map((item, index) => ({
+                    ...item,
+                    order: item.order ?? index
+                }));
+                setItems(itemsWithOrder);
+            } else {
+                setItems([]);
+            }
         } catch (error) {
             console.error('Lỗi tải menu:', error);
             message.error('Không thể tải menu');
+        }
+    };
+
+    // Drag and drop handlers
+    const handleDragStart = (item: NavItem) => {
+        setDraggedItem(item);
+    };
+
+    const handleDragOver = (e: React.DragEvent<HTMLTableRowElement>, item: NavItem) => {
+        e.preventDefault();
+        setDraggedOverItem(item);
+    };
+
+    const handleDragLeave = () => {
+        setDraggedOverItem(null);
+    };
+
+    const handleDrop = async (e: React.DragEvent<HTMLTableRowElement>, targetItem: NavItem) => {
+        e.preventDefault();
+        setDraggedOverItem(null);
+
+        if (!draggedItem || !draggedItem.id || !targetItem.id || draggedItem.id === targetItem.id) {
+            setDraggedItem(null);
+            return;
+        }
+
+        try {
+            // Reorder items
+            const draggedIndex = items.findIndex(item => item.id === draggedItem.id);
+            const targetIndex = items.findIndex(item => item.id === targetItem.id);
+
+            if (draggedIndex === -1 || targetIndex === -1) {
+                setDraggedItem(null);
+                return;
+            }
+
+            const newItems = [...items];
+            const [draggedItemData] = newItems.splice(draggedIndex, 1);
+            newItems.splice(targetIndex, 0, draggedItemData);
+
+            // Update order property
+            newItems.forEach((item, index) => {
+                item.order = index;
+            });
+
+            setItems(newItems);
+            setDraggedItem(null);
+
+            // Update all items in Firebase with new order
+            for (let i = 0; i < newItems.length; i++) {
+                await updateNavigationItem(newItems[i].id!, { order: i });
+            }
+
+            message.success('Cập nhật vị trí menu thành công');
+        } catch (error) {
+            console.error('Lỗi cập nhật vị trí:', error);
+            message.error('Cập nhật vị trí thất bại');
+            setDraggedItem(null);
+            loadNavigation(); // Reload to sync with Firebase
         }
     };
 
@@ -115,107 +188,6 @@ const AdminMenuEditor: React.FC = () => {
         }
     };
 
-    const mainColumns = [
-        {
-            title: 'Nhãn',
-            dataIndex: 'label',
-            key: 'label',
-            render: (text: string, record: NavItem) => (
-                <Space>
-                    <MenuOutlined style={{ color: '#1890ff' }} />
-                    <span style={{ fontWeight: 600 }}>{text}</span>
-                    {record.children && record.children.length > 0 && (
-                        <Tag color="blue">{record.children.length} mục con</Tag>
-                    )}
-                </Space>
-            )
-        },
-        {
-            title: 'Liên kết',
-            dataIndex: 'href',
-            key: 'href',
-            render: (text: string) => (
-                <Space>
-                    <LinkOutlined style={{ color: '#52c41a' }} />
-                    <span style={{ color: '#666' }}>{text}</span>
-                </Space>
-            )
-        },
-        {
-            title: 'Hành động',
-            key: 'action',
-            width: 150,
-            render: (_: any, record: NavItem) => (
-                <Space size="small">
-                    <Button
-                        type="link"
-                        icon={<EditOutlined />}
-                        onClick={() => showEditModal(record)}
-                    >
-                        Sửa
-                    </Button>
-                    <Button
-                        type="link"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => record.id && handleDelete(record.id)}
-                    >
-                        Xóa
-                    </Button>
-                </Space>
-            )
-        }
-    ];
-
-    const childColumns = [
-        {
-            title: 'Nhãn',
-            dataIndex: 'label',
-            key: 'label',
-            render: (text: string) => (
-                <Space style={{ paddingLeft: 24 }}>
-                    <span style={{ color: '#999' }}>└─</span>
-                    <span>{text}</span>
-                </Space>
-            )
-        },
-        {
-            title: 'Liên kết',
-            dataIndex: 'href',
-            key: 'href',
-            render: (text: string) => (
-                <Space>
-                    <LinkOutlined style={{ color: '#52c41a' }} />
-                    <span style={{ color: '#666' }}>{text}</span>
-                </Space>
-            )
-        },
-        {
-            title: 'Hành động',
-            key: 'action',
-            width: 150,
-            render: (_: any, record: NavItem) => (
-                <Space size="small">
-                    <Button
-                        type="link"
-                        icon={<EditOutlined />}
-                        onClick={() => showEditModal(record)}
-                    >
-                        Sửa
-                    </Button>
-                    <Button
-                        type="link"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => record.id && handleDelete(record.id)}
-                    >
-                        Xóa
-                    </Button>
-                </Space>
-            )
-        }
-    ];
-
     return (
         <div style={{ padding: '16px', background: '#f0f2f5', minHeight: '100vh' }}>
             <Title level={3}>Quản lý Menu Client</Title>
@@ -287,29 +259,133 @@ const AdminMenuEditor: React.FC = () => {
             </Card>
 
             <Card title="Danh sách menu" type="inner">
-                <Table
-                    columns={mainColumns}
-                    dataSource={items}
-                    rowKey="id"
-                    pagination={false}
-                    bordered
-                />
-
-                {items.map((it) => it.children && it.children.length > 0 && (
-                    <div key={it.id} style={{ marginTop: 24 }}>
-                        <Title level={5}>
-                            <Tag color="blue">Mục con của: {it.label}</Tag>
-                        </Title>
-                        <Table
-                            columns={childColumns}
-                            dataSource={it.children}
-                            rowKey="id"
-                            pagination={false}
-                            bordered
-                            size="small"
-                        />
+                {items.length === 0 ? (
+                    <Empty description="Chưa có mục menu nào" />
+                ) : (
+                    <div style={{ overflowX: 'auto' }}>
+                        <table style={{
+                            width: '100%',
+                            borderCollapse: 'collapse',
+                            border: '1px solid #d9d9d9'
+                        }}>
+                            <thead>
+                                <tr style={{ backgroundColor: '#fafafa', borderBottom: '1px solid #d9d9d9' }}>
+                                    <th style={{ width: 30, padding: '8px', textAlign: 'center' }}></th>
+                                    <th style={{ padding: '8px', textAlign: 'left' }}>Nhãn</th>
+                                    <th style={{ padding: '8px', textAlign: 'left' }}>Liên kết</th>
+                                    <th style={{ width: 150, padding: '8px', textAlign: 'left' }}>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {items.map((item) => (
+                                    <React.Fragment key={item.id}>
+                                        {/* Parent item */}
+                                        <tr
+                                            draggable
+                                            onDragStart={() => handleDragStart(item)}
+                                            onDragOver={(e) => handleDragOver(e, item)}
+                                            onDragLeave={handleDragLeave}
+                                            onDrop={(e) => handleDrop(e, item)}
+                                            style={{
+                                                borderBottom: '1px solid #d9d9d9',
+                                                backgroundColor: draggedOverItem?.id === item.id ? '#e6f7ff' : 'transparent',
+                                                opacity: draggedItem?.id === item.id ? 0.5 : 1,
+                                                cursor: 'grab',
+                                                transition: 'background-color 0.2s'
+                                            }}
+                                        >
+                                            <td style={{ padding: '8px', textAlign: 'center' }}>
+                                                <DragOutlined style={{ color: '#bfbfbf', cursor: 'move' }} />
+                                            </td>
+                                            <td style={{ padding: '8px' }}>
+                                                <Space>
+                                                    <MenuOutlined style={{ color: '#1890ff' }} />
+                                                    <span style={{ fontWeight: 600 }}>{item.label}</span>
+                                                    {item.children && item.children.length > 0 && (
+                                                        <Tag color="blue">{item.children.length} mục con</Tag>
+                                                    )}
+                                                </Space>
+                                            </td>
+                                            <td style={{ padding: '8px', color: '#666' }}>
+                                                <Space>
+                                                    <LinkOutlined style={{ color: '#52c41a' }} />
+                                                    <span>{item.href}</span>
+                                                </Space>
+                                            </td>
+                                            <td style={{ padding: '8px' }}>
+                                                <Space size="small">
+                                                    <Button
+                                                        type="link"
+                                                        size="small"
+                                                        icon={<EditOutlined />}
+                                                        onClick={() => showEditModal(item)}
+                                                    >
+                                                        Sửa
+                                                    </Button>
+                                                    <Button
+                                                        type="link"
+                                                        size="small"
+                                                        danger
+                                                        icon={<DeleteOutlined />}
+                                                        onClick={() => item.id && handleDelete(item.id)}
+                                                    >
+                                                        Xóa
+                                                    </Button>
+                                                </Space>
+                                            </td>
+                                        </tr>
+                                        
+                                        {/* Child items */}
+                                        {item.children && item.children.map((child) => (
+                                            <tr
+                                                key={child.id}
+                                                style={{
+                                                    borderBottom: '1px solid #f0f0f0',
+                                                    backgroundColor: '#fafafa'
+                                                }}
+                                            >
+                                                <td style={{ padding: '8px', textAlign: 'center', color: '#999' }}>└─</td>
+                                                <td style={{ padding: '8px', paddingLeft: '32px' }}>
+                                                    <Space>
+                                                        <MenuOutlined style={{ color: '#999', fontSize: '12px' }} />
+                                                        <span style={{ color: '#666' }}>{child.label}</span>
+                                                    </Space>
+                                                </td>
+                                                <td style={{ padding: '8px', color: '#999' }}>
+                                                    <Space>
+                                                        <LinkOutlined style={{ color: '#999', fontSize: '12px' }} />
+                                                        <span>{child.href}</span>
+                                                    </Space>
+                                                </td>
+                                                <td style={{ padding: '8px' }}>
+                                                    <Space size="small">
+                                                        <Button
+                                                            type="link"
+                                                            size="small"
+                                                            icon={<EditOutlined />}
+                                                            onClick={() => showEditModal(child)}
+                                                        >
+                                                            Sửa
+                                                        </Button>
+                                                        <Button
+                                                            type="link"
+                                                            size="small"
+                                                            danger
+                                                            icon={<DeleteOutlined />}
+                                                            onClick={() => child.id && handleDelete(child.id)}
+                                                        >
+                                                            Xóa
+                                                        </Button>
+                                                    </Space>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </React.Fragment>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
-                ))}
+                )}
             </Card>
 
             <Modal

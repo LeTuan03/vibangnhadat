@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaQuestionCircle, FaArrowLeft } from 'react-icons/fa';
 import QAFirebaseService from '../services/QAFirebaseService';
-import { mockFAQs } from '../data/mockData';
 import LoadingSpinner from '../components/LoadingSpinner';
 import type { FAQ } from '../types';
 import './QADetailPage.css';
+
+// Note: Fetches from Firebase; mockFAQs is fallback
 
 const QADetailPage: React.FC = () => {
     const [faqs, setFaqs] = useState<FAQ[]>([]);
@@ -28,11 +29,9 @@ const QADetailPage: React.FC = () => {
                 }
             } catch (err) {
                 console.error('Error loading FAQs:', err);
-                // Fallback to mock data
-                setFaqs(mockFAQs);
-                if (!mockFAQs.find(f => f.id === id)) {
-                    setNotFound(true);
-                }
+                // no fallback data available; mark not found
+                setFaqs([]);
+                setNotFound(true);
             } finally {
                 setLoading(false);
             }
@@ -87,19 +86,23 @@ const QADetailPage: React.FC = () => {
                                 {/* Additional explanation */}
                                 <div className="qa-explanation">
                                     <h3>Giải thích chi tiết</h3>
-                                    <p>
-                                        {faq.category === 'Tổng quan'
-                                            ? 'Câu hỏi này giúp bạn hiểu rõ hơn về định nghĩa, khái niệm cơ bản trong lĩnh vực pháp luật liên quan.'
-                                            : faq.category === 'Lập vi bằng'
-                                            ? 'Lập vi bằng là một trong những dịch vụ quan trọng của Thừa phát lại, giúp xác thực các giao dịch dân sự, kinh tế.'
-                                            : faq.category === 'Chi phí'
-                                            ? 'Chi phí dịch vụ được quy định theo quy chuẩn của Nhà nước, đảm bảo tính công khai, minh bạch và hợp lý.'
-                                            : faq.category === 'Xác minh điều kiện'
-                                            ? 'Xác minh điều kiện thi hành án là quá trình kiểm tra, xác nhận tài sản, thu nhập của người phải thi hành án.'
-                                            : faq.category === 'Dịch vụ khác'
-                                            ? 'Ngoài các dịch vụ chính, Thừa phát lại còn cung cấp nhiều dịch vụ hỗ trợ khác để đáp ứng nhu cầu khách hàng.'
-                                            : 'Đây là một câu hỏi quan trọng giúp bạn hiểu rõ hơn về quyền lợi và nghĩa vụ của mình.'}
-                                    </p>
+                                    {faq.fullDescription ? (
+                                        <div className="full-description">{faq.fullDescription.split('\n').map((p, i) => <p key={i}>{p}</p>)}</div>
+                                    ) : (
+                                        <p>
+                                            {faq.category === 'Tổng quan'
+                                                ? 'Câu hỏi này giúp bạn hiểu rõ hơn về định nghĩa, khái niệm cơ bản trong lĩnh vực pháp luật liên quan.'
+                                                : faq.category === 'Lập vi bằng'
+                                                ? 'Lập vi bằng là một trong những dịch vụ quan trọng của Thừa phát lại, giúp xác thực các giao dịch dân sự, kinh tế.'
+                                                : faq.category === 'Chi phí'
+                                                ? 'Chi phí dịch vụ được quy định theo quy chuẩn của Nhà nước, đảm bảo tính công khai, minh bạch và hợp lý.'
+                                                : faq.category === 'Xác minh điều kiện'
+                                                ? 'Xác minh điều kiện thi hành án là quá trình kiểm tra, xác nhận tài sản, thu nhập của người phải thi hành án.'
+                                                : faq.category === 'Dịch vụ khác'
+                                                ? 'Ngoài các dịch vụ chính, Thừa phát lại còn cung cấp nhiều dịch vụ hỗ trợ khác để đáp ứng nhu cầu khách hàng.'
+                                                : 'Đây là một câu hỏi quan trọng giúp bạn hiểu rõ hơn về quyền lợi và nghĩa vụ của mình.'}
+                                        </p>
+                                    )}
                                 </div>
 
                                 {/* Practical Examples */}

@@ -14,6 +14,7 @@ const ArticlePage = React.lazy(() => import('./pages/ArticlePage'));
 const DocumentDetailPage = React.lazy(() => import('./pages/DocumentDetailPage'));
 const QADetailPage = React.lazy(() => import('./pages/QADetailPage'));
 const ServiceAreaDetailPage = React.lazy(() => import('./pages/ServiceAreaDetailPage'));
+const VibanDetailPage = React.lazy(() => import('./pages/VibanDetailPage'));
 const FamilyLawPage = React.lazy(() => import('./pages/FamilyLawPage'));
 const FamilyLawDetailPage = React.lazy(() => import('./pages/FamilyLawDetailPage'));
 
@@ -34,6 +35,11 @@ const FamilyLawAdmin = React.lazy(() => import('./admin/family-law/FamilyLawAdmi
 const GalleryAdmin = React.lazy(() => import('./admin/gallery/GalleryAdmin'));
 const CompanyInfoAdmin = React.lazy(() => import('./admin/company-info/CompanyInfoAdmin'));
 const TeamAdmin = React.lazy(() => import('./admin/team/TeamAdmin'));
+const TestimonialsAdmin = React.lazy(() => import('./admin/testimonials/TestimonialsAdmin'));
+const LegalArticlesAdmin = React.lazy(() => import('./admin/legal-articles/LegalArticlesAdmin'));
+const LegalTermsAdmin = React.lazy(() => import('./admin/legal-terms/LegalTermsAdmin'));
+const LawExplanationsAdmin = React.lazy(() => import('./admin/law-explanations/LawExplanationsAdmin'));
+const ReferencesAdmin = React.lazy(() => import('./admin/references/ReferencesAdmin'));
 
 /**
  * Suspense boundary component for lazy-loaded routes
@@ -82,6 +88,9 @@ function App() {
                         {/* Service area routes */}
                         <Route path="service-areas/:id" element={<ServiceAreaDetailPage />} />
 
+                        {/* Viban routes */}
+                        <Route path="viban/:id" element={<VibanDetailPage />} />
+
                         {/* Family law routes */}
                         <Route path="family-law" element={<FamilyLawPage />} />
                         <Route path="family-law/:id" element={<FamilyLawDetailPage />} />
@@ -113,6 +122,11 @@ function App() {
                         <Route path="service-areas" element={<ServiceAreasAdmin />} />
                         <Route path="family-law" element={<FamilyLawAdmin />} />
                         <Route path="gallery" element={<GalleryAdmin />} />
+                        <Route path="testimonials" element={<TestimonialsAdmin />} />
+                        <Route path="legal-articles" element={<LegalArticlesAdmin />} />
+                        <Route path="legal-terms" element={<LegalTermsAdmin />} />
+                        <Route path="law-explanations" element={<LawExplanationsAdmin />} />
+                        <Route path="references" element={<ReferencesAdmin />} />
                         <Route path="company-info" element={<CompanyInfoAdmin />} />
                         <Route path="team" element={<TeamAdmin />} />
                     </Route>

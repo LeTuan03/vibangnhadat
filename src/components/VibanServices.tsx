@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaFileContract, FaHome, FaHandshake, FaLandmark, FaFileSignature, FaBuilding } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import { scrollToElement } from '../utils/helpers';
+import VibanFirebaseService from '../services/VibanFirebaseService';
+import type { Viban } from '../types';
+import LoadingSpinner from './LoadingSpinner';
 import './VibanServices.css';
 
 interface VibangType {
@@ -14,7 +18,8 @@ interface VibangType {
     fees: string;
 }
 
-export const vibangTypes: VibangType[] = [
+// Default mock data as fallback
+export const defaultVibangTypes: VibangType[] = [
     {
         id: 'vb-danssu',
         title: 'Vi bằng Giao dịch Dân sự',
@@ -134,8 +139,33 @@ export const vibangTypes: VibangType[] = [
 ];
 
 const VibanServices: React.FC = () => {
-    const [selectedType, setSelectedType] = useState<VibangType | null>(null);
+    const [vibans, setVibans] = useState<Viban[]>([]);
+    const [selectedType, setSelectedType] = useState<Viban | null>(null);
+    const [loading, setLoading] = useState(true);
     const [ref] = useIntersectionObserver({ threshold: 0.1, freezeOnceVisible: true });
+
+    useEffect(() => {
+        loadVibans();
+    }, []);
+
+    const loadVibans = async () => {
+        try {
+            setLoading(true);
+            const data = await VibanFirebaseService.getAllVibans();
+            setVibans(data.length > 0 ? data : []);
+        } catch (error) {
+            console.error('Lỗi tải dữ liệu vi bằng:', error);
+            setVibans([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
+    const displayVibans = vibans.length > 0 ? vibans : [];
 
     return (
         <section id="viban-services" className="section">
@@ -146,16 +176,16 @@ const VibanServices: React.FC = () => {
                 </p>
 
                 <div ref={ref} className={`viban-grid`}>
-                    {vibangTypes.map((type, index) => (
+                    {displayVibans.map((viban, index) => (
                         <div
-                            key={type.id}
+                            key={viban.id}
                             className="viban-card"
                             style={{ animationDelay: `${index * 0.1}s` }}
-                            onClick={() => setSelectedType(type)}
+                            onClick={() => setSelectedType(viban)}
                         >
-                            <div className="viban-icon">{type.icon}</div>
-                            <h3>{type.title}</h3>
-                            <p>{type.description}</p>
+                            <div className="viban-icon"><FaFileContract /></div>
+                            <h3>{viban.title}</h3>
+                            <p>{viban.description}</p>
                             <button className="viban-btn">Xem chi tiết →</button>
                         </div>
                     ))}
@@ -168,42 +198,51 @@ const VibanServices: React.FC = () => {
                             <button className="modal-close" onClick={() => setSelectedType(null)}>×</button>
 
                             <div className="modal-header">
-                                <div className="modal-icon">{selectedType.icon}</div>
+                                <div className="modal-icon"><FaFileContract /></div>
                                 <h2>{selectedType.title}</h2>
                             </div>
 
                             <div className="modal-body">
                                 <p className="modal-description">{selectedType.description}</p>
 
-                                <div className="modal-section">
-                                    <h3>Hồ sơ cần thiết:</h3>
-                                    <ul>
-                                        {selectedType.requirements.map((req, idx) => (
-                                            <li key={idx}>{req}</li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                {selectedType.requirements && selectedType.requirements.length > 0 && (
+                                    <div className="modal-section">
+                                        <h3>Hồ sơ cần thiết:</h3>
+                                        <ul>
+                                            {selectedType.requirements.map((req, idx) => (
+                                                <li key={idx}>{req}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
 
-                                <div className="modal-section">
-                                    <h3>Quy trình thực hiện:</h3>
-                                    <ol>
-                                        {selectedType.process.map((step, idx) => (
-                                            <li key={idx}>{step}</li>
-                                        ))}
-                                    </ol>
-                                </div>
+                                {selectedType.process && selectedType.process.length > 0 && (
+                                    <div className="modal-section">
+                                        <h3>Quy trình thực hiện:</h3>
+                                        <ol>
+                                            {selectedType.process.map((step, idx) => (
+                                                <li key={idx}>{step}</li>
+                                            ))}
+                                        </ol>
+                                    </div>
+                                )}
 
                                 <div className="modal-section">
                                     <h3>Phí dịch vụ:</h3>
                                     <p className="fee-info">{selectedType.fees}</p>
                                 </div>
 
-                                <button className="btn btn-primary btn-xl" onClick={() => {
-                                    setSelectedType(null);
-                                    scrollToElement('contact');
-                                }}>
-                                    Liên hệ tư vấn
-                                </button>
+                                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                    <Link to={`/viban/${selectedType.id}`} className="btn btn-primary btn-xl" onClick={() => setSelectedType(null)}>
+                                        Xem chi tiết đầy đủ
+                                    </Link>
+                                    <button className="btn btn-primary btn-xl" onClick={() => {
+                                        setSelectedType(null);
+                                        scrollToElement('contact');
+                                    }}>
+                                        Liên hệ tư vấn
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

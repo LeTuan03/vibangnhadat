@@ -1,13 +1,7 @@
 import { BaseFirebaseService } from './BaseFirebaseService';
+import type { Viban } from '../types';
 
-export interface Viban {
-  id?: string;
-  title: string;
-  description: string;
-  requirements: string[];
-  process: string[];
-  fees: string;
-}
+export type { Viban } from '../types';
 
 class VibanFirebaseService extends BaseFirebaseService<Viban> {
   constructor() {
@@ -57,6 +51,13 @@ class VibanFirebaseService extends BaseFirebaseService<Viban> {
    */
   async deleteViban(id: string): Promise<void> {
     return this.delete(id);
+  }
+
+  /**
+   * Get viban by ID
+   */
+  async getVibanById(id: string): Promise<Viban | null> {
+    return this.getById(id);
   }
 }
 

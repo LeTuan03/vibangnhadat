@@ -2,12 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaPaperPlane } from 'react-icons/fa';
 import { SiZalo } from 'react-icons/si';
 import { getContactInfo } from '../services';
-import { mockContactInfo } from '../data/mockData';
 import { createPhoneLink, createZaloLink, formatPhoneNumber, isValidEmail, isValidPhone } from '../utils/helpers';
 import './Contact.css';
 
 const Contact: React.FC = () => {
-    const [contactInfo, setContactInfo] = useState(mockContactInfo);
+    const [contactInfo, setContactInfo] = useState<any>({
+        phone: '',
+        email: '',
+        address: '',
+        workingHours: '',
+        zaloLink: '',
+        facebookLink: '',
+        googleMapsLink: '',
+        googleMapsEmbed: '',
+        coordinates: { lat: 0, lng: 0 }
+    });
 
     useEffect(() => {
         const loadContactInfo = async () => {
@@ -18,7 +27,7 @@ const Contact: React.FC = () => {
                 }
             } catch (error) {
                 console.error('Lỗi tải thông tin liên hệ:', error);
-                // Fallback to mock data
+                // keep default empty contact info until admin provides data
             }
         };
 

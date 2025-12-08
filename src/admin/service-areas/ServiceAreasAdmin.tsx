@@ -10,6 +10,12 @@ const ServiceAreasAdmin: React.FC = () => {
   const [editing, setEditing] = useState<ServiceArea | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [form] = Form.useForm()
+  const [detailsText, setDetailsText] = useState('')
+  const [benefitsText, setBenefitsText] = useState('')
+  const [servicesText, setServicesText] = useState('')
+  const [processText, setProcessText] = useState('')
+  const [contactPhone, setContactPhone] = useState('')
+  const [contactEmail, setContactEmail] = useState('')
 
   useEffect(() => {
     load()
@@ -28,12 +34,29 @@ const ServiceAreasAdmin: React.FC = () => {
   const openAdd = () => {
     setEditing(null)
     form.resetFields()
+    setDetailsText('')
+    setBenefitsText('')
+    setServicesText('')
+    setProcessText('')
+    setContactPhone('')
+    setContactEmail('')
     setIsModalOpen(true)
   }
 
   const openEdit = (a: ServiceArea) => {
     setEditing(a)
     form.setFieldsValue({ title: a.title, description: a.description, image: a.image })
+    setDetailsText((a.details || []).join('\n'))
+    setBenefitsText(((a as any).benefits || []).join('\n'))
+    // servicesOffered stored as array of { title, description }
+    if ((a as any).servicesOffered) {
+      setServicesText(((a as any).servicesOffered as any[]).map(s => `${s.title}|${s.description || ''}`).join('\n'))
+    } else {
+      setServicesText('')
+    }
+    setProcessText(((a as any).processSteps || []).join('\n'))
+    setContactPhone(((a as any).contactCTA && (a as any).contactCTA.phone) || '')
+    setContactEmail(((a as any).contactCTA && (a as any).contactCTA.email) || '')
     setIsModalOpen(true)
   }
 
@@ -55,7 +78,46 @@ const ServiceAreasAdmin: React.FC = () => {
   const handleSave = async () => {
     try {
       const values = await form.validateFields()
-      const payload = { title: values.title, description: values.description || '', image: values.image || '' }
+      
+      // Parse details
+      const details = detailsText
+        .split('\n')
+        .map(l => l.trim())
+        .filter(Boolean)
+      
+      // Parse benefits
+      const benefits = benefitsText
+        .split('\n')
+        .map(l => l.trim())
+        .filter(Boolean)
+      
+      // Parse services text lines into objects
+      const servicesOffered = servicesText
+        .split('\n')
+        .map(l => l.trim())
+        .filter(Boolean)
+        .map(l => {
+          const [title, desc] = l.split('|')
+          return { title: (title || '').trim(), description: (desc || '').trim() }
+        })
+      
+      // Parse process steps
+      const processSteps = processText
+        .split('\n')
+        .map(l => l.trim())
+        .filter(Boolean)
+
+      const payload = {
+        title: values.title,
+        description: values.description || '',
+        image: values.image || '',
+        details,
+        benefits,
+        servicesOffered,
+        processSteps,
+        contactCTA: { phone: contactPhone || '', email: contactEmail || '' },
+      }
+      
       if (editing && editing.id) {
         await serviceAreaService.updateServiceArea(editing.id, payload)
         message.success('Cập nhật thành công')
@@ -103,7 +165,7 @@ const ServiceAreasAdmin: React.FC = () => {
 
       <Table dataSource={filtered} columns={columns} rowKey={(r: any) => r.id} locale={{ emptyText: 'Không có dữ liệu' }} />
 
-      <Modal title={editing ? 'Sửa Lĩnh Vực Dịch Vụ' : 'Thêm Lĩnh Vực Dịch Vụ'} open={isModalOpen} onOk={handleSave} onCancel={() => { setIsModalOpen(false); form.resetFields(); setEditing(null) }} okText="Lưu" cancelText="Hủy">
+      <Modal title={editing ? 'Sửa Lĩnh Vực Dịch Vụ' : 'Thêm Lĩnh Vực Dịch Vụ'} open={isModalOpen} onOk={handleSave} onCancel={() => { setIsModalOpen(false); form.resetFields(); setEditing(null) }} okText="Lưu" cancelText="Hủy" width={700}>
         <Form form={form} layout="vertical">
           <Form.Item name="title" label="Tiêu đề" rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}>
             <Input />
@@ -113,6 +175,42 @@ const ServiceAreasAdmin: React.FC = () => {
           </Form.Item>
           <Form.Item name="image" label="URL hình ảnh">
             <Input />
+          </Form.Item>
+          <Form.Item label="Chi tiết (mỗi dòng 1 mục)">
+            <Input.TextArea 
+              rows={3} 
+              value={detailsText} 
+              onChange={(e) => setDetailsText(e.target.value)}
+              placeholder="Nhập mỗi chi tiết trên một dòng"
+            />
+          </Form.Item>
+          <Form.Item label="Lợi ích (mỗi dòng 1 mục)">
+            <Input.TextArea 
+              rows={3} 
+              value={benefitsText} 
+              onChange={(e) => setBenefitsText(e.target.value)}
+              placeholder="Nhập mỗi lợi ích trên một dòng"
+            />
+          </Form.Item>
+          <Form.Item label="Dịch vụ chính (mỗi dòng: Tiêu đề|Mô tả)">
+            <Input.TextArea 
+              rows={4} 
+              value={servicesText} 
+              onChange={(e) => setServicesText(e.target.value)} 
+              placeholder="Ví dụ: Tư vấn|Tư vấn chi tiết..."
+            />
+          </Form.Item>
+          <Form.Item label="Quy trình (mỗi dòng 1 bước)">
+            <Input.TextArea 
+              rows={3} 
+              value={processText} 
+              onChange={(e) => setProcessText(e.target.value)}
+              placeholder="Nhập mỗi bước trên một dòng"
+            />
+          </Form.Item>
+          <Form.Item label="Liên hệ (sẽ hiển thị ở CTA)">
+            <Input placeholder="Số điện thoại" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} style={{ marginBottom: 8 }} />
+            <Input placeholder="Email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} />
           </Form.Item>
         </Form>
       </Modal>

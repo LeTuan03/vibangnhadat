@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import FamilyLawFirebaseService from '../services/FamilyLawFirebaseService';
-import { mockFamilyLawQAs } from '../data/mockData';
 import { FaArrowLeft } from 'react-icons/fa';
 import LoadingSpinner from '../components/LoadingSpinner';
 import type { FamilyLawQA } from '../types';
+import { familyLawFallback } from '../data/familyLawFallback';
 import './FamilyLawDetailPage.css';
+
+// Note: Fetches from Firebase; mockFamilyLawQAs is fallback
 
 const FamilyLawDetailPage: React.FC = () => {
     const [familyLawQAs, setFamilyLawQAs] = useState<FamilyLawQA[]>([]);
@@ -23,15 +25,16 @@ const FamilyLawDetailPage: React.FC = () => {
                 setLoading(true);
                 const data = await FamilyLawFirebaseService.getAllQAs();
                 setFamilyLawQAs(data);
-                if (!data.find(qa => qa.id === id)) {
+                // If not found in Firebase, but exists in local fallback, consider it found
+                if (!data.find(qa => qa.id === id) && !(id && familyLawFallback[id])) {
                     setNotFound(true);
+                } else {
+                    setNotFound(false);
                 }
             } catch (err) {
                 console.error('Error loading family law Q&As:', err);
-                setFamilyLawQAs(mockFamilyLawQAs);
-                if (!mockFamilyLawQAs.find(qa => qa.id === id)) {
-                    setNotFound(true);
-                }
+                setFamilyLawQAs([]);
+                setNotFound(true);
             } finally {
                 setLoading(false);
             }
@@ -44,8 +47,10 @@ const FamilyLawDetailPage: React.FC = () => {
     }
 
     const item = familyLawQAs.find((f) => f.id === id);
+    // Merge with fallback so missing fields from Firebase are filled from local seed
+    const displayItem: FamilyLawQA | null = item ? { ...(familyLawFallback[item.id] || {}), ...item } : (id && familyLawFallback[id]) || null;
 
-    if (!item || notFound) {
+    if (!displayItem || notFound) {
         return (
             <main className="container">
                 <h2>Không tìm thấy nội dung</h2>
@@ -62,8 +67,8 @@ const FamilyLawDetailPage: React.FC = () => {
 
             <article>
                 <header className="detail-header">
-                    <h1>{item.question}</h1>
-                    <p className="lead">{item.shortDescription}</p>
+                    <h1>{item?.question}</h1>
+                    <p className="lead">{item?.shortDescription}</p>
                     <div className="meta-info">
                         <span className="tag">Hôn nhân – Gia đình</span>
                         <span className="date">Cập nhật: 2025</span>
@@ -71,72 +76,71 @@ const FamilyLawDetailPage: React.FC = () => {
                 </header>
 
                 <section className="detail-body">
-                    <div className="content-intro">
-                        <p>
-                            <strong>{item.question}</strong> là một vấn đề pháp lý quan trọng trong lĩnh vực hôn nhân và gia đình. 
-                            Bài viết này cung cấp hướng dẫn chi tiết, giải thích các quy định pháp luật hiện hành, thủ tục cần thiết, 
-                            tài liệu cần chuẩn bị và các lưu ý thực tiễn khi xử lý tình huống này.
-                        </p>
-                    </div>
+                    <>
+                        {displayItem.overview && (
+                            <>
+                                <div className="content-intro">
+                                    <p>
+                                        <strong>{displayItem.question}</strong> là một vấn đề pháp lý quan trọng trong lĩnh vực hôn nhân và gia đình.
+                                        {displayItem.overview && ` ${displayItem.overview}`}
+                                    </p>
+                                </div>
+                            </>
+                        )}
 
-                    <h3>📋 Tổng quan vấn đề</h3>
-                    <p>
-                        Đây là một trong những câu hỏi phổ biến mà các cặp vợ chồng hoặc những người liên quan đến pháp luật gia đình 
-                        thường gặp phải. Việc hiểu rõ quy định pháp luật sẽ giúp bạn bảo vệ quyền lợi chính đáng của mình.
-                    </p>
+                        {displayItem.overview && (
+                            <>
+                                <h3>📋 Tổng quan vấn đề</h3>
+                                <p>{displayItem.overview}</p>
+                            </>
+                        )}
 
-                    <h3>🔍 Khái niệm và định nghĩa</h3>
-                    <p>
-                        Theo pháp luật hiện hành, {item.question.toLowerCase()} được hiểu là... (nội dung giải thích chi tiết)
-                    </p>
+                        {displayItem.definition && (
+                            <>
+                                <h3>🔍 Khái niệm và định nghĩa</h3>
+                                <p>{displayItem.definition}</p>
+                            </>
+                        )}
 
-                    <h3>📑 Quy định pháp luật liên quan</h3>
-                    <ul>
-                        <li>Bộ Luật Dân sự năm 2015</li>
-                        <li>Luật Hôn nhân và Gia đình năm 2000</li>
-                        <li>Các quyết định hướng dẫn của Tòa án Tối cao</li>
-                        <li>Thông tư hướng dẫn của Bộ Tư pháp</li>
-                    </ul>
+                        {displayItem.relatedLaws && displayItem.relatedLaws.length > 0 && (
+                            <>
+                                <h3>📑 Quy định pháp luật liên quan</h3>
+                                <ul>
+                                    {displayItem.relatedLaws.map((law, idx) => (
+                                        <li key={idx}>{law}</li>
+                                    ))}
+                                </ul>
+                            </>
+                        )}
 
-                    <h3>📋 Hướng dẫn thực hiện từng bước</h3>
-                    <ol className="step-list">
-                        <li>
-                            <strong>Bước 1: Chuẩn bị giấy tờ cần thiết</strong>
-                            <p>Chuẩn bị đầy đủ các chứng chỉ, hợp đồng, giấy tờ liên quan có liên quan đến vấn đề của bạn.</p>
-                        </li>
-                        <li>
-                            <strong>Bước 2: Tư vấn với luật sư chuyên viên</strong>
-                            <p>Gặp luật sư để được tư vấn cụ thể, hiểu rõ quyền lợi và nghĩa vụ của bạn.</p>
-                        </li>
-                        <li>
-                            <strong>Bước 3: Tiến hành thủ tục theo quy định</strong>
-                            <p>Thực hiện đúng quy trình và thủ tục quy định bởi pháp luật để bảo vệ quyền lợi của mình.</p>
-                        </li>
-                        <li>
-                            <strong>Bước 4: Theo dõi tiến trình</strong>
-                            <p>Theo dõi kết quả và liên hệ với cơ quan chuyên trách nếu cần hỗ trợ thêm.</p>
-                        </li>
-                    </ol>
+                        {displayItem.processSteps && displayItem.processSteps.length > 0 && (
+                            <>
+                                <h3>📋 Hướng dẫn thực hiện từng bước</h3>
+                                <ol className="step-list">
+                                    {displayItem.processSteps.map((step, idx) => (
+                                        <li key={idx}>
+                                            <strong>{step.title}</strong>
+                                            <p>{step.description}</p>
+                                        </li>
+                                    ))}
+                                </ol>
+                            </>
+                        )}
 
-                    <h3>💡 Lưu ý quan trọng</h3>
-                    <div className="highlight-box">
-                        <ul>
-                            <li>Luôn giữ bản gốc của các tài liệu quan trọng</li>
-                            <li>Thực hiện thủ tục trong thời hạn quy định</li>
-                            <li>Tìm kiếm tư vấn pháp lý khi cần thiết</li>
-                            <li>Không trì hoãn các vấn đề pháp lý quan trọng</li>
-                        </ul>
-                    </div>
+                        {displayItem.tips && displayItem.tips.length > 0 && (
+                            <>
+                                <h3>💡 Lưu ý quan trọng</h3>
+                                <div className="highlight-box">
+                                    <ul>
+                                        {displayItem.tips.map((tip, idx) => (
+                                            <li key={idx}>{tip}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </>
+                        )}
+                    </>
 
-                    <h3>❓ Câu hỏi thường gặp</h3>
-                    <details className="faq-item">
-                        <summary>Có thời hạn nào để thực hiện thủ tục này không?</summary>
-                        <p>Có, theo quy định pháp luật, bạn cần thực hiện trong thời hạn... (chi tiết cụ thể)</p>
-                    </details>
-                    <details className="faq-item">
-                        <summary>Chi phí cho dịch vụ tư vấn là bao nhiêu?</summary>
-                        <p>Chi phí tư vấn pháp lý được tính dựa trên độ phức tạp của vụ việc. Liên hệ với chúng tôi để được báo giá chi tiết.</p>
-                    </details>
                 </section>
 
                 <aside className="consult-cta">

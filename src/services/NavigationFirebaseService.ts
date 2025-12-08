@@ -7,6 +7,7 @@ export interface NavItem {
   label: string;
   href: string;
   children?: NavItem[];
+  order?: number;
 }
 
 class NavigationFirebaseService extends BaseFirebaseService<NavItem> {
@@ -15,12 +16,19 @@ class NavigationFirebaseService extends BaseFirebaseService<NavItem> {
   }
 
   /**
-   * Get all top-level navigation items
+   * Get all top-level navigation items sorted by order
    */
   async getAll(): Promise<NavItem[]> {
     try {
       console.log('[navigation] Fetching all navigation items...');
-      const items = await super.getAll();
+      // Try to get ordered items first, fallback to getAll if order field doesn't exist
+      let items: NavItem[] = [];
+      try {
+        items = await this.getOrdered('order', 'asc');
+      } catch (err) {
+        console.log('[navigation] Order field not available, using getAll fallback');
+        items = await super.getAll();
+      }
       console.log('[navigation] Found', items.length, 'items');
       return items;
     } catch (error) {

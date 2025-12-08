@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBook, FaDownload, FaFilter } from 'react-icons/fa';
 import DocumentFirebaseService from '../services/DocumentFirebaseService';
-import { mockLegalDocuments } from '../data/mockData';
 import type { LegalDocument } from '../types';
 import './LegalDocuments.css';
 
@@ -17,7 +16,7 @@ const LegalDocuments: React.FC = () => {
                 setLegalDocuments(data);
             } catch (err) {
                 console.error('Error loading documents:', err);
-                setLegalDocuments(mockLegalDocuments);
+                setLegalDocuments([]);
             }
         };
         loadDocuments();

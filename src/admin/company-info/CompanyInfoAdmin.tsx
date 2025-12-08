@@ -146,6 +146,13 @@ const CompanyInfoAdmin: React.FC = () => {
                     <Input placeholder="https://maps.google.com/..." size="large" />
                 </Form.Item>
 
+                <Form.Item
+                    label="Google Maps Link Embed"
+                    name="googleMapsEmbed"
+                >
+                    <Input placeholder="https://maps.google.com/..." size="large" />
+                </Form.Item>
+
                 <Title level={5} style={{ marginTop: 24 }}>Tọa độ bản đồ</Title>
                 <Space size="large" style={{ width: '100%' }}>
                     <Form.Item

@@ -118,63 +118,63 @@ const Booking: React.FC = () => {
     };
 
     // CÁCH 2: Sử dụng EmailJS (Nếu muốn tự động gửi)
-    const sendEmailWithEmailJS = async () => {
-        try {
-            const emailjs = await import('@emailjs/browser');
+    // const sendEmailWithEmailJS = async () => {
+    //     try {
+    //         const emailjs = await import('@emailjs/browser');
 
-            const templateParams = {
-                to_email: contactInfo.email,
-                from_name: formData.name,
-                from_email: formData.email,
-                phone: formData.phone,
-                consultation_type: getConsultationTypeLabel(formData.consultationType),
-                consultation_area: getConsultationAreaLabel(formData.consultationArea),
-                preferred_date: formatDate(formData.preferredDate),
-                description: formData.description || '(Không có mô tả)',
-            };
+    //         const templateParams = {
+    //             to_email: contactInfo.email,
+    //             from_name: formData.name,
+    //             from_email: formData.email,
+    //             phone: formData.phone,
+    //             consultation_type: getConsultationTypeLabel(formData.consultationType),
+    //             consultation_area: getConsultationAreaLabel(formData.consultationArea),
+    //             preferred_date: formatDate(formData.preferredDate),
+    //             description: formData.description || '(Không có mô tả)',
+    //         };
 
-            await emailjs.send(
-                'YOUR_SERVICE_ID',      // Thay bằng Service ID của bạn
-                'YOUR_TEMPLATE_ID',     // Thay bằng Template ID của bạn
-                templateParams,
-                'YOUR_PUBLIC_KEY'       // Thay bằng Public Key của bạn
-            );
+    //         await emailjs.send(
+    //             'YOUR_SERVICE_ID',      // Thay bằng Service ID của bạn
+    //             'YOUR_TEMPLATE_ID',     // Thay bằng Template ID của bạn
+    //             templateParams,
+    //             'YOUR_PUBLIC_KEY'       // Thay bằng Public Key của bạn
+    //         );
 
-            return true;
-        } catch (error) {
-            console.error('EmailJS error:', error);
-            throw error;
-        }
-    };
+    //         return true;
+    //     } catch (error) {
+    //         console.error('EmailJS error:', error);
+    //         throw error;
+    //     }
+    // };
 
     // CÁCH 3: Sử dụng Backend API
-    const sendEmailWithBackend = async () => {
-        try {
-            const response = await fetch('/api/booking/send-email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    toEmail: contactInfo.email,
-                    consultationTypeLabel: getConsultationTypeLabel(formData.consultationType),
-                    consultationAreaLabel: getConsultationAreaLabel(formData.consultationArea),
-                    formattedDate: formatDate(formData.preferredDate),
-                }),
-            });
+    // const sendEmailWithBackend = async () => {
+    //     try {
+    //         const response = await fetch('/api/booking/send-email', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 ...formData,
+    //                 toEmail: contactInfo.email,
+    //                 consultationTypeLabel: getConsultationTypeLabel(formData.consultationType),
+    //                 consultationAreaLabel: getConsultationAreaLabel(formData.consultationArea),
+    //                 formattedDate: formatDate(formData.preferredDate),
+    //             }),
+    //         });
 
-            if (!response.ok) {
-                throw new Error('Không thể gửi email');
-            }
+    //         if (!response.ok) {
+    //             throw new Error('Không thể gửi email');
+    //         }
 
-            const result = await response.json();
-            return result.success;
-        } catch (error) {
-            console.error('Backend API error:', error);
-            throw error;
-        }
-    };
+    //         const result = await response.json();
+    //         return result.success;
+    //     } catch (error) {
+    //         console.error('Backend API error:', error);
+    //         throw error;
+    //     }
+    // };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

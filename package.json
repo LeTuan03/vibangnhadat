@@ -11,6 +11,7 @@
     "cleanup-nav": "node scripts/cleanup-navigation.js"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "antd": "^5.11.0",
     "firebase": "^10.7.0",
     "firebase-admin": "^13.6.0",

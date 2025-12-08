@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { FaFileContract, FaEnvelopeOpenText, FaSearchDollar, FaGavel, FaTimes } from 'react-icons/fa';
+import {
+    // FaFileContract
+    // , FaEnvelopeOpenText,
+    //  FaSearchDollar, FaGavel,
+    FaTimes, FaBuilding
+} from 'react-icons/fa';
 import ServiceFirebaseService from '../services/ServiceFirebaseService';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import type { Service } from '../types';
 import './Services.css';
 
-const iconMap: Record<string, React.ReactNode> = {
-    FaFileContract: <FaFileContract />,
-    FaEnvelopeOpenText: <FaEnvelopeOpenText />,
-    FaSearchDollar: <FaSearchDollar />,
-    FaGavel: <FaGavel />,
-};
+// const iconMap: Record<string, React.ReactNode> = {
+//     FaFileContract: <FaFileContract />,
+//     FaEnvelopeOpenText: <FaEnvelopeOpenText />,
+//     FaSearchDollar: <FaSearchDollar />,
+//     FaGavel: <FaGavel />,
+//     FaBuilding: <FaBuilding />,
+// };
 
 const Services: React.FC = () => {
     const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -49,7 +55,7 @@ const Services: React.FC = () => {
                             onClick={() => setSelectedService(service.id)}
                         >
                             <div className="service-icon">
-                                {iconMap[service.icon]}
+                                <FaBuilding />
                             </div>
                             <h3 className="service-title">{service.title}</h3>
                             <p className="service-description">{service.description}</p>
@@ -69,7 +75,7 @@ const Services: React.FC = () => {
 
                         <div className="modal-header">
                             <div className="modal-icon">
-                                {iconMap[selectedServiceData.icon]}
+                                <FaBuilding />
                             </div>
                             <h2>{selectedServiceData.title}</h2>
                         </div>

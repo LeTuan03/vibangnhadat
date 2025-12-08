@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaTimes, FaCalendarAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
 import './Booking.css';
 import { toast } from 'react-toastify';
+import { getContactInfo } from '../services';
 
 interface BookingFormData {
     name: string;
@@ -27,6 +28,25 @@ const Booking: React.FC = () => {
         agreedTerms: false,
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [contactInfo, setContactInfo] = useState<any>({
+        phone: '',
+        email: ''
+    });
+
+    useEffect(() => {
+        const loadContactInfo = async () => {
+            try {
+                const data = await getContactInfo();
+                if (data) {
+                    setContactInfo(data);
+                }
+            } catch (error) {
+                console.error('Lỗi tải thông tin liên hệ:', error);
+            }
+        };
+
+        loadContactInfo();
+    }, []);
 
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -38,8 +58,128 @@ const Booking: React.FC = () => {
         });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    // Format ngày sang định dạng dd/mm/yyyy
+    const formatDate = (dateString: string) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    // Format loại tư vấn
+    const getConsultationTypeLabel = (type: string) => {
+        const labels: Record<string, string> = {
+            'online': 'Online',
+            'offline': 'Trực tiếp tại văn phòng',
+            'phone': 'Qua điện thoại'
+        };
+        return labels[type] || type;
+    };
+
+    // Format lĩnh vực
+    const getConsultationAreaLabel = (area: string) => {
+        const labels: Record<string, string> = {
+            'business': 'Luật Doanh nghiệp',
+            'land': 'Luật Đất đai',
+            'criminal': 'Luật Hình sự',
+            'family': 'Hôn nhân - Gia đình',
+            'debt': 'Thu hồi nợ',
+            'arbitration': 'Trọng tài thương mại',
+            'ip': 'Sở hữu trí tuệ',
+            'other': 'Khác'
+        };
+        return labels[area] || area;
+    };
+
+    // CÁCH 1: Sử dụng mailto (Mở ứng dụng email của user)
+    const sendEmailWithMailto = () => {
+        const subject = encodeURIComponent(`Đặt lịch tư vấn từ ${formData.name}`);
+        const body = encodeURIComponent(
+            `YÊU CẦU ĐẶT LỊCH TƯ VẤN PHÁP LÝ\n` +
+            `=====================================\n\n` +
+            `THÔNG TIN KHÁCH HÀNG:\n` +
+            `- Họ và tên: ${formData.name}\n` +
+            `- Số điện thoại: ${formData.phone}\n` +
+            `- Email: ${formData.email}\n\n` +
+            `THÔNG TIN TƯ VẤN:\n` +
+            `- Hình thức: ${getConsultationTypeLabel(formData.consultationType)}\n` +
+            `- Lĩnh vực: ${getConsultationAreaLabel(formData.consultationArea)}\n` +
+            `- Thời gian mong muốn: ${formatDate(formData.preferredDate)}\n\n` +
+            `MÔ TẢ VỤ VIỆC:\n` +
+            `${formData.description || '(Không có mô tả)'}\n\n` +
+            `=====================================\n` +
+            `Email này được gửi từ website đặt lịch tư vấn.`
+        );
+
+        window.location.href = `mailto:${contactInfo.email}?subject=${subject}&body=${body}`;
+        return true;
+    };
+
+    // CÁCH 2: Sử dụng EmailJS (Nếu muốn tự động gửi)
+    const sendEmailWithEmailJS = async () => {
+        try {
+            const emailjs = await import('@emailjs/browser');
+
+            const templateParams = {
+                to_email: contactInfo.email,
+                from_name: formData.name,
+                from_email: formData.email,
+                phone: formData.phone,
+                consultation_type: getConsultationTypeLabel(formData.consultationType),
+                consultation_area: getConsultationAreaLabel(formData.consultationArea),
+                preferred_date: formatDate(formData.preferredDate),
+                description: formData.description || '(Không có mô tả)',
+            };
+
+            await emailjs.send(
+                'YOUR_SERVICE_ID',      // Thay bằng Service ID của bạn
+                'YOUR_TEMPLATE_ID',     // Thay bằng Template ID của bạn
+                templateParams,
+                'YOUR_PUBLIC_KEY'       // Thay bằng Public Key của bạn
+            );
+
+            return true;
+        } catch (error) {
+            console.error('EmailJS error:', error);
+            throw error;
+        }
+    };
+
+    // CÁCH 3: Sử dụng Backend API
+    const sendEmailWithBackend = async () => {
+        try {
+            const response = await fetch('/api/booking/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    toEmail: contactInfo.email,
+                    consultationTypeLabel: getConsultationTypeLabel(formData.consultationType),
+                    consultationAreaLabel: getConsultationAreaLabel(formData.consultationArea),
+                    formattedDate: formatDate(formData.preferredDate),
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Không thể gửi email');
+            }
+
+            const result = await response.json();
+            return result.success;
+        } catch (error) {
+            console.error('Backend API error:', error);
+            throw error;
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validation
         if (!formData.agreedTerms) {
             toast.error('Vui lòng đồng ý với chính sách bảo mật');
             return;
@@ -48,22 +188,40 @@ const Booking: React.FC = () => {
             toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
             return;
         }
-        toast.success('Yêu cầu tư vấn của bạn đã được gửi thành công. Chúng tôi sẽ liên hệ bạn sớm!');
-        setIsSubmitted(true);
-        setTimeout(() => {
-            setIsOpen(false);
-            setIsSubmitted(false);
-            setFormData({
-                name: '',
-                phone: '',
-                email: '',
-                consultationType: 'online',
-                consultationArea: '',
-                preferredDate: '',
-                description: '',
-                agreedTerms: false,
-            });
-        }, 2000);
+
+        try {
+            // Chọn 1 trong 3 cách dưới đây:
+
+            // CÁCH 1: Mailto (Mở ứng dụng email - Đơn giản nhất)
+            sendEmailWithMailto();
+
+            // CÁCH 2: EmailJS (Tự động gửi - Không cần backend)
+            // await sendEmailWithEmailJS();
+
+            // CÁCH 3: Backend API (Chuyên nghiệp nhất)
+            // await sendEmailWithBackend();
+
+            toast.success('Yêu cầu tư vấn của bạn đã được gửi thành công. Chúng tôi sẽ liên hệ bạn sớm!');
+            setIsSubmitted(true);
+
+            setTimeout(() => {
+                setIsOpen(false);
+                setIsSubmitted(false);
+                setFormData({
+                    name: '',
+                    phone: '',
+                    email: '',
+                    consultationType: 'online',
+                    consultationArea: '',
+                    preferredDate: '',
+                    description: '',
+                    agreedTerms: false,
+                });
+            }, 2000);
+        } catch (error) {
+            console.error('Error sending email:', error);
+            toast.error('Có lỗi xảy ra khi gửi email. Vui lòng thử lại sau.');
+        }
     };
 
     return (
@@ -88,7 +246,7 @@ const Booking: React.FC = () => {
                             <div className="booking-success">
                                 <div className="success-icon">✓</div>
                                 <h3>Đặt lịch thành công!</h3>
-                                <p>Chúng tôi sẽ liên hệ lại với bạn trong thời gian soonest.</p>
+                                <p>Chúng tôi sẽ liên hệ lại với bạn trong thời gian sớm nhất.</p>
                             </div>
                         ) : (
                             <>
@@ -174,6 +332,7 @@ const Booking: React.FC = () => {
                                                 value={formData.preferredDate}
                                                 onChange={handleInputChange}
                                                 required
+                                                min={new Date().toISOString().split('T')[0]}
                                             />
                                         </div>
                                     </div>
@@ -220,13 +379,13 @@ const Booking: React.FC = () => {
                         <div className="booking-info-card">
                             <FaPhone className="booking-info-icon" />
                             <h3>Gọi cho chúng tôi</h3>
-                            <p>Hotline: <strong>0901234567</strong></p>
+                            <p>Hotline: <strong>{contactInfo.phone}</strong></p>
                             <p className="booking-info-desc">Hỗ trợ 24/7, mọi lúc</p>
                         </div>
                         <div className="booking-info-card">
                             <FaEnvelope className="booking-info-icon" />
                             <h3>Gửi email</h3>
-                            <p><strong>contact@thuaphatlaivn.com</strong></p>
+                            <p><strong>{contactInfo.email}</strong></p>
                             <p className="booking-info-desc">Phản hồi trong 2 giờ</p>
                         </div>
                         <div className="booking-info-card">

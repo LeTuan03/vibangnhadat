@@ -27,7 +27,6 @@ const Contact: React.FC = () => {
                 }
             } catch (error) {
                 console.error('Lỗi tải thông tin liên hệ:', error);
-                // keep default empty contact info until admin provides data
             }
         };
 
@@ -43,11 +42,11 @@ const Contact: React.FC = () => {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitSuccess, setSubmitSuccess] = useState(false);
+    const [submitError, setSubmitError] = useState('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-        // Clear error when user types
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
         }
@@ -80,21 +79,104 @@ const Contact: React.FC = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+    // CÁCH 1: Sử dụng EmailJS (Không cần backend)
+    // const sendEmailWithEmailJS = async () => {
+    //     try {
+    //         // Cài đặt: npm install @emailjs/browser
+    //         const emailjs = await import('@emailjs/browser');
+
+    //         const templateParams = {
+    //             from_name: formData.name,
+    //             from_email: formData.email,
+    //             phone: formData.phone,
+    //             message: formData.message,
+    //             to_email: contactInfo.email, // Email nhận
+    //         };
+
+    //         await emailjs.send(
+    //             'YOUR_SERVICE_ID',      // Lấy từ EmailJS dashboard
+    //             'YOUR_TEMPLATE_ID',     // Lấy từ EmailJS dashboard
+    //             templateParams,
+    //             'YOUR_PUBLIC_KEY'       // Lấy từ EmailJS dashboard
+    //         );
+
+    //         return true;
+    //     } catch (error) {
+    //         console.error('EmailJS error:', error);
+    //         throw error;
+    //     }
+    // };
+
+    // CÁCH 2: Sử dụng API Backend
+    // const sendEmailWithBackend = async () => {
+    //     try {
+    //         const response = await fetch('/api/contact/send-email', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 ...formData,
+    //                 toEmail: contactInfo.email,
+    //             }),
+    //         });
+
+    //         if (!response.ok) {
+    //             throw new Error('Không thể gửi email');
+    //         }
+
+    //         const result = await response.json();
+    //         return result.success;
+    //     } catch (error) {
+    //         console.error('Backend API error:', error);
+    //         throw error;
+    //     }
+    // };
+
+    // CÁCH 3: Sử dụng mailto (Mở ứng dụng email của user)
+    const sendEmailWithMailto = () => {
+        const subject = encodeURIComponent(`Liên hệ từ ${formData.name}`);
+        const body = encodeURIComponent(
+            `Họ tên: ${formData.name}\n` +
+            `Email: ${formData.email}\n` +
+            `Số điện thoại: ${formData.phone}\n\n` +
+            `Nội dung:\n${formData.message}`
+        );
+
+        window.location.href = `mailto:${contactInfo.email}?subject=${subject}&body=${body}`;
+        return true;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!validate()) return;
 
         setIsSubmitting(true);
+        setSubmitError('');
 
-        // Simulate API call
-        setTimeout(() => {
-            setIsSubmitting(false);
+        try {
+            // Chọn 1 trong 3 cách dưới đây:
+
+            // CÁCH 1: EmailJS (Recommended - Không cần backend)
+            // await sendEmailWithEmailJS();
+
+            // CÁCH 2: Backend API (Cần server)
+            // await sendEmailWithBackend();
+
+            // CÁCH 3: Mailto (Mở ứng dụng email của user)
+            sendEmailWithMailto();
+
             setSubmitSuccess(true);
             setFormData({ name: '', email: '', phone: '', message: '' });
 
             setTimeout(() => setSubmitSuccess(false), 5000);
-        }, 1500);
+        } catch (error: any) {
+            console.error('Error sending email:', error);
+            setSubmitError('Có lỗi xảy ra khi gửi email. Vui lòng thử lại sau.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -266,6 +348,12 @@ const Contact: React.FC = () => {
                             {submitSuccess && (
                                 <div className="success-message">
                                     ✓ Cảm ơn bạn! Chúng tôi sẽ liên hệ lại sớm nhất.
+                                </div>
+                            )}
+
+                            {submitError && (
+                                <div className="error-message" style={{ marginTop: '1rem', textAlign: 'center' }}>
+                                    {submitError}
                                 </div>
                             )}
                         </form>

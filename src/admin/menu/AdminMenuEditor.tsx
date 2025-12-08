@@ -14,8 +14,6 @@ export interface NavItem {
 const { Title } = Typography;
 const { Option } = Select;
 
-const generateId = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
-
 const AdminMenuEditor: React.FC = () => {
     const [items, setItems] = useState<NavItem[]>([]);
     const [form] = Form.useForm();
@@ -110,11 +108,15 @@ const AdminMenuEditor: React.FC = () => {
     const handleAdd = async (values: any) => {
         try {
             const newItem: NavItem = {
-                id: generateId(values.label),
                 label: values.label.trim(),
                 href: values.href.trim()
             };
-            await createNavigationItem(newItem);
+            // Pass parent ID if selected, otherwise create as top-level
+            if (values.parent) {
+                await createNavigationItem(newItem, values.parent);
+            } else {
+                await createNavigationItem(newItem);
+            }
             message.success('Thêm mục menu thành công');
             form.resetFields();
             loadNavigation();

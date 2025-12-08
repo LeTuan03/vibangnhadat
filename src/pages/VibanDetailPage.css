@@ -95,12 +95,12 @@
   line-height: 1.6;
 }
 
-.requirements-list li:before {
+/* .requirements-list li:before {
   content: '✓ ';
   color: var(--color-accent);
   font-weight: var(--font-weight-bold);
   margin-right: 8px;
-}
+} */
 
 .process-steps {
   display: grid;

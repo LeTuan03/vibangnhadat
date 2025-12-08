@@ -72,7 +72,7 @@ const QA: React.FC = () => {
     }
 
     const categories = ['all', ...new Set(faqs.map((f) => f.category))];
-    
+
     const filteredFAQs = faqs.filter((f) => {
         const matchCategory = selectedCategory === 'all' || f.category === selectedCategory;
         const matchSearch =
@@ -259,7 +259,7 @@ const QA: React.FC = () => {
                 </div>
 
                 {/* Submit Question */}
-                <div className="qa-submit-section">
+                <div className="qa-submit-section" style={{ display: "none" }}>
                     <h3>Không tìm thấy câu trả lời?</h3>
                     <p>Gửi câu hỏi của bạn cho luật sư tư vấn. Chúng tôi sẽ phản hồi trong 24 giờ.</p>
                     <button

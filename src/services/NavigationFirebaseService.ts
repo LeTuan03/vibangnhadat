@@ -63,29 +63,149 @@ class NavigationFirebaseService extends BaseFirebaseService<NavItem> {
   }
 
   /**
-   * Create new navigation item
+   * Create new navigation item (supports parent/children)
    */
-  async create(item: Omit<NavItem, 'id'>): Promise<NavItem> {
+  async create(item: Omit<NavItem, 'id'>, parentId?: string): Promise<NavItem> {
     try {
-      console.log('[navigation] Creating new item:', item);
-      const result = await super.create(item);
-      console.log('[navigation] Item created:', result);
-      return result;
+      console.log('[navigation] Creating new item:', item, 'parentId:', parentId);
+      
+      // Get all items from Firebase
+      const items = await this.getAll();
+      
+      // Create the new item with generated ID
+      const newItem: NavItem = {
+        ...item,
+        id: this.generateId(item.label)
+      };
+      
+      if (parentId) {
+        // Find parent and add as child
+        const findAndAddToParent = (list: NavItem[]): boolean => {
+          for (const parent of list) {
+            if (parent.id === parentId) {
+              parent.children = parent.children || [];
+              parent.children.push(newItem);
+              return true;
+            }
+            if (parent.children && findAndAddToParent(parent.children)) {
+              return true;
+            }
+          }
+          return false;
+        };
+        
+        const found = findAndAddToParent(items);
+        if (!found) {
+          throw new Error(`Parent with id ${parentId} not found`);
+        }
+      } else {
+        // Add as top-level item
+        // Set order if not provided
+        if (!newItem.order) {
+          newItem.order = Math.max(0, ...items.map(i => i.order || 0)) + 1;
+        }
+        items.push(newItem);
+      }
+      
+      // Rebuild Firebase with new items
+      console.log('[navigation] Rebuilding Firebase with new item...');
+      const batch = writeBatch(db);
+      
+      // Get fresh list of ALL documents currently in Firebase
+      const navCollection = collection(db, this.collectionName);
+      const allDocsSnapshot = await getDocs(navCollection);
+      
+      // Delete all existing documents
+      for (const docSnapshot of allDocsSnapshot.docs) {
+        batch.delete(docSnapshot.ref);
+      }
+      
+      // Re-add all items with the new item
+      for (const item of items) {
+        if (item.id) {
+          const docRef = doc(db, this.collectionName, item.id);
+          batch.set(docRef, item);
+        }
+      }
+      
+      await batch.commit();
+      console.log('[navigation] Item created and Firebase rebuilt successfully');
+      return newItem;
     } catch (error) {
       console.error('Error creating navigation item:', error);
       throw error;
     }
   }
+  
+  /**
+   * Generate ID from label
+   */
+  private generateId(label: string): string {
+    return label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
+  }
 
   /**
-   * Update navigation item
+   * Update navigation item (supports nested children)
    */
   async update(id: string, data: Partial<NavItem>): Promise<NavItem> {
     try {
       console.log('[navigation] Updating item:', id, data);
-      const result = await super.update(id, data);
-      console.log('[navigation] Item updated:', result);
-      return result;
+      
+      // First, try to find the item in the tree (including nested children)
+      const items = await this.getAll();
+      
+      const updateInTree = (list: NavItem[]): NavItem | null => {
+        for (let i = 0; i < list.length; i++) {
+          const item = list[i];
+          // Check if this is the item we're looking for
+          if (item.id === id) {
+            const updated = { ...item, ...data, id: item.id };
+            list[i] = updated;
+            return updated;
+          }
+          // Search in children
+          if (item.children) {
+            const found = updateInTree(item.children);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+      
+      const updated = updateInTree(items);
+      
+      if (updated) {
+        // Item found in tree, rebuild Firebase with updated items
+        console.log('[navigation] Item found in tree, rebuilding Firebase...');
+        const batch = writeBatch(db);
+        
+        // Get fresh list of ALL documents currently in Firebase
+        const navCollection = collection(db, this.collectionName);
+        const allDocsSnapshot = await getDocs(navCollection);
+        
+        // Delete all existing documents
+        for (const docSnapshot of allDocsSnapshot.docs) {
+          batch.delete(docSnapshot.ref);
+        }
+        
+        // Re-add all items with the update
+        for (const item of items) {
+          if (item.id) {
+            const docRef = doc(db, this.collectionName, item.id);
+            batch.set(docRef, item);
+          }
+        }
+        
+        await batch.commit();
+        console.log('[navigation] Item updated and Firebase rebuilt successfully');
+        return updated;
+      } else {
+        // Item not found in tree, try direct update from database
+        console.log('[navigation] Item not found in tree, attempting direct update from DB');
+        const result = await super.update(id, data);
+        console.log('[navigation] Item updated:', result);
+        return result;
+      }
     } catch (error) {
       console.error('Error updating navigation item:', error);
       throw error;

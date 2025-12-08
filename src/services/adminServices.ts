@@ -399,8 +399,8 @@ export async function getAllNavigationItems() {
   });
 }
 
-export async function createNavigationItem(data: any) {
-  return NavigationFirebaseService.create(data);
+export async function createNavigationItem(data: any, parentId?: string) {
+  return NavigationFirebaseService.create(data, parentId);
 }
 
 export async function updateNavigationItem(id: string, data: Partial<any>) {

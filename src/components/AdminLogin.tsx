@@ -41,7 +41,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
                     {error && <Alert type="error" message={error} style={{ marginBottom: 16 }} />}
 
-                    <Form form={form} layout="vertical" onFinish={handleFinish} initialValues={{ username: 'admin', password: 'admin123' }}>
+                    <Form form={form} layout="vertical" onFinish={handleFinish} initialValues={{ username: '', password: '' }}>
                         <Form.Item name="username" label="Tên đăng nhập" rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập' }]}>
                             <Input prefix={<UserOutlined />} placeholder="Nhập tên đăng nhập" />
                         </Form.Item>
@@ -58,7 +58,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     </Form>
 
                     <div style={{ textAlign: 'center', marginTop: 8 }}>
-                        <Text type="secondary"><strong>Demo:</strong> admin / admin123</Text>
+                        {/* <Text type="secondary"><strong>Demo:</strong> admin / admin123</Text> */}
                         <div style={{ marginTop: 6 }}>
                             <Link to="/">Sang Landing page</Link>
                         </div>

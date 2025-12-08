@@ -107,6 +107,14 @@
     margin-right: auto;
 }
 
+.header-badges {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
 .category-badge {
     display: inline-flex;
     align-items: center;
@@ -118,8 +126,19 @@
     font-weight: 700;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    margin-bottom: var(--spacing-lg);
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.featured-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-lg);
+    background: linear-gradient(135deg, #fef08a 0%, #fcd34d 100%);
+    color: #854d0e;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.2);
 }
 
 .article-title {
@@ -164,6 +183,22 @@
     border-radius: var(--radius-md);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     font-style: italic;
+    margin-bottom: var(--spacing-xl);
+}
+
+.article-featured-image {
+    margin-bottom: var(--spacing-2xl);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    max-height: 500px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.article-featured-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 /* ============================================
@@ -184,6 +219,33 @@
 .article-content {
     min-width: 0;
     /* Prevent overflow */
+}
+
+.article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background: #eff6ff;
+    color: #0369a1;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    transition: all 0.3s ease;
+}
+
+.tag:hover {
+    background: #0369a1;
+    color: white;
+    transform: translateY(-2px);
 }
 
 .content-body {
@@ -214,6 +276,36 @@
     float: left;
     margin: 0.1em 0.1em 0 0;
     color: var(--color-primary);
+}
+
+.content-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin: var(--spacing-2xl) 0 var(--spacing-lg) 0;
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.content-heading:first-of-type {
+    margin-top: 0;
+}
+
+.content-list {
+    margin-left: var(--spacing-2xl);
+    margin-bottom: var(--spacing-xl);
+    list-style-type: disc;
+}
+
+.content-list li {
+    margin-bottom: var(--spacing-md);
+    line-height: 1.8;
+    color: var(--color-text);
+}
+
+.content-list li strong {
+    color: var(--color-text-dark);
+    font-weight: 600;
 }
 
 /* ============================================
@@ -249,7 +341,6 @@
 .related-card {
     position: relative;
     background: white;
-    padding: var(--spacing-xl);
     border-radius: var(--radius-lg);
     text-decoration: none;
     border: 2px solid #f1f5f9;
@@ -257,6 +348,14 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+}
+
+.related-image {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+    margin-bottom: var(--spacing-md);
 }
 
 .related-card::before {
@@ -294,6 +393,7 @@
     letter-spacing: 0.5px;
     margin-bottom: var(--spacing-md);
     align-self: flex-start;
+    margin-left: var(--spacing-xl);
 }
 
 .related-title {
@@ -303,6 +403,7 @@
     line-height: 1.4;
     margin-bottom: var(--spacing-sm);
     transition: color 0.2s;
+    padding: 0 var(--spacing-xl);
 }
 
 .related-card:hover .related-title {
@@ -315,13 +416,14 @@
     line-height: 1.6;
     margin-bottom: var(--spacing-md);
     flex-grow: 1;
+    padding: 0 var(--spacing-xl);
 }
 
 .related-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-xl) 0;
     border-top: 1px solid #f1f5f9;
 }
 

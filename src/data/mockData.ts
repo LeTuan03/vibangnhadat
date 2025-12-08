@@ -4,33 +4,618 @@ import type { Service, BlogPost, FAQ, LegalDocument, Testimonial, TeamMember, St
 export const mockBlogPosts: BlogPost[] = [
     {
         id: 'blog-1',
-        title: 'Hướng dẫn lập hợp đồng dân sự',
-        excerpt: 'Những điều cần biết khi lập hợp đồng dân sự hợp lệ',
-        content: 'Hợp đồng dân sự là một thỏa thuận pháp luật giữa hai hay nhiều bên...',
+        title: 'Hướng dẫn chi tiết về lập hợp đồng dân sự hợp lệ',
+        excerpt: 'Hợp đồng dân sự là nền tảng của mọi giao dịch. Bài viết này hướng dẫn các yếu tố bắt buộc để hợp đồng có hiệu lực pháp luật.',
+        content: `Hợp đồng dân sự là thỏa thuận pháp luật giữa hai hay nhiều bên, được quy định tại Bộ Luật Dân sự 2015. Để hợp đồng có hiệu lực pháp luật, cần đáp ứng những điều kiện sau:
+
+1. Các bên có năng lực hợp đồng (phải là người thành niên, có năng lực hành vi dân sự đầy đủ)
+2. Sự đồng ý của các bên về nội dung hợp đồng
+3. Nội dung hợp đồng phải hợp pháp, không vi phạm các quy định pháp luật
+4. Hình thức lập hợp đồng phải đúng quy định (bằng văn bản, chứng thực hoặc công chứng nếu luật có quy định)
+5. Hợp đồng phải có đối tượng xác định rõ ràng
+
+Các loại hợp đồng dân sự phổ biến:
+- Hợp đồng mua bán
+- Hợp đồng cho thuê
+- Hợp đồng tặng cho
+- Hợp đồng vay
+- Hợp đồng lao động
+
+Để tránh tranh chấp, hợp đồng cần có những nội dung cụ thể như: quyền và nghĩa vụ của các bên, thời gian thực hiện, điều kiện thanh toán, những trường hợp vi phạm và hậu quả.
+
+Nên tham khảo ý kiến của luật sư khi lập những hợp đồng có giá trị lớn hoặc liên quan đến tài sản quan trọng.`,
         author: 'Luật sư Nguyễn Văn A',
-        date: '2024-01-15',
+        date: '2024-12-01',
         category: 'Luật dân sự',
-        image: 'https://via.placeholder.com/400x300?text=Hop+Dong+Dan+Su'
+        image: 'https://via.placeholder.com/800x400?text=Hop+Dong+Dan+Su',
+        tags: ['hợp đồng', 'luật dân sự', 'tư vấn pháp luật'],
+        featured: true,
+        status: 'published',
+        views: 245,
+        readTime: 8
     },
     {
         id: 'blog-2',
-        title: 'Quy trình giải quyết tranh chấp lao động',
-        excerpt: 'Cách giải quyết hiệu quả các tranh chấp lao động',
-        content: 'Tranh chấp lao động là những bất đồng phát sinh giữa người lao động và người sử dụng lao động...',
+        title: 'Quy trình giải quyết tranh chấp lao động theo pháp luật Việt Nam',
+        excerpt: 'Tranh chấp lao động xảy ra thường xuyên. Bài viết này giới thiệu các bước giải quyết từ thương lượng đến tòa án.',
+        content: `Tranh chấp lao động phát sinh khi có bất đồng giữa người sử dụng lao động và người lao động. Pháp luật Lao động 2012 quy định quy trình giải quyết gồm các bước:
+
+1. THƯƠNG LƯỢNG TRỰ TIẾP (Bước 1)
+- Hai bên tìm cách giải quyết thân thiện
+- Thời gian: không quá 10 ngày
+- Nên ghi chép lại kết quả thương lượng
+
+2. KHIẾU NẠI (Bước 2)
+- Gửi khiếu nại đến người sử dụng lao động
+- Nếu chưa giải quyết, có thể khiếu nại đến người đại diện được ủy quyền
+- Người sử dụng lao động phải giải quyết trong vòng 10 ngày
+
+3. TỐ CÁO LÊN CƠ QUAN LÂCS (Bước 3)
+- Nếu tranh chấp chưa giải quyết, gửi tố cáo lên Cơ quan Lâm bộ, Công đoàn cấp cơ sở
+- Cơ quan này có trách nhiệm giải quyết trong 10 ngày
+- Có thể hòa giải hoặc xác định lỗi của bên nào
+
+4. TRỌNG TÀI LAO ĐỘNG (Bước 4)
+- Nếu còn tranh chấp, các bên có thể đồng ý gửi hòa giải tại Hội đồng Trọng tài
+- Hội đồng sẽ giải quyết trong thời gian quy định
+- Quyết định của Hội đồng có tính chất bắt buộc
+
+5. TÒA ÁN (Bước 5)
+- Là bước giải quyết cuối cùng
+- Tòa án có thể chấp nhận hoặc bác bỏ quyết định trọng tài
+- Phán quyết của tòa án là cuối cùng
+
+LƯU Ý QUAN TRỌNG:
+- Người lao động không cần phải chi trả phí cho các bước 1-4
+- Nên giữ giấy tờ, hợp đồng, chứng cứ để chứng minh tuyên bố
+- Thời hiệu khiếu nại thường là 30 ngày kể từ khi tranh chấp phát sinh
+
+Để bảo vệ quyền lợi của mình, người lao động nên tham khảo ý kiến của luật sư ngay khi phát sinh tranh chấp.`,
         author: 'Luật sư Trần Thị B',
-        date: '2024-01-10',
+        date: '2024-11-28',
         category: 'Luật lao động',
-        image: 'https://via.placeholder.com/400x300?text=Tranh+Chap+Lao+Dong'
+        image: 'https://via.placeholder.com/800x400?text=Tranh+Chap+Lao+Dong',
+        tags: ['tranh chấp', 'lao động', 'giải quyết', 'quy trình'],
+        featured: true,
+        status: 'published',
+        views: 312,
+        readTime: 10
     },
     {
         id: 'blog-3',
-        title: 'Thủ tục ly hôn tại Việt Nam',
-        excerpt: 'Các bước cần thiết để hoàn tất thủ tục ly hôn',
-        content: 'Ly hôn là sự chấm dứt hôn nhân được công nhân bởi pháp luật...',
+        title: 'Thủ tục ly hôn tại Việt Nam: Từ ly hôn thỏa thuận đến tranh chấp',
+        excerpt: 'Ly hôn có hai hình thức: thỏa thuận và tranh chấp. Bài viết hướng dẫn chi tiết từng quy trình.',
+        content: `Ly hôn là sự chấm dứt hôn nhân được công nhân bởi pháp luật. Theo Luật Hôn nhân và Gia đình 2000, có hai hình thức ly hôn:
+
+I. LY HÔN THỎA THUẬN (Đơn giản, nhanh chóng)
+Điều kiện:
+- Cả hai vợ chồng đồng ý ly hôn
+- Có thỏa thuận về con cái (nuôi dạy, cấp dưỡng)
+- Có thỏa thuận về tài sản và nợ chung
+- Không có con nhỏ dưới 3 tuổi ngoài hôn nhân (trừ trường hợp cần thiết)
+
+Thủ tục:
+1. Chuẩn bị hồ sơ:
+   - Giấy khai sinh của cặp vợ chồng
+   - Giấy chứng thực hôn nhân
+   - CMND/CCCD của cả hai
+   - Nếu có con: giấy khai sinh con
+   - Thỏa thuận bằng văn bản về con cái, tài sản, nợ chung
+
+2. Nộp đơn tại Trung tâm Hành chính công:
+   - Có thể nộp trực tiếp hoặc qua bưu điện
+   - Phí: từ 500.000 - 750.000 đồng (tùy tỉnh)
+
+3. Chờ xử lý:
+   - Thời gian từ 3-5 ngày làm việc
+   - Cơ quan hành chính sẽ gọi kiểm tra ý muốn của cả hai
+
+4. Nhận giấy chứng thực:
+   - Sau khi được cấp, hôn nhân chính thức chấm dứt
+   - Đến Công an để cập nhật thông tin CMND/CCCD
+
+II. LY HÔN TRANH CHẤP (Giải quyết tại tòa án)
+Trường hợp:
+- Một bên không đồng ý ly hôn
+- Có tranh chấp về con cái hoặc tài sản
+
+Thủ tục:
+1. Lập đơn kiện ly hôn
+2. Nộp đơn tại Tòa án nhân dân cấp huyện
+3. Tòa án triệu tập các bên để hòa giải
+4. Nếu không thành, tòa án mở phiên tòa
+5. Phán quyết ly hôn (hoặc không)
+
+Thời gian: 3-6 tháng
+
+III. VẤN ĐỀ CON CÁI
+- Người có năng lực nuôi dạy sẽ được nuôi con
+- Bên kia phải cấp dưỡng cho con
+- Mức cấp dưỡng: từ 15-30% lương của người bên kia
+- Nếu có con nhỏ dưới 3 tuổi, mẹ ưu tiên được nuôi
+
+IV. PHÂN CHIA TÀI SẢN
+- Tài sản riêng của mỗi bên trước hôn nhân: thuộc quyền sở hữu riêng
+- Tài sản chung trong hôn nhân: chia đôi (trừ khi có thỏa thuận khác)
+- Nợ chung: hai bên cùng chịu trách nhiệm
+
+LƯỚI Ý:
+- Chuẩn bị hồ sơ đầy đủ để nhanh chóng
+- Nên tham khảo luật sư nếu tranh chấp về con cái hoặc tài sản
+- Bảo tồn bằng chứng về tài sản chung`,
         author: 'Luật sư Phạm Văn C',
-        date: '2024-01-05',
+        date: '2024-11-25',
         category: 'Hôn nhân gia đình',
-        image: 'https://via.placeholder.com/400x300?text=Ly+Hon'
+        image: 'https://via.placeholder.com/800x400?text=Ly+Hon',
+        tags: ['ly hôn', 'gia đình', 'thủ tục', 'con cái', 'tài sản'],
+        featured: true,
+        status: 'published',
+        views: 458,
+        readTime: 12
+    },
+    {
+        id: 'blog-4',
+        title: 'Những sai lầm phổ biến khi thành lập công ty và cách tránh',
+        excerpt: 'Thành lập công ty không khó, nhưng nhiều người mắc phải những sai lầm có thể gây hậu quả lâu dài.',
+        content: `Thành lập một công ty là quyết định quan trọng. Dưới đây là những sai lầm phổ biến mà các doanh nhân thường gặp:
+
+1. KHÔNG LẬP GIẤY TỜ NỘI BỘ CÔNG TY
+- Sai lầm: Thành lập công ty nhưng không có Điều lệ công ty rõ ràng
+- Hậu quả: Khi có tranh chấp, khó xác định quyền hạn của cổ đông, lãnh đạo
+- Cách tránh: Lập Điều lệ công ty chi tiết, rõ ràng trước khi đăng ký
+
+2. KHÔNG PHÂN CHIA VỐN RÕ RÀNG
+- Sai lầm: Không có hợp đồng góp vốn, chỉ nói lời
+- Hậu quả: Tranh chấp về tỷ lệ cổ phần, quyền lợi
+- Cách tránh: Lập hợp đồng góp vốn bằng văn bản, rõ ràng tỷ lệ, thời hạn
+
+3. MIX TIỀN CÁ NHÂN VÀ TIỀN CÔNG TY
+- Sai lầm: Sử dụng tài khoản cá nhân cho giao dịch công ty
+- Hậu quả: Khó tính toán lợi nhuận, rủi ro về thuế, pháp lý
+- Cách tránh: Mở tài khoản riêng cho công ty, phân tách hoàn toàn
+
+4. KHÔNG CẬP NHẬT HỒ SƠ CÔNG TY
+- Sai lầm: Không nộp báo cáo tài chính, báo cáo hàng năm
+- Hậu quả: Bị phạt, công ty bị tước quyền
+- Cách tránh: Cập nhật đầy đủ, đúng hạn tất cả các loại báo cáo
+
+5. KHÔNG LÝ GIẢI RÕ RÀNG TRÁCH NHIỆM CỦA CỔ ĐÔNG
+- Sai lầm: Không có biên bản họp cổ đông
+- Hậu quả: Tranh chấp về quyết định kinh doanh
+- Cách tránh: Tổ chức họp cổ đông định kỳ, lập biên bản ghi chép
+
+6. KHÔNG CÓ HỢP ĐỒNG LƯƠNG CHO NHÂN VIÊN
+- Sai lầm: Thuê nhân viên không có hợp đồng hoặc hợp đồng không chuẩn
+- Hậu quả: Tranh chấp lao động, phạt hành chính
+- Cách tránh: Ký hợp đồng lao động theo quy định, rõ ràng về lương, quyền lợi
+
+7. KHÔNG KẾ TOÁN ĐỤC TẬP
+- Sai lầm: Không ghi chép hóa đơn, chứng từ
+- Hậu quả: Không thể chứng minh doanh thu, khó tính thuế
+- Cách tránh: Ghi chép mọi giao dịch, lưu giữ hóa đơn, chứng từ
+
+GIẢI PHÁP:
+Hãy tham khảo ý kiến của luật sư để đảm bảo công ty được thành lập đúng quy định, và có thể tránh được những vấn đề pháp lý về sau.`,
+        author: 'Luật sư Nguyễn Văn A',
+        date: '2024-11-20',
+        category: 'Luật doanh nghiệp',
+        image: 'https://via.placeholder.com/800x400?text=Thanh+Lap+Cong+Ty',
+        tags: ['công ty', 'doanh nghiệp', 'sai lầm', 'pháp lý'],
+        featured: false,
+        status: 'published',
+        views: 189,
+        readTime: 9
+    },
+    {
+        id: 'blog-5',
+        title: 'Hướng dẫn mua bán nhà đất: Những điều cần biết để tránh rủi ro',
+        excerpt: 'Mua bán bất động sản là giao dịch lớn. Bài viết này giúp bạn hiểu rõ quy trình và tránh những rủi ro.',
+        content: `Mua bán nhà đất là một trong những giao dịch lớn nhất trong cuộc đời. Dưới đây là hướng dẫn chi tiết để bạn thực hiện giao dịch an toàn:
+
+I. KIỂM TRA GIẤY TỜ BẤT ĐỘNG SẢN
+Trước khi mua, cần kiểm tra:
+1. Giấy chứng thực quyền sử dụng đất (GCNQSD)
+2. Giấy chứng thực nhà ở (GCNNH)
+3. Bản đồ địa chính
+4. Hóa đơn, chứng thực về nguồn gốc
+
+Kiểm tra:
+- Tên người sở hữu có trùng với người bán không?
+- Diện tích, vị trí có trùng khớp không?
+- Giấy chứng thực còn hiệu lực?
+- Có lệnh cấm giao dịch không?
+
+II. KIỂM TRA TÌNH TRẠNG PHÁP LÝ
+- Có tranh chấp đất đai với hàng xóm không?
+- Có nợ tiền sử dụng đất?
+- Có nợ thuế?
+- Có ai khác nhất quyền trên bất động sản không?
+
+III. THƯƠNG LƯỢNG GIÁ
+- Tìm hiểu giá thị trường khu vực
+- So sánh với những bất động sản tương tự
+- Đừng vội, hãy thương lượng hợp lý
+
+IV. LẬP HỢP ĐỒNG MUA BÁN
+- Hợp đồng phải có bằng văn bản
+- Ghi rõ:
+  * Tên, CMND của cả hai bên
+  * Mô tả chi tiết bất động sản
+  * Giá, phương thức thanh toán
+  * Thời gian giao nhận
+  * Trách nhiệm nếu vi phạm
+  * Ngày ký hợp đồng
+
+V. XỬ LÝ HÀNH CHÍNH
+1. Lập dự toán thuế, phí
+2. Nộp hồ sơ tại Cục Đăng ký Đất đai
+3. Trả thuế chuyển nhượng
+4. Đợi cấp giấy chứng thực mới
+
+VI. NHỮNG RỦI RO CẦN TRÁNH
+- Không mua đất mà chủ sở hữu không rõ ràng
+- Không mua đất đang có tranh chấp
+- Không rút tiền trước khi nhận được giấy chứng thực
+- Không để kẻ xấu lợi dụng
+
+LƯU Ý QUAN TRỌNG:
+- Nên kiểm tra giấy tờ tại Cục Đăng ký Đất đai
+- Nên mời luật sư tham gia để đảm bảo quyền lợi
+- Lưu giữ tất cả giấy tờ, hóa đơn
+- Bảo hiểm giao dịch nếu có thể`,
+        author: 'Luật sư Trần Thị B',
+        date: '2024-11-18',
+        category: 'Luật đất đai',
+        image: 'https://via.placeholder.com/800x400?text=Mua+Ban+Dat+Dai',
+        tags: ['đất đai', 'mua bán', 'bất động sản', 'pháp lý'],
+        featured: false,
+        status: 'published',
+        views: 267,
+        readTime: 11
+    },
+    {
+        id: 'blog-6',
+        title: 'Hợp đồng lao động: Những điều cần biết để bảo vệ quyền lợi của bạn',
+        excerpt: 'Hợp đồng lao động là quyền và nghĩa vụ pháp lý. Bài viết này giúp bạn hiểu rõ quyền lợi của mình.',
+        content: `Hợp đồng lao động là thỏa thuận pháp luật giữa người sử dụng lao động và người lao động. Đây là những điều bạn cần biết:
+
+I. HỢP ĐỒNG LƯƠNG ĐỘNG PHẢI CÓ NHỮNG GÌ
+Theo Luật Lao động 2012, hợp đồng phải ghi rõ:
+1. Tên, địa chỉ của hai bên
+2. Vị trí công việc
+3. Nơi làm việc
+4. Mức lương
+5. Thời gian làm việc
+6. Thời hạn hợp đồng (vô hạn hay có hạn)
+7. Quyền và nghĩa vụ
+8. Điều kiện làm việc
+9. Bảo hiểm xã hội, bảo hiểm y tế
+
+II. LOẠI HỢP ĐỒNG
+1. Hợp đồng vô hạn định kỳ:
+   - Không có ngày kết thúc
+   - Ổn định nhất cho người lao động
+
+2. Hợp đồng có hạn định kỳ:
+   - Có ngày kết thúc rõ ràng (thường 1-3 năm)
+   - Khi kết thúc, người sử dụng lao động có thể không gia hạn
+
+3. Hợp đồng làm việc theo dự án:
+   - Kết thúc khi dự án xong
+
+III. QUYỀN CỦA NGƯỜI LAO ĐỘNG
+- Được trả lương đầy đủ, đúng hạn
+- Được hưởng bảo hiểm xã hội, bảo hiểm y tế
+- Được nghỉ phép hàng năm (12-16 ngày tùy điều kiện)
+- Được lao động trong điều kiện an toàn
+- Được đình công nếu quyền lợi bị vi phạm
+
+IV. NGHĨA VỤ CỦA NGƯỜI LAO ĐỘNG
+- Làm việc đúng giờ, đúng chất lượng
+- Tuân thủ nội quy công ty
+- Bảo mật thông tin công ty
+- Không tham gia hoạt động cạnh tranh với công ty
+
+V. LƯƠNG VÀ CẤP DƯỠNG
+- Lương tối thiểu hàng tháng được quy định bởi nhà nước
+- Ngoài lương, có thể có trợ cấp ăn trưa, xăng xe
+- Lương làm thêm giờ phải được trả thêm 150-300% tùy điều kiện
+
+VI. KỲ NGHỈ VÀ NGÀY LỄ
+- Ngày lễ Tết: 7 ngày
+- Ngày quốc khánh: 1 ngày
+- Những ngày lễ khác: tuỳ định
+- Kỳ nghỉ hàng năm: 12-16 ngày (tùy năm làm việc)
+
+VII. CHẤM DỨT HỢP ĐỒNG
+Hợp đồng có thể kết thúc khi:
+- Hết thời hạn (hợp đồng có hạn)
+- Hai bên thỏa thuận
+- Một bên đơn phương chấm dứt (phải có lý do chính đáng)
+- Người sử dụng lao động phải trả tiền bồi thường nếu kết thúc không có lý do
+
+LƯUI Ý:
+- Đọc kỹ hợp đồng trước khi ký
+- Yêu cầu một bản copy
+- Lưu giữ hợp đồng thật
+- Nếu hợp đồng không rõ ràng, tham khảo luật sư`,
+        author: 'Luật sư Phạm Văn C',
+        date: '2024-11-15',
+        category: 'Luật lao động',
+        image: 'https://via.placeholder.com/800x400?text=Hop+Dong+Lao+Dong',
+        tags: ['lao động', 'hợp đồng', 'quyền lợi', 'lương'],
+        featured: false,
+        status: 'published',
+        views: 334,
+        readTime: 10
+    },
+    {
+        id: 'blog-7',
+        title: 'Quyền thừa kế và phân chia tài sản: Những gì bạn cần biết',
+        excerpt: 'Thừa kế là quyền được hưởng tài sản của người đã chết. Bài viết này giải thích rõ quy tắc thừa kế.',
+        content: `Thừa kế là quyền và nghĩa vụ của những người còn sống được hưởng tài sản của người đã chết. Dưới đây là những điều bạn cần biết:
+
+I. NGUYÊN TẮC THỪA KẾ
+- Người chết gọi là thụ hưởng
+- Những người được hưởng tài sản gọi là người thừa kế
+- Người thừa kế phải đáp ứng một số điều kiện nhất định
+- Thừa kế có hai hình thức: thừa kế theo pháp luật hoặc theo di chúc
+
+II. NGƯỜI CÓ QUYỀN THỪA KẾ
+Thứ tự thừa kế theo pháp luật:
+
+Hàng thứ nhất:
+- Vợ/chồng
+- Con cái (kể cả con nuôi, con riêng)
+- Bố mẹ
+
+Hàng thứ hai:
+- Anh, chị, em ruột
+- Ông bà
+- Cháu ruột (con của anh em đã chết)
+
+Hàng thứ ba:
+- Bác, cô, chú, dì
+- Cháu của những người này
+
+Hàng thứ tư:
+- Những người khác (có liên quan xa)
+
+III. DI CHÚC
+Di chúc là quyết định của người viết (người chết) về cách chia tài sản sau khi họ chết.
+
+Điều kiện di chúc hợp lệ:
+1. Được viết bằng văn bản hoặc ghi âm
+2. Phải do chính tay người viết hoặc người khác viết theo yêu cầu
+3. Phải có chữ ký hoặc điểm chỉ của người viết
+4. Phải có 02 nhân chứng
+5. Nếu như tài sản của người chết trong nước ngoài, có thể công chứng tại đó
+
+IV. QUY TRÌNH THỪA KẾ
+1. Xác định người chết (khai tử)
+2. Xác định di chúc (nếu có)
+3. Xác định những người thừa kế
+4. Kiểm kê tài sản
+5. Chia tài sản theo pháp luật hoặc di chúc
+6. Cấp giấy chứng thực di sản
+
+V. PHÂN CHIA TÀI SẢN
+- Nếu có di chúc: tuân theo di chúc
+- Nếu không có di chúc: tuân theo thứ tự thừa kế (hàng 1, 2, 3, 4)
+- Những người cùng hàng chia đều nhau
+- Nếu một người trong hàng đã chết, con của họ thừa kế thay (thừa kế cử chỉ định)
+
+VI. NỢ CỦA NGƯỜI CHẾT
+- Những người thừa kế phải chịu trách nhiệm trả nợ
+- Nhưng chỉ trả tối đa bằng giá trị tài sản thừa kế
+
+LƯUI Ý:
+- Hãy viết di chúc rõ ràng khi còn sống
+- Công chứng di chúc để tránh tranh chấp
+- Tham khảo luật sư khi có tranh chấp thừa kế`,
+        author: 'Luật sư Trần Thị B',
+        date: '2024-11-10',
+        category: 'Hôn nhân gia đình',
+        image: 'https://via.placeholder.com/800x400?text=Thua+Ke',
+        tags: ['thừa kế', 'di chúc', 'tài sản', 'gia đình'],
+        featured: false,
+        status: 'published',
+        views: 156,
+        readTime: 9
+    },
+    {
+        id: 'blog-8',
+        title: 'Bảo vệ quyền lợi trẻ em sau ly hôn: Hướng dẫn cho cha mẹ',
+        excerpt: 'Sau ly hôn, trẻ em cần được bảo vệ. Bài viết này giải thích quyền lợi và trách nhiệm của cha mẹ.',
+        content: `Sau ly hôn, quyền lợi của trẻ em là ưu tiên hàng đầu. Dưới đây là những điều bạn cần biết:
+
+I. QUYỀN CỦA TRẺ EM SAU LY HÔN
+- Được bên cha/mẹ có năng lực nuôi dạy tốt nhất
+- Được cấp dưỡng từ cả hai bên cha mẹ
+- Được học tập, chăm sóc sức khỏe
+- Được tiếp xúc với bên cha/mẹ không được nuôi
+
+II. QUYỀN NUÔI CON
+- Người có năng lực nuôi dạy sẽ được nuôi con
+- Luật lưu tâm tới lợi ích của trẻ
+- Nếu có con nhỏ dưới 3 tuổi, mẹ được ưu tiên
+- Trẻ từ 3-7 tuổi, có thể để với mẹ hoặc cha tùy tình hình
+- Trẻ từ 7 tuổi trở lên, có thể có ý kiến của chính trẻ
+
+III. TIỀN CẤP DƯỠNG
+- Bên không được nuôi con phải trả tiền cấp dưỡng
+- Mức cấp dưỡng: 15-30% thu nhập hàng tháng
+- Tính từ khi ly hôn cho đến khi con trưởng thành (18 tuổi)
+- Nếu con tiếp tục học tập, có thể kéo dài đến 30 tuổi
+
+IV. QUYỀN TIẾP XÚC
+- Bên không được nuôi con vẫn có quyền gặp gỡ con
+- Lịch gặp gỡ được thỏa thuận hoặc do tòa án quy định
+- Không thể từ chối bên kia gặp con nếu không có lý do chính đáng
+
+V. LỢI ÍCH CỦA TRẺ
+- Sống trong môi trường an toàn, yên tĩnh
+- Được cố gắng gìn giữ quan hệ với cả hai bên cha mẹ
+- Không bị ảnh hưởng bởi tranh chấp của cha mẹ
+
+VI. NHỮNG LƯUI Ý QUAN TRỌNG
+- Không bao giờ sử dụng trẻ em để tranh giành quyền lực
+- Tôn trọng quyền gặp gỡ của bên kia
+- Không nên nói xấu bên kia trước mặt con
+- Cố gắng hòa giải để tránh tổn thương tâm lý cho con
+
+GIẢI PHÁP TRANH CHẤP:
+Nếu có tranh chấp, cách tốt nhất là:
+1. Thương lượng hòa giải
+2. Gửi hòa giải tại UBND xã
+3. Gửi tòa án nếu vẫn chưa giải quyết`,
+        author: 'Luật sư Nguyễn Văn A',
+        date: '2024-11-08',
+        category: 'Hôn nhân gia đình',
+        image: 'https://via.placeholder.com/800x400?text=Quyen+Tre+Em',
+        tags: ['trẻ em', 'gia đình', 'ly hôn', 'quyền lợi'],
+        featured: false,
+        status: 'published',
+        views: 128,
+        readTime: 8
+    },
+    {
+        id: 'blog-9',
+        title: 'Các loại hợp đồng phổ biến mà bạn nên biết',
+        excerpt: 'Hiểu rõ các loại hợp đồng giúp bạn bảo vệ quyền lợi trong giao dịch kinh doanh.',
+        content: `Có rất nhiều loại hợp đồng trong pháp luật dân sự. Dưới đây là những loại phổ biến nhất:
+
+I. HỢP ĐỒNG MUA BÁN
+- Bên bán: chuyển giao sản phẩm
+- Bên mua: trả tiền theo giá đã thỏa thuận
+- Rủi ro từ sản phẩm: chuyển cho bên mua từ lúc bàn giao
+
+II. HỢP ĐỒNG CHO THUÊ
+- Bên cho thuê: cho bên kia sử dụng tài sản
+- Bên thuê: trả tiền theo thỏa thuận
+- Thời gian thuê: được ghi rõ
+
+III. HỢP ĐỒNG VAY
+- Bên cho vay: cấp tiền hoặc hàng hóa
+- Bên vay: trả lại số tiền/hàng hóa tương đương
+- Có thể có lãi suất hoặc không
+
+IV. HỢP ĐỒNG TẶNG CHO
+- Bên tặng: chuyển giao tài sản
+- Bên nhận: nhận tài sản không có lấy gì
+- Có thể có điều kiện gắn liền
+
+V. HỢP ĐỒNG HOÀN TRẢ
+- Bên cho: chuyển giao tài sản
+- Bên nhận: có quyền hoàn trả tài sản
+- Thường dùng trong bán hàng
+
+VI. HỢP ĐỒNG SỬA CHỮA
+- Bên sửa: sửa chữa hàng hóa
+- Bên giao hàng: trả tiền công sửa chữa
+
+VII. HỢP ĐỒNG LÀM CÔNG VIỆC
+- Bên nhận: thực hiện công việc theo yêu cầu
+- Bên giao: trả tiền công
+- Kết quả: tài sản kết quả từ công việc
+
+VIII. HỢP ĐỒNG BẢO HIỂM
+- Công ty bảo hiểm: bảo vệ rủi ro
+- Bên mua: trả phí bảo hiểm
+- Khi có rủi ro: công ty bảo hiểm đền bù
+
+NHỮNG NGUYÊN TẮC CHUNG:
+- Phải có sự đồng ý của cả hai bên
+- Phải có bằng văn bản (nếu luật quy định)
+- Nội dung phải hợp pháp
+- Phải có hạn thanh toán rõ ràng
+
+LỜI KHUYÊN:
+Khi ký hợp đồng, hãy:
+1. Đọc kỹ tất cả điều khoản
+2. Hiểu rõ quyền và nghĩa vụ của bạn
+3. Yêu cầu giải thích những điều không rõ
+4. Tham khảo luật sư nếu cần`,
+        author: 'Luật sư Phạm Văn C',
+        date: '2024-11-05',
+        category: 'Luật dân sự',
+        image: 'https://via.placeholder.com/800x400?text=Hop+Dong+Pho+Bien',
+        tags: ['hợp đồng', 'luật dân sự', 'các loại'],
+        featured: false,
+        status: 'published',
+        views: 213,
+        readTime: 7
+    },
+    {
+        id: 'blog-10',
+        title: 'Quyền và nghĩa vụ trong quan hệ thuê nhà: Hướng dẫn cho bên cho và bên thuê',
+        excerpt: 'Hợp đồng thuê nhà cần rõ ràng để tránh tranh chấp. Bài viết này giải thích quyền lợi của cả hai bên.',
+        content: `Thuê nhà là giao dịch phổ biến. Cả bên cho thuê và bên thuê cần hiểu rõ quyền và nghĩa vụ của mình:
+
+I. QUYỀN CỦA BÊN CHO THUÊ
+- Nhận tiền thuê đầy đủ, đúng hạn
+- Kiểm tra, bảo trì bất động sản
+- Vào nhà để kiểm tra (với thông báo trước)
+- Thu hồi nhà khi hợp đồng kết thúc
+- Giữ tiền cọc nếu bên thuê gây hư hại
+
+II. NGHĨA VỤ CỦA BÊN CHO THUÊ
+- Giao bất động sản trong tình trạng tốt
+- Bảo vệ quyền sử dụng của bên thuê
+- Thực hiện sửa chữa cần thiết
+- Không can thiệp vào nhu cầu hợp lý của bên thuê
+- Trả lại tiền cọc khi hợp đồng kết thúc
+
+III. QUYỀN CỦA BÊN THUÊ
+- Được sử dụng nhà theo đúng mục đích
+- Được sửa chữa, cải tạo nếu được phép
+- Được yên tĩnh, không bị kỳ thị
+- Được lưu trữ hàng cá nhân
+- Được cấu cảnh hợp lý
+
+IV. NGHĨA VỤ CỦA BÊN THUÊ
+- Trả tiền thuê đầy đủ, đúng hạn
+- Bảo quản tốt bất động sản
+- Không gây hư hại hoặc cọ xát
+- Tuân thủ nội quy khu dân cư
+- Trả lại bất động sản trong tình trạng tốt
+
+V. HỢP ĐỒNG THUÊ NHÀ CẦN GHI RÕ
+- Tên, CMND của cả hai bên
+- Mô tả chi tiết bất động sản
+- Mục đích sử dụng
+- Thời gian thuê
+- Giá tiền thuê hàng tháng
+- Tiền cọc và cách trả lại
+- Ai chịu trách nhiệm về tiền điện, nước, internet
+- Điều kiện chấm dứt hợp đồng
+
+VI. NHỮNG VẤN ĐỀ CẦN LƯU Ý
+- Có giấy phép nếu cho thuê lâu dài
+- Nên kiểm tra tình trạng bất động sản trước khi ký
+- Ghi rõ những hư hại hiện có để không bị buộc trách nhiệm sau
+- Nên chứng thực hợp đồng
+
+VII. CHẤM DỨT HỢP ĐỒNG
+- Hai bên có thể thỏa thuận chấm dứt
+- Một bên có thể chấm dứt nếu bên kia vi phạm
+- Cần thông báo trước 30-60 ngày
+- Kiểm tra tình trạng, trả lại tiền cọc
+
+LỜI KHUYÊN:
+- Ký hợp đồng bằng văn bản
+- Giữ bản copy cho mình
+- Ghi chép tình trạng bất động sản (hình ảnh, video)
+- Tham khảo luật sư nếu có tranh chấp`,
+        author: 'Luật sư Trần Thị B',
+        date: '2024-11-01',
+        category: 'Luật đất đai',
+        image: 'https://via.placeholder.com/800x400?text=Thue+Nha',
+        tags: ['thuê nhà', 'bất động sản', 'hợp đồng'],
+        featured: false,
+        status: 'published',
+        views: 195,
+        readTime: 8
     }
 ];
 

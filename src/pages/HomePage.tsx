@@ -13,7 +13,7 @@ import QA from '../components/QA';
 import Booking from '../components/Booking';
 import Careers from '../components/Careers';
 import Contact from '../components/Contact';
-import Newsletter from '../components/Newsletter';
+// import Newsletter from '../components/Newsletter';
 
 const HomePage: React.FC = () => {
     return (
@@ -34,7 +34,7 @@ const HomePage: React.FC = () => {
                 <Careers />
                 <Contact />
             </main>
-            <Newsletter />
+            {/* <Newsletter /> */}
         </div>
     );
 };

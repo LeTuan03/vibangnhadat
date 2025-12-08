@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { FaCalendar, FaUser, FaClock, FaTag } from 'react-icons/fa';
 import BlogFirebaseService from '../services/BlogFirebaseService';
 import { formatDate } from '../utils/helpers';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -24,6 +25,14 @@ const ArticlePage: React.FC = () => {
                 setBlogPosts(data);
                 if (!data.find(p => p.id === id)) {
                     setNotFound(true);
+                }
+                // Increment views
+                if (id) {
+                    try {
+                        await BlogFirebaseService.incrementViews(id);
+                    } catch (err) {
+                        console.warn('Could not increment views:', err);
+                    }
                 }
             } catch (err) {
                 console.error('Error loading blog posts:', err);
@@ -57,6 +66,10 @@ const ArticlePage: React.FC = () => {
         );
     }
 
+    const relatedPosts = blogPosts
+        .filter((p) => p.category === post.category && p.id !== post.id && (p.status === 'published' || p.status === undefined))
+        .slice(0, 3);
+
     return (
         <main className="article-page">
             <div className="container">
@@ -76,51 +89,99 @@ const ArticlePage: React.FC = () => {
 
                 {/* Article Header */}
                 <header className="article-header">
-                    <div className="category-badge">{post.category}</div>
+                    <div className="header-badges">
+                        <div className="category-badge">{post.category}</div>
+                        {post.featured && <div className="featured-badge">⭐ Nổi bật</div>}
+                    </div>
                     <h1 className="article-title">{post.title}</h1>
+                    
                     <div className="article-meta">
                         <div className="meta-item">
-                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                <circle cx="9" cy="6" r="3" fill="currentColor"/>
-                                <path d="M9 10.5c-3.5 0-6.5 2-6.5 4.5h13c0-2.5-3-4.5-6.5-4.5z" fill="currentColor"/>
-                            </svg>
-                            <span>{post.author}</span>
+                            <FaUser /> {post.author}
                         </div>
                         <div className="meta-item">
-                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                <rect x="3" y="4" width="12" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                                <path d="M3 7h12M6 2v3M12 2v3" stroke="currentColor" strokeWidth="1.5"/>
-                            </svg>
-                            <span>{formatDate(post.date)}</span>
+                            <FaCalendar /> {formatDate(post.date)}
                         </div>
+                        {post.readTime && (
+                            <div className="meta-item">
+                                <FaClock /> {post.readTime} phút đọc
+                            </div>
+                        )}
+                        {post.views !== undefined && (
+                            <div className="meta-item">
+                                👁️ {post.views.toLocaleString()} lượt xem
+                            </div>
+                        )}
                     </div>
+                    
                     <p className="article-excerpt">{post.excerpt}</p>
+
+                    {post.image && (
+                        <div className="article-featured-image">
+                            <img src={post.image} alt={post.title} />
+                        </div>
+                    )}
                 </header>
 
                 {/* Main Content Area */}
                 <div className="article-layout">
                     {/* Article Body */}
                     <article className="article-content">
+                        {/* Tags */}
+                        {post.tags && post.tags.length > 0 && (
+                            <div className="article-tags">
+                                {post.tags.map(tag => (
+                                    <span key={tag} className="tag">
+                                        <FaTag /> {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+
                         <div className="content-body">
-                            {post.content.split('\n\n').map((para, idx) => (
-                                <p key={idx} className="content-paragraph">{para}</p>
-                            ))}
+                            {post.content.split('\n\n').map((para, idx) => {
+                                // Check if paragraph is a heading
+                                if (para.trim().match(/^#+\s/)) {
+                                    const level = para.match(/^#+/)?.[0].length || 2;
+                                    const text = para.replace(/^#+\s/, '').trim();
+                                    const HeadingTag = `h${Math.min(level + 2, 6)}` as keyof JSX.IntrinsicElements;
+                                    return React.createElement(HeadingTag, { key: idx, className: 'content-heading' }, text);
+                                }
+
+                                // Check if paragraph is a list
+                                if (para.trim().match(/^[-*•]\s/)) {
+                                    const items = para
+                                        .split('\n')
+                                        .filter(line => line.trim())
+                                        .map(line => line.replace(/^[-*•]\s/, '').trim());
+                                    return (
+                                        <ul key={idx} className="content-list">
+                                            {items.map((item, i) => (
+                                                <li key={i}>{item}</li>
+                                            ))}
+                                        </ul>
+                                    );
+                                }
+
+                                return (
+                                    <p key={idx} className="content-paragraph">{para}</p>
+                                );
+                            })}
                         </div>
 
                         {/* Related Posts */}
-                        <section className="related-posts">
-                            <h3 className="section-title">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path d="M3 7h14M3 13h14M7 3v14" stroke="currentColor" strokeWidth="2"/>
-                                </svg>
-                                Bài viết liên quan
-                            </h3>
-                            <div className="related-grid">
-                                {blogPosts
-                                    .filter((p) => p.category === post.category && p.id !== post.id)
-                                    .slice(0, 3)
-                                    .map((rel) => (
+                        {relatedPosts.length > 0 && (
+                            <section className="related-posts">
+                                <h3 className="section-title">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M3 7h14M3 13h14M7 3v14" stroke="currentColor" strokeWidth="2"/>
+                                    </svg>
+                                    Bài viết liên quan
+                                </h3>
+                                <div className="related-grid">
+                                    {relatedPosts.map((rel) => (
                                         <Link key={rel.id} to={`/blog/${rel.id}`} className="related-card">
+                                            {rel.image && <img src={rel.image} alt={rel.title} className="related-image" />}
                                             <div className="related-badge">{rel.category}</div>
                                             <h4 className="related-title">{rel.title}</h4>
                                             <p className="related-excerpt">{rel.excerpt}</p>
@@ -130,8 +191,9 @@ const ArticlePage: React.FC = () => {
                                             </div>
                                         </Link>
                                     ))}
-                            </div>
-                        </section>
+                                </div>
+                            </section>
+                        )}
                     </article>
 
                     {/* Sidebar */}
@@ -172,6 +234,18 @@ const ArticlePage: React.FC = () => {
                                     <span className="info-label">Ngày đăng:</span>
                                     <span className="info-value">{formatDate(post.date)}</span>
                                 </div>
+                                {post.readTime && (
+                                    <div className="quick-info-item">
+                                        <span className="info-label">Thời gian đọc:</span>
+                                        <span className="info-value">{post.readTime} phút</span>
+                                    </div>
+                                )}
+                                {post.views !== undefined && (
+                                    <div className="quick-info-item">
+                                        <span className="info-label">Lượt xem:</span>
+                                        <span className="info-value">{post.views.toLocaleString()}</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </aside>

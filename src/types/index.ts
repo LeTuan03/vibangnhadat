@@ -58,6 +58,9 @@ export interface BlogPost extends BaseEntity {
     tags?: string[];
     featured?: boolean;
     views?: number;
+    status?: 'draft' | 'published' | 'archived';
+    readTime?: number;
+    relatedPosts?: string[];
 }
 
 // ============ FAQ/Q&A Types ============

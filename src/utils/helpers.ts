@@ -3,13 +3,21 @@
  * @param dateString - ISO date string
  * @returns Formatted date string (e.g., "1 tháng 12, 2024")
  */
-export const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('vi-VN', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    }).format(date);
+export const formatDate = (dateInput?: string | Date | null): string => {
+    if (!dateInput) return '';
+
+    const date = dateInput instanceof Date ? dateInput : new Date(String(dateInput));
+    if (Number.isNaN(date.getTime())) return '';
+
+    try {
+        return new Intl.DateTimeFormat('vi-VN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        }).format(date);
+    } catch (e) {
+        return '';
+    }
 };
 
 /**

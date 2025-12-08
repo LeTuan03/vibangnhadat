@@ -1,5 +1,7 @@
 import { BaseFirebaseService } from './BaseFirebaseService';
 import { LegalArticle } from '../types';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from '../config/firebase';
 
 class LegalArticleFirebaseService extends BaseFirebaseService<LegalArticle> {
   constructor() {
@@ -73,6 +75,27 @@ class LegalArticleFirebaseService extends BaseFirebaseService<LegalArticle> {
       );
     } catch (error) {
       console.error('Error searching articles:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Subscribe to realtime updates for articles collection
+   * Returns unsubscribe function
+   */
+  subscribeArticles(onChange: (items: LegalArticle[]) => void) {
+    try {
+      const colRef = collection(db, this.collectionName);
+      const q = query(colRef, orderBy('datePublished', 'desc'));
+      const unsub = onSnapshot(q, (snapshot) => {
+        const items: LegalArticle[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as LegalArticle));
+        onChange(items);
+      }, (err) => {
+        console.error('Realtime articles subscription error:', err);
+      });
+      return unsub;
+    } catch (error) {
+      console.error('Error setting up realtime subscription for articles:', error);
       throw error;
     }
   }

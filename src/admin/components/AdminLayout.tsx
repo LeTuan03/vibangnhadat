@@ -19,6 +19,7 @@ const menuConfig: Array<{ key: string; path: string; label: string; icon: React.
     { key: 'services', path: '/admin/services', label: 'Dịch vụ', icon: <FaFileContract /> },
     { key: 'viban', path: '/admin/viban', label: 'Vi bằng', icon: <FaUsers /> },
     // { key: 'category', path: '/admin/category', label: 'Danh mục', icon: <FaList /> },
+    { key: 'legal-articles', path: '/admin/legal-articles', label: 'Bài viết pháp luật', icon: <FaNewspaper /> },
     { key: 'documents', path: '/admin/documents', label: 'Tài liệu', icon: <FaBook /> },
     { key: 'qa', path: '/admin/qa', label: 'Hỏi & Đáp', icon: <FaQuestionCircle /> },
     { key: 'statistics', path: '/admin/statistics', label: 'Thống kê', icon: <FaTrophy /> },

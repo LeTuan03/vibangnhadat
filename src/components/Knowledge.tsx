@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { FaNewspaper, FaFileAlt, FaChevronDown, FaChevronUp, FaSearch, FaBook, FaLink, FaLightbulb } from 'react-icons/fa';
 import BlogFirebaseService from '../services/BlogFirebaseService';
 import DocumentFirebaseService from '../services/DocumentFirebaseService';
+import { getAllLegalArticles } from '../services';
 // Removed mock fallbacks: data is loaded from Firebase services
-import { legalArticles, mainLaws, legalTerms, usefulReferences } from '../data/legalKnowledge';
+import { mainLaws, legalTerms, usefulReferences } from '../data/legalKnowledge';
 import { formatDate } from '../utils/helpers';
 import BlogDetail from './BlogDetail';
 import LoadingSpinner from './LoadingSpinner';
-import type { BlogPost, LegalDocument } from '../types';
+import type { BlogPost, LegalDocument, LegalArticle } from '../types';
 import './Knowledge.css';
 
 const Knowledge: React.FC = () => {
@@ -18,10 +19,12 @@ const Knowledge: React.FC = () => {
 
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
     const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>([]);
+    const [legalArticles, setLegalArticles] = useState<LegalArticle[]>([]);
     const [loading, setLoading] = useState(true);
     const [_error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        let unsubArticles: (() => void) | null = null
         const loadData = async () => {
             try {
                 setLoading(true);
@@ -31,6 +34,22 @@ const Knowledge: React.FC = () => {
                 ]);
                 setBlogPosts(posts || []);
                 setLegalDocuments(docs || []);
+
+                // subscribe to realtime legal articles
+                try {
+                    const svc = await import('../services/LegalArticleFirebaseService');
+                    unsubArticles = svc.default.subscribeArticles((items: any[]) => {
+                        setLegalArticles(items || []);
+                    });
+                } catch (err) {
+                    console.warn('Could not subscribe to realtime articles, falling back to one-time fetch', err);
+                    try {
+                        const articles = await getAllLegalArticles();
+                        setLegalArticles(articles || []);
+                    } catch (e) {
+                        console.error('Error loading articles fallback:', e);
+                    }
+                }
             } catch (err) {
                 console.error('Error loading data:', err);
                 setError('Không thể tải dữ liệu');
@@ -42,6 +61,10 @@ const Knowledge: React.FC = () => {
             }
         };
         loadData();
+
+        return () => {
+            if (unsubArticles) unsubArticles()
+        }
     }, []);
 
     if (loading) {
@@ -167,7 +190,7 @@ const Knowledge: React.FC = () => {
                                                     <span className="legal-date">Ngày ban hành: {formatDate(doc.publishDate)}</span>
                                                 </div>
                                             </div>
-                                            <button className="btn btn-outline">Xem chi tiết</button>
+                                            {/* <button className="btn btn-outline">Xem chi tiết</button> */}
                                         </div>
                                     ))
                                 ) : (

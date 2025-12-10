@@ -17,6 +17,7 @@ const ServiceAreaDetailPage = React.lazy(() => import('./pages/ServiceAreaDetail
 const VibanDetailPage = React.lazy(() => import('./pages/VibanDetailPage'));
 const FamilyLawPage = React.lazy(() => import('./pages/FamilyLawPage'));
 const FamilyLawDetailPage = React.lazy(() => import('./pages/FamilyLawDetailPage'));
+const LegalKnowledge = React.lazy(() => import('./pages/LegalKnowledge'));
 
 // Lazy load admin components
 const AdminLogin = React.lazy(() => import('./components/AdminLogin'));
@@ -94,6 +95,7 @@ function App() {
                         {/* Family law routes */}
                         <Route path="family-law" element={<FamilyLawPage />} />
                         <Route path="family-law/:id" element={<FamilyLawDetailPage />} />
+                        <Route path="legal-knowledge" element={<LegalKnowledge />} />
 
                         {/* 404 fallback */}
                         <Route path="*" element={<NotFound />} />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { FaBars, FaTimes, FaPhone, FaChevronDown, FaHome } from 'react-icons/fa';
-import { getAllNavigationItems } from '../services';
+import { getAllNavigationItems, getCompanyInfo } from '../services';
 import { scrollToElement } from '../utils/helpers';
 import { useScrollSpy } from '../hooks/useScrollSpy';
 import './Header.css';
@@ -24,6 +24,21 @@ const Header: React.FC = () => {
   const location = useLocation();
 
   const [navigationItems, setNavigationItems] = useState<NavItem[]>([]);
+
+  const [companyInfo, setCompanyInfo] = React.useState<any>({ fullName: '', slogan: '', description: '' });
+
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const [company] = await Promise.all([getCompanyInfo()]);
+        if (company) setCompanyInfo(company);
+      } catch (err) {
+        console.error('Lỗi tải dữ liệu Hero:', err);
+      }
+    };
+
+    load();
+  }, []);
 
   // Load navigation from Firebase
   useEffect(() => {
@@ -180,14 +195,14 @@ const Header: React.FC = () => {
 
   return (
     <header className={`header ${isScrolled ? 'header-scrolled' : ''}`}>
-      <div className="container">
+      <div className="container" style={{ maxWidth: 'unset' }}>
         <div className="header-content">
           {/* Logo */}
           <div className="header-logo" onClick={handleLogoClick}>
             <img src="/logo.png" alt="Thừa Phát Lại Logo" />
             <div>
-              <h1 className="logo-text">Thừa Phát Lại</h1>
-              <p className="logo-subtitle">Uy tín - Chuyên nghiệp</p>
+              <h1 className="logo-text">{companyInfo.fullName}</h1>
+              <p className="logo-subtitle">Sở tư pháp thành phố Hà Nội</p>
             </div>
           </div>
 
@@ -296,8 +311,8 @@ const Header: React.FC = () => {
               <div key={item.id || item.label} className="mobile-nav-item">
                 <button
                   className={`mobile-nav-link ${item.children ? isParentActive(item) : isLinkActive(item.href)
-                      ? 'active'
-                      : ''
+                    ? 'active'
+                    : ''
                     }`}
                   onClick={(e) => {
                     e.stopPropagation();

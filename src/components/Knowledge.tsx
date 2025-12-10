@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { FaNewspaper, FaFileAlt, FaChevronDown, FaChevronUp, FaSearch, FaBook, FaLink, FaLightbulb } from 'react-icons/fa';
-import BlogFirebaseService from '../services/BlogFirebaseService';
+import {
+    // FaNewspaper,
+    FaFileAlt, FaChevronDown, FaChevronUp, FaSearch, FaBook, FaLink, FaLightbulb
+} from 'react-icons/fa';
+// import BlogFirebaseService from '../services/BlogFirebaseService';
 import DocumentFirebaseService from '../services/DocumentFirebaseService';
 import { getAllLegalArticles } from '../services';
 // Removed mock fallbacks: data is loaded from Firebase services
@@ -12,12 +15,12 @@ import type { BlogPost, LegalDocument, LegalArticle } from '../types';
 import './Knowledge.css';
 
 const Knowledge: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'news' | 'faq' | 'legal' | 'articles' | 'laws' | 'terms' | 'references'>('news');
+    const [activeTab, setActiveTab] = useState<'news' | 'faq' | 'legal' | 'articles' | 'laws' | 'terms' | 'references'>('legal');
     const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
 
-    const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+    // const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
     const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>([]);
     const [legalArticles, setLegalArticles] = useState<LegalArticle[]>([]);
     const [loading, setLoading] = useState(true);
@@ -28,11 +31,13 @@ const Knowledge: React.FC = () => {
         const loadData = async () => {
             try {
                 setLoading(true);
-                const [posts, docs] = await Promise.all([
-                    BlogFirebaseService.getAllPosts(),
-                    DocumentFirebaseService.getAllDocuments(),
-                ]);
-                setBlogPosts(posts || []);
+                const [
+                    // posts, 
+                    docs] = await Promise.all([
+                        // BlogFirebaseService.getAllPosts(),
+                        DocumentFirebaseService.getAllDocuments(),
+                    ]);
+                // setBlogPosts(posts || []);
                 setLegalDocuments(docs || []);
 
                 // subscribe to realtime legal articles
@@ -54,7 +59,7 @@ const Knowledge: React.FC = () => {
                 console.error('Error loading data:', err);
                 setError('Không thể tải dữ liệu');
                 // Keep empty lists if Firebase fails
-                setBlogPosts([]);
+                // setBlogPosts([]);
                 setLegalDocuments([]);
             } finally {
                 setLoading(false);
@@ -91,12 +96,12 @@ const Knowledge: React.FC = () => {
 
                 {/* Tab Navigation */}
                 <div className="knowledge-tabs">
-                    <button
+                    {/* <button
                         className={`tab-btn ${activeTab === 'news' ? 'active' : ''}`}
                         onClick={() => setActiveTab('news')}
                     >
                         <FaNewspaper /> Tin tức / Blog
-                    </button>
+                    </button> */}
                     <button
                         className={`tab-btn ${activeTab === 'articles' ? 'active' : ''}`}
                         onClick={() => setActiveTab('articles')}
@@ -132,7 +137,7 @@ const Knowledge: React.FC = () => {
                 {/* Tab Content */}
                 <div className="knowledge-content">
                     {/* News Tab */}
-                    {activeTab === 'news' && (
+                    {/* {activeTab === 'news' && (
                         <div className="tab-panel animate-fadeIn">
                             <div className="news-grid">
                                 {blogPosts.map((post) => (
@@ -159,7 +164,7 @@ const Knowledge: React.FC = () => {
                                 ))}
                             </div>
                         </div>
-                    )}
+                    )} */}
 
                     {/* Legal Documents Tab */}
                     {activeTab === 'legal' && (

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FaPlay, FaArrowRight } from 'react-icons/fa';
+import {
+    FaPlay,
+    // FaArrowRight
+} from 'react-icons/fa';
 import GalleryFirebaseService from '../services/GalleryFirebaseService';
 import type { GalleryItem } from '../types';
 import './Gallery.css';
@@ -50,7 +53,7 @@ const Gallery: React.FC = () => {
             <div className="container">
                 <div className="section-header">
                     <h2 className="section-title">Hình ảnh & Video</h2>
-                    <a href="#" className="see-more-link">Xem thêm <FaArrowRight /></a>
+                    {/* <a href="#" className="see-more-link">Xem thêm <FaArrowRight /></a> */}
                 </div>
                 <div className="gallery-grid">
                     {galleryItems.map((item) => (

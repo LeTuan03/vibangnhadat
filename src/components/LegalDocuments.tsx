@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaBook, FaDownload, FaFilter } from 'react-icons/fa';
+import {
+    FaBook,
+    // FaDownload,
+    FaFilter
+} from 'react-icons/fa';
 import DocumentFirebaseService from '../services/DocumentFirebaseService';
 import type { LegalDocument } from '../types';
 import './LegalDocuments.css';
@@ -76,9 +80,9 @@ const LegalDocuments: React.FC = () => {
                                     </span>
                                 </div>
                             </Link>
-                            <Link to={`/documents/${doc.id}`} className="doc-download">
+                            {/* <Link to={`/documents/${doc.id}`} className="doc-download">
                                 <FaDownload /> Tải xuống
-                            </Link>
+                            </Link> */}
                         </div>
                     ))}
                 </div>

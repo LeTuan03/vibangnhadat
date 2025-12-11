@@ -61,6 +61,7 @@ export interface BlogPost extends BaseEntity {
     status?: 'draft' | 'published' | 'archived';
     readTime?: number;
     relatedPosts?: string[];
+    modifiedDate?: string;
 }
 
 // ============ FAQ/Q&A Types ============

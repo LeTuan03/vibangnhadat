@@ -6,6 +6,7 @@ import { BlogPost } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Contact from '../components/Contact';
 import { formatDate } from '../utils/helpers';
+import { useSEO, generateArticleStructuredData } from '../hooks/useSEO';
 import './BlogDetailPage.css';
 
 const BlogDetailPage: React.FC = () => {
@@ -74,6 +75,29 @@ const BlogDetailPage: React.FC = () => {
             </div>
         );
     }
+
+    // Use SEO hook when post is loaded
+    useSEO({
+        title: `${post.title} - Văn phòng Thừa phát lại`,
+        description: post.excerpt || 'Đọc bài viết pháp lý chi tiết từ văn phòng thừa phát lại',
+        keywords: post.tags?.join(', ') || 'bài viết, pháp luật',
+        ogType: 'article',
+        ogTitle: post.title,
+        ogDescription: post.excerpt,
+        ogImage: post.image || '/logo.png',
+        ogUrl: typeof window !== 'undefined' ? window.location.href : '',
+        canonical: typeof window !== 'undefined' ? window.location.href : '',
+        structuredData: generateArticleStructuredData({
+            title: post.title,
+            description: post.excerpt,
+            image: post.image,
+            author: post.author,
+            publishedDate: new Date(post.date).toISOString(),
+            modifiedDate: post.modifiedDate ? new Date(post.modifiedDate).toISOString() : new Date(post.date).toISOString(),
+            content: post.content,
+            url: typeof window !== 'undefined' ? window.location.href : '',
+        }),
+    });
 
     return (
         <article className="blog-detail-page">

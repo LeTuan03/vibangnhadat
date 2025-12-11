@@ -4,6 +4,7 @@ import { FaCalendar, FaUser, FaClock, FaTag } from 'react-icons/fa';
 import BlogFirebaseService from '../services/BlogFirebaseService';
 import { formatDate } from '../utils/helpers';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useSEO, generateArticleStructuredData } from '../hooks/useSEO';
 import type { BlogPost } from '../types';
 import './ArticlePage.css';
 
@@ -50,6 +51,29 @@ const ArticlePage: React.FC = () => {
     }
 
     const post = blogPosts.find((p) => p.id === id);
+
+    // Use SEO hook when post is loaded
+    useSEO({
+        title: post ? `${post.title} - Văn phòng Thừa phát lại` : 'Bài viết không tìm thấy',
+        description: post?.excerpt || 'Đọc bài viết pháp lý chi tiết từ văn phòng thừa phát lại',
+        keywords: post?.tags?.join(', ') || 'bài viết, pháp luật',
+        ogType: 'article',
+        ogTitle: post?.title,
+        ogDescription: post?.excerpt,
+        ogImage: post?.image || '/logo.png',
+        ogUrl: typeof window !== 'undefined' ? window.location.href : '',
+        canonical: typeof window !== 'undefined' ? window.location.href : '',
+        structuredData: post ? generateArticleStructuredData({
+            title: post.title,
+            description: post.excerpt,
+            image: post.image,
+            author: post.author,
+            publishedDate: new Date(post.date).toISOString(),
+            modifiedDate: post.modifiedDate ? new Date(post.modifiedDate).toISOString() : new Date(post.date).toISOString(),
+            content: post.content,
+            url: typeof window !== 'undefined' ? window.location.href : '',
+        }) : undefined,
+    });
 
     if (!post || notFound) {
         return (

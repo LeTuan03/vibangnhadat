@@ -10,6 +10,7 @@ import DocumentFirebaseService from '../services/DocumentFirebaseService';
 import { formatDate } from '../utils/helpers';
 import LoadingSpinner from '../components/LoadingSpinner';
 import type { LegalDocument } from '../types';
+import { useSchemaMarkup, generateArticleSchema } from '../utils/schemaMarkup';
 import './DocumentDetailPage.css';
 
 // Note: Fetches from Firebase; mockLegalDocuments is fallback
@@ -63,6 +64,15 @@ const DocumentDetailPage: React.FC = () => {
     const relatedDocs = legalDocuments
         .filter((d) => d.category === document.category && d.id !== document.id)
         .slice(0, 3);
+
+    // Apply Article schema markup for legal documents
+    useSchemaMarkup(generateArticleSchema({
+        headline: document.title,
+        description: document.description,
+        author: 'Văn phòng Thừa phát lại',
+        datePublished: document.publishDate,
+        url: typeof window !== 'undefined' ? window.location.href : '',
+    }));
 
     return (
         <main className="container document-detail-container">

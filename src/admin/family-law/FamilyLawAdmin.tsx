@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Image, Tabs, TabsProps } from 'antd'
+import FileUploadBase64 from '../components/FileUploadBase64'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { FamilyLawQA } from '../../types'
 import { familyLawService } from '../api/familyLawService'
@@ -144,8 +145,8 @@ const FamilyLawAdmin: React.FC = () => {
           <Form.Item name="shortDescription" label="Mô tả ngắn *" rules={[{ required: true, message: 'Vui lòng nhập mô tả ngắn' }]}>
             <Input.TextArea rows={3} placeholder="Mô tả ngắn gọn về câu hỏi" />
           </Form.Item>
-          <Form.Item name="image" label="URL Hình ảnh">
-            <Input placeholder="https://..." />
+          <Form.Item name="image" label="Hình ảnh">
+            <FileUploadBase64 />
           </Form.Item>
         </>
       ),

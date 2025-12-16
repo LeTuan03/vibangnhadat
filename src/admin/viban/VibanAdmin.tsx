@@ -1,6 +1,7 @@
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 import { Table, Button, Input, Card, Space, Popconfirm, message, Modal, Form } from 'antd'
+import FileUploadBase64 from '../components/FileUploadBase64'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import VibanFirebaseService from '../../services/VibanFirebaseService'
 import type { Viban } from '../../types'
@@ -149,8 +150,8 @@ const VibanAdmin: FC = () => {
 					<Form.Item name="fees" label="Phí cấp vi bằng" rules={[{ required: true, message: 'Vui lòng nhập phí' }]}>
 						<Input placeholder="VD: 200.000đ - 500.000đ" />
 					</Form.Item>
-					<Form.Item name="image" label="URL Hình ảnh">
-						<Input placeholder="https://example.com/image.jpg" />
+					<Form.Item name="image" label="Hình ảnh">
+						<FileUploadBase64 />
 					</Form.Item>
 					<Form.Item label="Yêu cầu (mỗi dòng một yêu cầu)">
 						<Input.TextArea

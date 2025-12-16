@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Table, Button, Input, Card, Modal, Form, Select, Image, Space, Popconfirm, message } from 'antd'
+import FileUploadBase64 from '../components/FileUploadBase64'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { GalleryItem } from '../../types'
 import { galleryService } from '../api/galleryService'
@@ -126,8 +127,8 @@ const GalleryAdmin: React.FC = () => {
                         </Select>
                     </Form.Item>
 
-                    <Form.Item name="thumbnail" label="URL Thumbnail" rules={[{ required: true, message: 'Vui lòng nhập URL thumbnail' }]}>
-                        <Input placeholder="VD: /images/gallery-1.jpg" />
+                    <Form.Item name="thumbnail" label="Thumbnail" rules={[{ required: true, message: 'Vui lòng chọn thumbnail' }]}>
+                        <FileUploadBase64 />
                     </Form.Item>
 
                     <Form.Item name="videoId" label="ID Video (YouTube)">

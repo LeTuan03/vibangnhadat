@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { BlogPost } from "@/types"
 import { Modal, Form, Input, Select, DatePicker, message, Switch, InputNumber, Divider } from 'antd'
+import FileUploadBase64 from '../components/FileUploadBase64'
 import { getAllCategories } from '../../services'
 import dayjs from 'dayjs'
 
@@ -138,8 +139,8 @@ export const BlogFormModal: React.FC<BlogFormModalProps> = ({ isOpen, onClose, o
                     </Select>
                 </Form.Item>
 
-                <Form.Item name="image" label="URL Ảnh đại diện">
-                    <Input placeholder="https://via.placeholder.com/800x400?text=Title" />
+                <Form.Item name="image" label="Ảnh đại diện">
+                    <FileUploadBase64 />
                 </Form.Item>
 
                 {/* Additional Fields */}

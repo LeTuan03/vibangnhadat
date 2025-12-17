@@ -23,7 +23,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     const handleFinish = (values: { username: string; password: string }) => {
         setError(null)
         const { username, password } = values
-        if (username === 'admin' && password === 'admin123') {
+        if (username === import.meta.env.VITE_ADMIN_USERNAME && password === import.meta.env.VITE_ADMIN_PASSWORD) {
             onLogin(username, password)
         } else {
             setError('Tên đăng nhập hoặc mật khẩu không đúng!')

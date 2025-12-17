@@ -16,7 +16,6 @@ const VideoModal: React.FC<VideoModalProps> = ({ videoId, onClose }) => {
     return (
         <div className="video-modal" onClick={onClose}>
             <div className="video-modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="video-modal-close" onClick={onClose}>×</button>
                 <iframe
                     width="100%"
                     height="600"
@@ -30,10 +29,26 @@ const VideoModal: React.FC<VideoModalProps> = ({ videoId, onClose }) => {
         </div>
     );
 };
+interface ImageModalProps {
+    src: string;
+    alt?: string;
+    onClose: () => void;
+}
+
+const ImageModal: React.FC<ImageModalProps> = ({ src, alt, onClose }) => {
+    return (
+         <div className="video-modal" onClick={onClose}>
+            <div className="video-modal-content" onClick={(e) => e.stopPropagation()}>
+                <img src={src} alt={alt} style={{width: '100%'}}/>
+            </div>
+        </div>
+    );
+};
 
 const Gallery: React.FC = () => {
     const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
     const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     useEffect(() => {
         const loadGallery = async () => {
@@ -73,6 +88,7 @@ const Gallery: React.FC = () => {
                                     src={item.thumbnail}
                                     alt={item.title}
                                     className="gallery-image"
+                                    onClick={() => setSelectedImage(item.thumbnail)}
                                 />
                             )}
                         </div>
@@ -82,6 +98,13 @@ const Gallery: React.FC = () => {
 
             {selectedVideo && (
                 <VideoModal videoId={selectedVideo} onClose={() => setSelectedVideo(null)} />
+            )}
+            {selectedImage && (
+                <ImageModal
+                    src={selectedImage}
+                    alt="Gallery Image"
+                    onClose={() => setSelectedImage(null)}
+                />
             )}
         </section>
     );

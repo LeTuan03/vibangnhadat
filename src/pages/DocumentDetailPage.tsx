@@ -45,11 +45,24 @@ const DocumentDetailPage: React.FC = () => {
         loadDocuments();
     }, [id]);
 
+    const document = legalDocuments.find((d) => d.id === id);
+
+    const relatedDocs = document
+        ? legalDocuments.filter((d) => d.category === document.category && d.id !== document.id).slice(0, 3)
+        : [];
+
+    // Call schema hook unconditionally to keep hook order stable across renders
+    useSchemaMarkup(document ? generateArticleSchema({
+        headline: document.title,
+        description: document.description,
+        author: 'Văn phòng Thừa phát lại',
+        datePublished: document.publishDate,
+        url: typeof window !== 'undefined' ? window.location.href : '',
+    }) : []);
+
     if (loading) {
         return <LoadingSpinner />;
     }
-
-    const document = legalDocuments.find((d) => d.id === id);
 
     if (!document || notFound) {
         return (
@@ -60,19 +73,6 @@ const DocumentDetailPage: React.FC = () => {
             </main>
         );
     }
-
-    const relatedDocs = legalDocuments
-        .filter((d) => d.category === document.category && d.id !== document.id)
-        .slice(0, 3);
-
-    // Apply Article schema markup for legal documents
-    useSchemaMarkup(generateArticleSchema({
-        headline: document.title,
-        description: document.description,
-        author: 'Văn phòng Thừa phát lại',
-        datePublished: document.publishDate,
-        url: typeof window !== 'undefined' ? window.location.href : '',
-    }));
 
     return (
         <main className="container document-detail-container">

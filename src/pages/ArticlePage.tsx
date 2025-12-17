@@ -46,13 +46,9 @@ const ArticlePage: React.FC = () => {
         loadPosts();
     }, [id]);
 
-    if (loading) {
-        return <LoadingSpinner />;
-    }
-
     const post = blogPosts.find((p) => p.id === id);
 
-    // Use SEO hook when post is loaded
+    // Call SEO hook unconditionally to keep hook order stable across renders
     useSEO({
         title: post ? `${post.title} - Văn phòng Thừa phát lại` : 'Bài viết không tìm thấy',
         description: post?.excerpt || 'Đọc bài viết pháp lý chi tiết từ văn phòng thừa phát lại',
@@ -74,6 +70,10 @@ const ArticlePage: React.FC = () => {
             url: typeof window !== 'undefined' ? window.location.href : '',
         }) : undefined,
     });
+
+    if (loading) {
+        return <LoadingSpinner />;
+    }
 
     if (!post || notFound) {
         return (

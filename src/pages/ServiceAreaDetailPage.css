@@ -133,7 +133,7 @@
     color: var(--color-text);
 }
 
-.area-content > p {
+.area-content>p {
     margin-bottom: 2rem;
     color: var(--color-text);
     font-size: 1.0625rem;
@@ -274,8 +274,9 @@
 .benefits-list li::before {
     content: '✓ ';
     color: var(--color-primary);
-    font-weight: bold;
-    margin-right: 0.5rem;
+    position: absolute;
+    left: -20px;
+    font-weight: var(--font-weight-bold);
 }
 
 .consult-cta {
@@ -284,6 +285,7 @@
     padding: 3rem 2rem;
     border-radius: var(--radius-xl);
     margin-top: 3rem;
+    margin-bottom: 3rem;
     text-align: center;
     box-shadow: var(--shadow-xl);
 }
@@ -295,7 +297,7 @@
     font-weight: 800;
 }
 
-.cta-content > p {
+.cta-content>p {
     margin-bottom: 1.5rem;
     font-size: 1.0625rem;
     line-height: 1.6;
@@ -316,4 +318,3 @@
     font-size: 0.9375rem;
     color: rgba(255, 255, 255, 0.9);
 }
-

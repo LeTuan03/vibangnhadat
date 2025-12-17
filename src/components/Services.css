@@ -122,8 +122,8 @@
 .modal-header {
     background: var(--gradient-primary);
     color: white;
-    /* padding: var(--spacing-3xl) var(--spacing-xl); */
-    /* border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; */
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
     text-align: center;
 }
 
@@ -191,7 +191,6 @@
 .benefits-list li::before {
     content: '★';
     color: var(--color-secondary);
-    left: -27px;
 }
 
 /* Responsive */

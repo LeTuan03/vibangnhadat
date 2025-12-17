@@ -11,7 +11,7 @@ import Gallery from '../components/Gallery';
 // import Knowledge from '../components/Knowledge';
 import QA from '../components/QA';
 import Booking from '../components/Booking';
-import Careers from '../components/Careers';
+// import Careers from '../components/Careers';
 import Contact from '../components/Contact';
 import { useSEO, generateOrganizationStructuredData } from '../hooks/useSEO';
 // import Newsletter from '../components/Newsletter';
@@ -44,7 +44,7 @@ const HomePage: React.FC = () => {
                 {/* <Knowledge /> */}
                 <QA />
                 <Booking />
-                <Careers />
+                {/* <Careers /> */}
                 <Contact />
             </main>
             {/* <Newsletter /> */}

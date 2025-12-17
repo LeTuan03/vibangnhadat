@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { FaUsers, FaBullseye, FaHeart, FaBriefcase } from 'react-icons/fa';
 import { getCompanyInfo, getAllTeamMembers } from '../services';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
-import { scrollToElement } from '../utils/helpers';
 import './About.css';
 
 const About: React.FC = () => {
@@ -58,12 +57,6 @@ const About: React.FC = () => {
                         onClick={() => setActiveTab('vision')}
                     >
                         <FaBullseye /> Tầm nhìn & Sứ mệnh
-                    </button>
-                    <button
-                        className={`tab-btn ${activeTab === 'careers' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('careers')}
-                    >
-                        <FaHeart /> Tuyển dụng
                     </button>
                 </div>
 
@@ -145,35 +138,6 @@ const About: React.FC = () => {
                         </div>
                     )}
 
-                    {/* Careers Tab */}
-                    {activeTab === 'careers' && (
-                        <div className="tab-panel animate-fadeIn">
-                            <div className="careers-content">
-                                <h3>Cơ hội nghề nghiệp</h3>
-                                <p className="lead">
-                                    Chúng tôi luôn tìm kiếm những người tài năng, nhiệt huyết để gia nhập đội ngũ.
-                                </p>
-                                <div className="careers-info">
-                                    <h4>Chúng tôi tìm kiếm:</h4>
-                                    <ul>
-                                        <li>Thừa phát lại viên có chứng chỉ hành nghề</li>
-                                        <li>Chuyên viên pháp lý</li>
-                                        <li>Nhân viên hành chính</li>
-                                    </ul>
-                                    <h4>Quyền lợi:</h4>
-                                    <ul>
-                                        <li>Mức lương cạnh tranh</li>
-                                        <li>Môi trường làm việc chuyên nghiệp</li>
-                                        <li>Cơ hội phát triển nghề nghiệp</li>
-                                        <li>Đào tạo và nâng cao kỹ năng</li>
-                                    </ul>
-                                    <button className="btn btn-primary" onClick={() => scrollToElement('contact')}>
-                                        Liên hệ ngay
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
         </section>

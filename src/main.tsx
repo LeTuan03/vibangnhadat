@@ -9,6 +9,15 @@ import 'react-toastify/dist/ReactToastify.css'
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <ErrorBoundary>
+            <section style={{ display: "none" }}>
+                <h1>Văn phòng Thừa phát lại Hoàng Mai</h1>
+                <p>
+                    Văn phòng Thừa phát lại Hoàng Mai chuyên cung cấp các dịch vụ:
+                    lập vi bằng, tống đạt văn bản, xác minh điều kiện thi hành án
+                    và tổ chức thi hành án theo quy định của pháp luật Việt Nam.
+                </p>
+            </section>
+
             <App />
             <ToastContainer
                 position="top-right"

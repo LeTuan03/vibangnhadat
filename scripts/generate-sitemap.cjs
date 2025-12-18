@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
-/**
- * Sitemap Generator for Văn phòng Thừa phát lại
- * Generates XML sitemaps for SEO optimization
- * Run this script after building the project
+/*
+ * CommonJS wrapper for sitemap generator (works when package.json has "type": "module")
  */
 
 const fs = require('fs');
@@ -40,9 +38,6 @@ const STATIC_PAGES = [
   { url: '/contact', priority: '0.6', changefreq: 'monthly' },
 ];
 
-/**
- * Generate XML sitemap
- */
 function generateSitemap(pages) {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -73,24 +68,12 @@ ${
   return xml;
 }
 
-/**
- * Generate sitemap index
- */
 function generateSitemapIndex(sitemaps) {
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemaps.map((sitemap) => `  <sitemap>
-    <loc>${DOMAIN}${sitemap}</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-  </sitemap>`).join('\n')}
-</sitemapindex>`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemaps.map((sitemap) => `  <sitemap>\n    <loc>${DOMAIN}${sitemap}</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n  </sitemap>`).join('\n')}\n</sitemapindex>`;
 
   return xml;
 }
 
-/**
- * Fetch blog posts from Firebase and generate sitemap
- */
 async function generateBlogSitemap() {
   try {
     const db = admin.firestore();
@@ -116,9 +99,6 @@ async function generateBlogSitemap() {
   }
 }
 
-/**
- * Fetch documents and generate sitemap entries
- */
 async function generateDocumentsSitemap() {
   try {
     const db = admin.firestore();
@@ -142,48 +122,38 @@ async function generateDocumentsSitemap() {
   }
 }
 
-/**
- * Main function
- */
 async function generateSitemaps() {
   console.log('🗺️  Generating sitemaps...');
 
   try {
-    // Fetch dynamic content from Firebase
     const blogPosts = await generateBlogSitemap();
     const documents = await generateDocumentsSitemap();
 
-    // Combine all pages
     const allStaticPages = [...STATIC_PAGES];
     const allBlogPages = [...allStaticPages, ...blogPosts];
     const allDocumentsPages = [...STATIC_PAGES, ...documents];
 
-    // Create output directory if it doesn't exist
     const publicDir = path.join(__dirname, '../public');
     if (!fs.existsSync(publicDir)) {
       fs.mkdirSync(publicDir, { recursive: true });
     }
 
-    // Generate main sitemap (static pages)
     const mainSitemap = generateSitemap(allStaticPages);
     fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), mainSitemap);
     console.log('✅ Generated sitemap.xml');
 
-    // Generate blog sitemap
     if (blogPosts.length > 0) {
       const blogSitemap = generateSitemap(allBlogPages);
       fs.writeFileSync(path.join(publicDir, 'blog-sitemap.xml'), blogSitemap);
       console.log(`✅ Generated blog-sitemap.xml (${blogPosts.length} posts)`);
     }
 
-    // Generate documents sitemap
     if (documents.length > 0) {
       const docSitemap = generateSitemap(allDocumentsPages);
       fs.writeFileSync(path.join(publicDir, 'documents-sitemap.xml'), docSitemap);
       console.log(`✅ Generated documents-sitemap.xml (${documents.length} documents)`);
     }
 
-    // Generate sitemap index
     const sitemapFiles = ['/sitemap.xml'];
     if (blogPosts.length > 0) sitemapFiles.push('/blog-sitemap.xml');
     if (documents.length > 0) sitemapFiles.push('/documents-sitemap.xml');
@@ -202,5 +172,4 @@ async function generateSitemaps() {
   }
 }
 
-// Run the generator
 generateSitemaps();

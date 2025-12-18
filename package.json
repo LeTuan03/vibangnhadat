@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "seed": "node scripts/seed-firebase.js",
     "cleanup-nav": "node scripts/cleanup-navigation.js",
-    "generate-sitemap": "node scripts/generate-sitemap.js"
+    "generate-sitemap": "node scripts/generate-sitemap.js",
+    "check-seo": "node scripts/check-seo.js",
+    "ping-sitemap": "node scripts/ping-sitemap.js"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

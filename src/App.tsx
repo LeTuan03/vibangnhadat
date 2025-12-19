@@ -20,7 +20,7 @@ const FamilyLawDetailPage = React.lazy(() => import('./pages/FamilyLawDetailPage
 const LegalKnowledge = React.lazy(() => import('./pages/LegalKnowledge'));
 
 // Lazy load admin components
-const AdminLogin = React.lazy(() => import('./components/AdminLogin'));
+const AdminLogin = React.lazy(() => import('./admin/AdminLoginPage'));
 const QA = React.lazy(() => import('./components/QA'));
 const LegalDocuments = React.lazy(() => import('./components/LegalDocuments'));
 const NewAdmin = React.lazy(() => import('./admin/news/NewAdmin'));

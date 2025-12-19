@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { FaQuestionCircle, FaArrowLeft } from 'react-icons/fa';
 import QAFirebaseService from '../services/QAFirebaseService';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useSEO, generateBreadcrumbStructuredData } from '../hooks/useSEO';
 import type { FAQ } from '../types';
 import './QADetailPage.css';
 
@@ -44,6 +45,33 @@ const QADetailPage: React.FC = () => {
     }
 
     const faq = faqs.find((f) => f.id === id);
+
+    useSEO({
+        title: faq ? `${faq.question} | Hỏi đáp Thừa phát lại Hoàng Mai` : 'Hỏi đáp pháp luật',
+        description: faq?.answer.substring(0, 160) || 'Giải đáp thắc mắc về dịch vụ thừa phát lại, lập vi bằng, tống đạt văn bản.',
+        keywords: `${faq?.category || 'pháp luật'}, hỏi đáp thừa phát lại, ${faq?.question}, giải đáp pháp luật`,
+        ogType: 'article',
+        ogTitle: faq?.question,
+        ogDescription: faq?.answer.substring(0, 160),
+        canonical: typeof window !== 'undefined' ? window.location.href : '',
+        structuredData: faq ? {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            'mainEntity': [{
+                '@type': 'Question',
+                'name': faq.question,
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': faq.answer
+                }
+            }],
+            'breadcrumb': generateBreadcrumbStructuredData([
+                { name: 'Trang chủ', url: typeof window !== 'undefined' ? window.location.origin : '' },
+                { name: 'Hỏi đáp', url: typeof window !== 'undefined' ? `${window.location.origin}/qa` : '' },
+                { name: faq.question, url: typeof window !== 'undefined' ? window.location.href : '' }
+            ])
+        } : undefined
+    });
 
     if (!faq || notFound) {
         return (
@@ -93,14 +121,14 @@ const QADetailPage: React.FC = () => {
                                             {faq.category === 'Tổng quan'
                                                 ? 'Câu hỏi này giúp bạn hiểu rõ hơn về định nghĩa, khái niệm cơ bản trong lĩnh vực pháp luật liên quan.'
                                                 : faq.category === 'Lập vi bằng'
-                                                ? 'Lập vi bằng là một trong những dịch vụ quan trọng của Thừa phát lại, giúp xác thực các giao dịch dân sự, kinh tế.'
-                                                : faq.category === 'Chi phí'
-                                                ? 'Chi phí dịch vụ được quy định theo quy chuẩn của Nhà nước, đảm bảo tính công khai, minh bạch và hợp lý.'
-                                                : faq.category === 'Xác minh điều kiện'
-                                                ? 'Xác minh điều kiện thi hành án là quá trình kiểm tra, xác nhận tài sản, thu nhập của người phải thi hành án.'
-                                                : faq.category === 'Dịch vụ khác'
-                                                ? 'Ngoài các dịch vụ chính, Thừa phát lại còn cung cấp nhiều dịch vụ hỗ trợ khác để đáp ứng nhu cầu khách hàng.'
-                                                : 'Đây là một câu hỏi quan trọng giúp bạn hiểu rõ hơn về quyền lợi và nghĩa vụ của mình.'}
+                                                    ? 'Lập vi bằng là một trong những dịch vụ quan trọng của Thừa phát lại, giúp xác thực các giao dịch dân sự, kinh tế.'
+                                                    : faq.category === 'Chi phí'
+                                                        ? 'Chi phí dịch vụ được quy định theo quy chuẩn của Nhà nước, đảm bảo tính công khai, minh bạch và hợp lý.'
+                                                        : faq.category === 'Xác minh điều kiện'
+                                                            ? 'Xác minh điều kiện thi hành án là quá trình kiểm tra, xác nhận tài sản, thu nhập của người phải thi hành án.'
+                                                            : faq.category === 'Dịch vụ khác'
+                                                                ? 'Ngoài các dịch vụ chính, Thừa phát lại còn cung cấp nhiều dịch vụ hỗ trợ khác để đáp ứng nhu cầu khách hàng.'
+                                                                : 'Đây là một câu hỏi quan trọng giúp bạn hiểu rõ hơn về quyền lợi và nghĩa vụ của mình.'}
                                         </p>
                                     )}
                                 </div>

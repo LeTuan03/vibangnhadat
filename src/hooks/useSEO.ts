@@ -113,8 +113,8 @@ export const useSEO = (config: SEOConfig) => {
 
     // Add structured data (JSON-LD)
     if (structuredData) {
-      // Remove existing structured data script if any
-      const existingScript = document.querySelector('script[type="application/ld+json"]');
+      // Remove existing structured data script managed by this hook
+      const existingScript = document.querySelector('script[data-seo-managed="true"]');
       if (existingScript) {
         existingScript.remove();
       }
@@ -122,6 +122,7 @@ export const useSEO = (config: SEOConfig) => {
       // Add new structured data
       const scriptElement = document.createElement('script');
       scriptElement.type = 'application/ld+json';
+      scriptElement.setAttribute('data-seo-managed', 'true');
       scriptElement.textContent = JSON.stringify(structuredData);
       document.head.appendChild(scriptElement);
     }
@@ -131,7 +132,7 @@ export const useSEO = (config: SEOConfig) => {
 
     return () => {
       // Cleanup structured data when component unmounts
-      const script = document.querySelector('script[type="application/ld+json"]');
+      const script = document.querySelector('script[data-seo-managed="true"]');
       if (script) {
         script.remove();
       }

@@ -11,7 +11,7 @@ import { DeleteOutlined } from '@ant-design/icons'
 interface ServiceFormModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (service: Omit<Service, 'id'> | Service) => void;
+    onSave: (service: Omit<Service, 'id'> | Service) => Promise<void>;
     editService?: Service | null;
 }
 
@@ -21,6 +21,7 @@ export const ServiceFormModal: React.FC<ServiceFormModalProps> = ({ isOpen, onCl
     const [detailInput, setDetailInput] = useState('')
     const [benefits, setBenefits] = useState<string[]>([])
     const [benefitInput, setBenefitInput] = useState('')
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         if (editService) {
@@ -30,6 +31,7 @@ export const ServiceFormModal: React.FC<ServiceFormModalProps> = ({ isOpen, onCl
         } else {
             form.resetFields()
             setDetails([])
+            setBenefits([])
         }
     }, [editService, isOpen, form])
 
@@ -49,22 +51,33 @@ export const ServiceFormModal: React.FC<ServiceFormModalProps> = ({ isOpen, onCl
                 message.error('Vui lòng điền đầy đủ thông tin!')
                 return
             }
+
+            setLoading(true)
             const payload: any = { ...values, details, benefits }
             if (editService) {
-                onSave({ ...payload, id: editService.id })
-                message.success('Cập nhật dịch vụ thành công!')
+                await onSave({ ...payload, id: editService.id })
             } else {
-                onSave(payload)
-                message.success('Thêm dịch vụ mới thành công!')
+                await onSave(payload)
             }
             onClose()
         } catch (e) {
-            // validation failed
+            // Error handled by parent or validation failed
+        } finally {
+            setLoading(false)
         }
     }
 
     return (
-        <Modal title={editService ? 'Chỉnh sửa dịch vụ' : 'Thêm dịch vụ mới'} open={isOpen} onCancel={onClose} onOk={handleOk} okText={editService ? 'Cập nhật' : 'Thêm mới'}>
+        <Modal
+            title={editService ? 'Chỉnh sửa dịch vụ' : 'Thêm dịch vụ mới'}
+            open={isOpen}
+            onCancel={onClose}
+            onOk={handleOk}
+            okText={editService ? 'Cập nhật' : 'Thêm mới'}
+            confirmLoading={loading}
+            okButtonProps={{ disabled: loading }}
+            cancelButtonProps={{ disabled: loading }}
+        >
             <Form form={form} layout="vertical">
                 <Form.Item name="title" label="Tên dịch vụ" rules={[{ required: true, message: 'Vui lòng nhập tên dịch vụ' }]}>
                     <Input placeholder="Ví dụ: Công chứng hợp đồng" />

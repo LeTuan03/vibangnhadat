@@ -23,7 +23,12 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     const handleFinish = (values: { username: string; password: string }) => {
         setError(null)
         const { username, password } = values
-        if (username === import.meta.env.VITE_ADMIN_USERNAME && password === import.meta.env.VITE_ADMIN_PASSWORD) {
+
+        // Use environment variables or fallback for testing
+        const validUsername = import.meta.env.VITE_ADMIN_USERNAME || 'admin'
+        const validPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123'
+
+        if (username === validUsername && password === validPassword) {
             onLogin(username, password)
         } else {
             setError('Tên đăng nhập hoặc mật khẩu không đúng!')
@@ -58,9 +63,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     </Form>
 
                     <div style={{ textAlign: 'center', marginTop: 8 }}>
-                        {/* <Text type="secondary"><strong>Demo:</strong> admin / admin123</Text> */}
                         <div style={{ marginTop: 6 }}>
-                            <Link to="/">Sang Landing page</Link>
+                            <Link to="/">Quay lại trang chủ</Link>
                         </div>
                     </div>
                 </Card>

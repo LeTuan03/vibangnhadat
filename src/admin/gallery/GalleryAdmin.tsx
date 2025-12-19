@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Table, Button, Input, Card, Modal, Form, Select, Image, Space, Popconfirm, message } from 'antd'
-import FileUploadBase64 from '../components/FileUploadBase64'
+import FileUploadCloudinary from '../components/FileUploadCloudinary'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { GalleryItem } from '../../types'
 import { galleryService } from '../api/galleryService'
@@ -128,7 +128,7 @@ const GalleryAdmin: React.FC = () => {
                     </Form.Item>
 
                     <Form.Item name="thumbnail" label="Thumbnail" rules={[{ required: true, message: 'Vui lòng chọn thumbnail' }]}>
-                        <FileUploadBase64 />
+                        <FileUploadCloudinary folder="gallery" />
                     </Form.Item>
 
                     <Form.Item name="videoId" label="ID Video (YouTube)">

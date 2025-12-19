@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Image, Tabs, TabsProps } from 'antd'
-import FileUploadBase64 from '../components/FileUploadBase64'
+import FileUploadCloudinary from '../components/FileUploadCloudinary'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { FamilyLawQA } from '../../types'
 import { familyLawService } from '../api/familyLawService'
@@ -26,13 +26,13 @@ const FamilyLawAdmin: React.FC = () => {
     }
   }
 
-  const openAdd = () => { 
+  const openAdd = () => {
     setEditing(null)
     form.resetFields()
     setIsModalOpen(true)
   }
 
-  const openEdit = (l: FamilyLawQA) => { 
+  const openEdit = (l: FamilyLawQA) => {
     setEditing(l)
     form.setFieldsValue({
       question: l.question,
@@ -66,7 +66,7 @@ const FamilyLawAdmin: React.FC = () => {
   const handleSave = async () => {
     try {
       const values = await form.validateFields()
-      
+
       // Parse process steps
       const processSteps = values.processSteps
         ?.split('---')
@@ -146,7 +146,7 @@ const FamilyLawAdmin: React.FC = () => {
             <Input.TextArea rows={3} placeholder="Mô tả ngắn gọn về câu hỏi" />
           </Form.Item>
           <Form.Item name="image" label="Hình ảnh">
-            <FileUploadBase64 />
+            <FileUploadCloudinary folder="family-law" />
           </Form.Item>
         </>
       ),
@@ -174,15 +174,15 @@ const FamilyLawAdmin: React.FC = () => {
       children: (
         <>
           <Form.Item name="processSteps" label="Hướng dẫn từng bước (ngăn cách mỗi bước bằng ---)">
-            <Input.TextArea 
-              rows={6} 
-              placeholder={"Bước 1: Chuẩn bị giấy tờ\nChuẩn bị đầy đủ các chứng chỉ, hợp đồng...\n---\nBước 2: Tư vấn với luật sư\nGặp luật sư để được tư vấn cụ thể..."} 
+            <Input.TextArea
+              rows={6}
+              placeholder={"Bước 1: Chuẩn bị giấy tờ\nChuẩn bị đầy đủ các chứng chỉ, hợp đồng...\n---\nBước 2: Tư vấn với luật sư\nGặp luật sư để được tư vấn cụ thể..."}
             />
           </Form.Item>
           <Form.Item name="tips" label="Lưu ý quan trọng (mỗi dòng 1 lưu ý)">
-            <Input.TextArea 
-              rows={4} 
-              placeholder={"Chuẩn bị đầy đủ giấy tờ trước khi làm thủ tục\nLiên hệ cơ quan có thẩm quyền để xác nhận\nSe hết, hãy lưu giữ tất cả chứng chỉ"} 
+            <Input.TextArea
+              rows={4}
+              placeholder={"Chuẩn bị đầy đủ giấy tờ trước khi làm thủ tục\nLiên hệ cơ quan có thẩm quyền để xác nhận\nSe hết, hãy lưu giữ tất cả chứng chỉ"}
             />
           </Form.Item>
           <Form.Item name="fullDescription" label="Nội dung chi tiết (tổng hợp)">
@@ -205,12 +205,12 @@ const FamilyLawAdmin: React.FC = () => {
 
       <Table dataSource={filtered} columns={columns} rowKey={(r: any) => r.id} locale={{ emptyText: 'Không có dữ liệu' }} pagination={{ pageSize: 10 }} />
 
-      <Modal 
-        title={editing ? 'Chỉnh sửa: Hôn Nhân - Gia Đình' : 'Thêm mới: Hôn Nhân - Gia Đình'} 
-        open={isModalOpen} 
-        onOk={handleSave} 
-        onCancel={() => { setIsModalOpen(false); form.resetFields(); setEditing(null) }} 
-        okText="Lưu" 
+      <Modal
+        title={editing ? 'Chỉnh sửa: Hôn Nhân - Gia Đình' : 'Thêm mới: Hôn Nhân - Gia Đình'}
+        open={isModalOpen}
+        onOk={handleSave}
+        onCancel={() => { setIsModalOpen(false); form.resetFields(); setEditing(null) }}
+        okText="Lưu"
         cancelText="Hủy"
         width={900}
       >

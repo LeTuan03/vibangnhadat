@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { FaArrowLeft, FaCheckCircle, FaClipboardList, FaGift } from 'react-icons/fa'
 import VibanFirebaseService from '../services/VibanFirebaseService'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useSEO, generateBreadcrumbStructuredData } from '../hooks/useSEO'
 import type { Viban } from '../types'
 import './VibanDetailPage.css'
 
@@ -39,6 +40,31 @@ const VibanDetailPage: React.FC = () => {
     }
     loadViban()
   }, [id])
+
+  useSEO({
+    title: viban ? `${viban.title} | Lập vi bằng Hoàng Mai` : 'Dịch vụ Lập vi bằng',
+    description: viban?.description || 'Dịch vụ lập vi bằng chuyên nghiệp, uy tín tại Văn phòng Thừa phát lại Hoàng Mai.',
+    keywords: `${viban?.title || ''}, lập vi bằng hoàng mai, thừa phát lại hoàng mai, thủ tục lập vi bằng, phí lập vi bằng`,
+    ogType: 'article',
+    ogTitle: viban?.title,
+    ogDescription: viban?.description,
+    canonical: typeof window !== 'undefined' ? window.location.href : '',
+    structuredData: viban ? {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      'name': viban.title,
+      'description': viban.description,
+      'provider': {
+        '@type': 'LocalBusiness',
+        'name': 'Văn phòng Thừa phát lại Hoàng Mai'
+      },
+      'breadcrumb': generateBreadcrumbStructuredData([
+        { name: 'Trang chủ', url: typeof window !== 'undefined' ? window.location.origin : '' },
+        { name: 'Dịch vụ vi bằng', url: typeof window !== 'undefined' ? window.location.origin : '' },
+        { name: viban.title, url: typeof window !== 'undefined' ? window.location.href : '' }
+      ])
+    } : undefined
+  });
 
   if (loading) {
     return <LoadingSpinner />

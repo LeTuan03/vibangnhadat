@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import ServiceAreaFirebaseService from '../services/ServiceAreaFirebaseService';
 import { FaArrowLeft } from 'react-icons/fa';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useSEO, generateBreadcrumbStructuredData } from '../hooks/useSEO';
 import type { ServiceArea } from '../types';
 import './ServiceAreaDetailPage.css';
 
@@ -43,6 +44,32 @@ const ServiceAreaDetailPage: React.FC = () => {
     }
 
     const area = serviceAreas.find((s) => s.id === id);
+
+    useSEO({
+        title: area ? `${area.title} | Thừa phát lại Hoàng Mai` : 'Dịch vụ Thừa phát lại',
+        description: area?.description || 'Dịch vụ thừa phát lại chuyên nghiệp, uy tín tại Hoàng Mai, Hà Nội.',
+        keywords: `${area?.title || ''}, thừa phát lại hoàng mai, dịch vụ thừa phát lại, lập vi bằng, tống đạt`,
+        ogType: 'website',
+        ogTitle: area?.title,
+        ogDescription: area?.description,
+        ogImage: area?.image || '/logo.png',
+        canonical: typeof window !== 'undefined' ? window.location.href : '',
+        structuredData: area ? {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            'name': area.title,
+            'description': area.description,
+            'provider': {
+                '@type': 'LocalBusiness',
+                'name': 'Văn phòng Thừa phát lại Hoàng Mai'
+            },
+            'breadcrumb': generateBreadcrumbStructuredData([
+                { name: 'Trang chủ', url: typeof window !== 'undefined' ? window.location.origin : '' },
+                { name: 'Lĩnh vực', url: typeof window !== 'undefined' ? window.location.origin : '' },
+                { name: area.title, url: typeof window !== 'undefined' ? window.location.href : '' }
+            ])
+        } : undefined
+    });
 
     if (!area || notFound) {
         return (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Table, Button, Space, Popconfirm, Modal, Form, Input, InputNumber, Switch, message } from 'antd'
-import FileUploadBase64 from '../components/FileUploadBase64'
+import FileUploadCloudinary from '../components/FileUploadCloudinary'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import type { Testimonial } from '../../types'
 import { getAllTestimonials, createTestimonial, updateTestimonial, deleteTestimonial } from '../../services'
@@ -110,7 +110,7 @@ const TestimonialsAdmin: React.FC = () => {
                     <Form.Item name="content" label="Nội dung" rules={[{ required: true }]}> <Input.TextArea rows={4} /> </Form.Item>
                     <Form.Item name="rating" label="Đánh giá" rules={[{ required: true }]}><InputNumber min={1} max={5} /></Form.Item>
                     <Form.Item name="featured" label="Nổi bật" valuePropName="checked"> <Switch /> </Form.Item>
-                    <Form.Item name="image" label="Ảnh"> <FileUploadBase64 /> </Form.Item>
+                    <Form.Item name="image" label="Ảnh"> <FileUploadCloudinary folder="testimonials" /> </Form.Item>
 
                     <Form.Item style={{ marginTop: 16 }}>
                         <Space>

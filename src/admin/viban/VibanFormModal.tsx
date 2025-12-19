@@ -13,14 +13,14 @@ interface VibangType {
 interface VibanFormModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (viban: Omit<VibangType, 'id'> | VibangType) => void;
+    onSave: (viban: Omit<VibangType, 'id'> | VibangType) => Promise<void>;
     editViban?: VibangType | null;
 }
 
 export const VibanFormModal: React.FC<VibanFormModalProps> = ({ isOpen, onClose, onSave, editViban }) => {
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<Omit<VibangType, 'id'>>({
         title: '',
-        // icon: '',
         description: '',
         requirements: [],
         process: [],
@@ -34,7 +34,6 @@ export const VibanFormModal: React.FC<VibanFormModalProps> = ({ isOpen, onClose,
         if (editViban) {
             setFormData({
                 title: editViban.title,
-                // icon: editViban.icon,
                 description: editViban.description,
                 requirements: editViban.requirements || [],
                 process: editViban.process || [],
@@ -43,7 +42,6 @@ export const VibanFormModal: React.FC<VibanFormModalProps> = ({ isOpen, onClose,
         } else {
             setFormData({
                 title: '',
-                // icon: '',
                 description: '',
                 requirements: [],
                 process: [],
@@ -52,21 +50,26 @@ export const VibanFormModal: React.FC<VibanFormModalProps> = ({ isOpen, onClose,
         }
     }, [editViban, isOpen]);
 
-    const handleSubmit = (e: React.MouseEvent) => {
+    const handleSubmit = async (e: React.MouseEvent) => {
         e.preventDefault();
 
-        if (!formData.title ||
-            //  !formData.icon ||
-            !formData.description || !formData.fees) {
+        if (!formData.title || !formData.description || !formData.fees) {
             return;
         }
 
-        if (editViban) {
-            onSave({ ...formData, id: editViban.id });
-        } else {
-            onSave(formData);
+        setLoading(true);
+        try {
+            if (editViban) {
+                await onSave({ ...formData, id: editViban.id });
+            } else {
+                await onSave(formData);
+            }
+            onClose();
+        } catch (error) {
+            console.error('Lỗi khi lưu vi bằng:', error);
+        } finally {
+            setLoading(false);
         }
-        onClose();
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -259,11 +262,11 @@ export const VibanFormModal: React.FC<VibanFormModalProps> = ({ isOpen, onClose,
                 </div>
 
                 <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" onClick={onClose}>
+                    <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
                         Hủy
                     </button>
-                    <button type="button" className="btn btn-primary" onClick={handleSubmit}>
-                        {editViban ? 'Cập nhật' : 'Thêm mới'}
+                    <button type="button" className="btn btn-primary" onClick={handleSubmit} disabled={loading}>
+                        {loading ? 'Đang lưu...' : (editViban ? 'Cập nhật' : 'Thêm mới')}
                     </button>
                 </div>
             </div>

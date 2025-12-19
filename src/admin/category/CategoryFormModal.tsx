@@ -5,12 +5,13 @@ import { Category } from '../api/categoryService'
 interface CategoryFormModalProps {
     isOpen: boolean
     onClose: () => void
-    onSave: (cat: Category) => void
+    onSave: (cat: Category) => Promise<void>
     editCategory: Category | null | undefined
 }
 
 export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({ isOpen, onClose, onSave, editCategory }) => {
     const [form] = Form.useForm()
+    const [loading, setLoading] = React.useState(false)
 
     useEffect(() => {
         if (editCategory && isOpen) {
@@ -27,7 +28,8 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({ isOpen, on
         }
     }, [editCategory, isOpen, form])
 
-    const handleFinish = (values: any) => {
+    const handleFinish = async (values: any) => {
+        setLoading(true)
         try {
             let basePayload: any = {
                 name: (values.name || '').trim(),
@@ -42,11 +44,13 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({ isOpen, on
                 ? { ...basePayload, id: editCategory.id }
                 : basePayload as Category
 
-            onSave(payload)
+            await onSave(payload)
             onClose()
         } catch (error) {
             console.error('Lỗi lưu danh mục:', error)
             message.error(`Lỗi: ${error instanceof Error ? error.message : 'Lỗi không xác định'}`)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -58,6 +62,9 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({ isOpen, on
             onCancel={onClose}
             okText={editCategory ? 'Cập nhật' : 'Thêm mới'}
             onOk={() => form.submit()}
+            confirmLoading={loading}
+            okButtonProps={{ disabled: loading }}
+            cancelButtonProps={{ disabled: loading }}
         >
             <Form form={form} layout="vertical" onFinish={handleFinish}>
                 <Form.Item

@@ -10,7 +10,7 @@ import DocumentFirebaseService from '../services/DocumentFirebaseService';
 import { formatDate } from '../utils/helpers';
 import LoadingSpinner from '../components/LoadingSpinner';
 import type { LegalDocument } from '../types';
-import { useSchemaMarkup, generateArticleSchema } from '../utils/schemaMarkup';
+import { useSEO, generateBreadcrumbStructuredData } from '../hooks/useSEO';
 import './DocumentDetailPage.css';
 
 // Note: Fetches from Firebase; mockLegalDocuments is fallback
@@ -47,18 +47,34 @@ const DocumentDetailPage: React.FC = () => {
 
     const document = legalDocuments.find((d) => d.id === id);
 
+    useSEO({
+        title: document ? `${document.title} | Thư viện Thừa phát lại Hoàng Mai` : 'Thư viện pháp luật',
+        description: document?.description || 'Thư viện văn bản pháp luật, biểu mẫu về thừa phát lại và lập vi bằng.',
+        keywords: `${document?.title || ''}, văn bản pháp luật, thừa phát lại hoàng mai, biểu mẫu pháp lý`,
+        ogType: 'article',
+        ogTitle: document?.title,
+        ogDescription: document?.description,
+        canonical: typeof window !== 'undefined' ? window.location.href : '',
+        structuredData: document ? {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            'headline': document.title,
+            'description': document.description,
+            'author': {
+                '@type': 'Organization',
+                'name': 'Văn phòng Thừa phát lại Hoàng Mai'
+            },
+            'breadcrumb': generateBreadcrumbStructuredData([
+                { name: 'Trang chủ', url: typeof window !== 'undefined' ? window.location.origin : '' },
+                { name: 'Thư viện', url: typeof window !== 'undefined' ? `${window.location.origin}/documents` : '' },
+                { name: document.title, url: typeof window !== 'undefined' ? window.location.href : '' }
+            ])
+        } : undefined
+    });
+
     const relatedDocs = document
         ? legalDocuments.filter((d) => d.category === document.category && d.id !== document.id).slice(0, 3)
         : [];
-
-    // Call schema hook unconditionally to keep hook order stable across renders
-    useSchemaMarkup(document ? generateArticleSchema({
-        headline: document.title,
-        description: document.description,
-        author: 'Văn phòng Thừa phát lại',
-        datePublished: document.publishDate,
-        url: typeof window !== 'undefined' ? window.location.href : '',
-    }) : []);
 
     if (loading) {
         return <LoadingSpinner />;

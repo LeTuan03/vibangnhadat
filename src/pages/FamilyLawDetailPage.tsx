@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import FamilyLawFirebaseService from '../services/FamilyLawFirebaseService';
 import { FaArrowLeft } from 'react-icons/fa';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useSEO, generateBreadcrumbStructuredData } from '../hooks/useSEO';
 import type { FamilyLawQA } from '../types';
 import { familyLawFallback } from '../data/familyLawFallback';
 import './FamilyLawDetailPage.css';
@@ -49,6 +50,31 @@ const FamilyLawDetailPage: React.FC = () => {
     const item = familyLawQAs.find((f) => f.id === id);
     // Merge with fallback so missing fields from Firebase are filled from local seed
     const displayItem: FamilyLawQA | null = item ? { ...(familyLawFallback[item.id] || {}), ...item } : (id && familyLawFallback[id]) || null;
+
+    useSEO({
+        title: displayItem ? `${displayItem.question} | Luật Hôn nhân Hoàng Mai` : 'Tư vấn Luật Hôn nhân Gia đình',
+        description: displayItem?.shortDescription || 'Tư vấn pháp luật hôn nhân và gia đình uy tín tại Văn phòng Thừa phát lại Hoàng Mai.',
+        keywords: `${displayItem?.question || ''}, luật hôn nhân gia đình, tư vấn ly hôn, quyền nuôi con, thừa phát lại hoàng mai`,
+        ogType: 'article',
+        ogTitle: displayItem?.question,
+        ogDescription: displayItem?.shortDescription,
+        canonical: typeof window !== 'undefined' ? window.location.href : '',
+        structuredData: displayItem ? {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            'headline': displayItem.question,
+            'description': displayItem.shortDescription,
+            'author': {
+                '@type': 'Organization',
+                'name': 'Văn phòng Thừa phát lại Hoàng Mai'
+            },
+            'breadcrumb': generateBreadcrumbStructuredData([
+                { name: 'Trang chủ', url: typeof window !== 'undefined' ? window.location.origin : '' },
+                { name: 'Hôn nhân Gia đình', url: typeof window !== 'undefined' ? `${window.location.origin}/family-law` : '' },
+                { name: displayItem.question, url: typeof window !== 'undefined' ? window.location.href : '' }
+            ])
+        } : undefined
+    });
 
     if (!displayItem || notFound) {
         return (

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  <url>
+    <loc>https://thuaphatlaihoangmai.com/family-law/faq-family-1</loc>
+    <lastmod>2025-12-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+
+  </url>
+  <url>
+    <loc>https://thuaphatlaihoangmai.com/family-law/faq-family-2</loc>
+    <lastmod>2025-01-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>/images/family-qa-2.jpg</image:loc>
+      <image:title>Quy Trình Chia Tài Sản Chung</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thuaphatlaihoangmai.com/family-law/faq-family-3</loc>
+    <lastmod>2025-01-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>/images/family-qa-3.jpg</image:loc>
+      <image:title>Thủ Tục Đăng Ký Kết Hôn Có Yêu Tố Nước Ngoài 2025</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thuaphatlaihoangmai.com/family-law/faq-family-4</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>/images/family-qa-4.jpg</image:loc>
+      <image:title>Chính phủ Đề Xuất Bổ Sung Trường Hợp Thu Hồi Đất</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thuaphatlaihoangmai.com/family-law/faq-family-5</loc>
+    <lastmod>2024-12-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>/images/family-qa-5.jpg</image:loc>
+      <image:title>LỰ HÔN ĐƠN PHƯƠNG CẦN NHỮNG GIẤY TỜ, THỦ TỤC GÌ?</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thuaphatlaihoangmai.com/family-law/faq-family-6</loc>
+    <lastmod>2024-12-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>/images/family-qa-6.jpg</image:loc>
+      <image:title>Cấu Thành Của Tội Ấu Dâm Và Xử Phạt</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://thuaphatlaihoangmai.com/qa/faq-1</loc>
+    <lastmod>2025-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+
+  </url>
+  <url>
+    <loc>https://thuaphatlaihoangmai.com/qa/faq-2</loc>
+    <lastmod>2025-12-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+
+  </url>
+  <url>
+    <loc>https://thuaphatlaihoangmai.com/qa/faq-3</loc>
+    <lastmod>2025-12-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+
+  </url>
+  <url>
+    <loc>https://thuaphatlaihoangmai.com/qa/faq-4</loc>
+    <lastmod>2025-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+
+  </url>
+  <url>
+    <loc>https://thuaphatlaihoangmai.com/qa/hBtxlDuZ5OQzpMcWV6TE</loc>
+    <lastmod>2025-12-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+
+  </url>
+</urlset>

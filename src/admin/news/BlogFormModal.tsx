@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { BlogPost } from "@/types"
 import { Modal, Form, Input, Select, DatePicker, message, Switch, InputNumber, Divider } from 'antd'
-import FileUploadBase64 from '../components/FileUploadBase64'
+import FileUploadCloudinary from '../components/FileUploadCloudinary'
 import { getAllCategories } from '../../services'
 import dayjs from 'dayjs'
 
 interface BlogFormModalProps {
     isOpen: boolean
     onClose: () => void
-    onSave: (post: Omit<BlogPost, 'id'> | BlogPost) => void
+    onSave: (post: Omit<BlogPost, 'id'> | BlogPost) => Promise<void>
     editPost?: BlogPost | null
 }
 
 export const BlogFormModal: React.FC<BlogFormModalProps> = ({ isOpen, onClose, onSave, editPost }) => {
     const [form] = Form.useForm()
     const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([])
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         const loadCategories = async () => {
@@ -50,7 +51,7 @@ export const BlogFormModal: React.FC<BlogFormModalProps> = ({ isOpen, onClose, o
             })
         } else {
             form.resetFields()
-            form.setFieldsValue({ 
+            form.setFieldsValue({
                 date: dayjs(),
                 featured: false,
                 status: 'published',
@@ -60,52 +61,61 @@ export const BlogFormModal: React.FC<BlogFormModalProps> = ({ isOpen, onClose, o
         }
     }, [editPost, isOpen, form])
 
-    const handleFinish = (values: any) => {
+    const handleFinish = async (values: any) => {
         if (!values.title || !values.excerpt || !values.content || !values.author || !values.date || !values.category) {
             message.error('Vui lòng điền đầy đủ thông tin bắt buộc!')
             return
         }
 
-        const payload: any = {
-            title: values.title,
-            excerpt: values.excerpt,
-            content: values.content,
-            author: values.author,
-            date: values.date.format ? values.date.format('YYYY-MM-DD') : values.date,
-            category: values.category,
-            image: values.image || '',
-            tags: values.tags || [],
-            featured: values.featured || false,
-            status: values.status || 'published',
-            views: values.views || 0,
-            readTime: values.readTime || 5,
-        }
+        setLoading(true)
+        try {
+            const payload: any = {
+                title: values.title,
+                excerpt: values.excerpt,
+                content: values.content,
+                author: values.author,
+                date: values.date.format ? values.date.format('YYYY-MM-DD') : values.date,
+                category: values.category,
+                image: values.image || '',
+                tags: values.tags || [],
+                featured: values.featured || false,
+                status: values.status || 'published',
+                views: values.views || 0,
+                readTime: values.readTime || 5,
+            }
 
-        if (editPost) {
-            onSave({ ...payload, id: editPost.id })
-            message.success('Cập nhật bài viết thành công!')
-        } else {
-            onSave(payload)
-            message.success('Thêm bài viết mới thành công!')
+            if (editPost) {
+                await onSave({ ...payload, id: editPost.id })
+            } else {
+                await onSave(payload)
+            }
+            onClose()
+        } catch (error) {
+            console.error('Lỗi khi lưu bài viết:', error)
+            // Lỗi đã được xử lý ở parent (hiển thị message.error), 
+            // nhưng ta giữ modal mở để user có thể thử lại
+        } finally {
+            setLoading(false)
         }
-
-        onClose()
     }
 
     return (
-        <Modal 
-            title={editPost ? 'Chỉnh sửa bài viết' : 'Thêm bài viết mới'} 
-            open={isOpen} 
-            onCancel={onClose} 
-            okText={editPost ? 'Cập nhật' : 'Thêm mới'} 
+        <Modal
+            title={editPost ? 'Chỉnh sửa bài viết' : 'Thêm bài viết mới'}
+            open={isOpen}
+            onCancel={onClose}
+            okText={editPost ? 'Cập nhật' : 'Thêm mới'}
             onOk={() => form.submit()}
+            confirmLoading={loading}
             width={800}
             bodyStyle={{ maxHeight: '70vh', overflowY: 'auto' }}
+            okButtonProps={{ disabled: loading }}
+            cancelButtonProps={{ disabled: loading }}
         >
             <Form form={form} layout="vertical" onFinish={handleFinish}>
                 {/* Main Content */}
                 <Divider>Thông tin chính</Divider>
-                
+
                 <Form.Item name="title" label="Tiêu đề *" rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}>
                     <Input placeholder="Nhập tiêu đề bài viết" />
                 </Form.Item>
@@ -140,15 +150,15 @@ export const BlogFormModal: React.FC<BlogFormModalProps> = ({ isOpen, onClose, o
                 </Form.Item>
 
                 <Form.Item name="image" label="Ảnh đại diện">
-                    <FileUploadBase64 />
+                    <FileUploadCloudinary folder="blog" />
                 </Form.Item>
 
                 {/* Additional Fields */}
                 <Divider>Tùy chọn nâng cao</Divider>
 
                 <Form.Item name="tags" label="Thẻ (Tags)">
-                    <Select 
-                        mode="tags" 
+                    <Select
+                        mode="tags"
                         placeholder="Nhập các thẻ để phân loại bài viết"
                         tokenSeparators={[',']}
                     />

@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 import { Table, Button, Input, Card, Space, Popconfirm, message, Modal, Form } from 'antd'
-import FileUploadBase64 from '../components/FileUploadBase64'
+import FileUploadCloudinary from '../components/FileUploadCloudinary'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import VibanFirebaseService from '../../services/VibanFirebaseService'
 import type { Viban } from '../../types'
@@ -151,7 +151,7 @@ const VibanAdmin: FC = () => {
 						<Input placeholder="VD: 200.000đ - 500.000đ" />
 					</Form.Item>
 					<Form.Item name="image" label="Hình ảnh">
-						<FileUploadBase64 />
+						<FileUploadCloudinary folder="viban" />
 					</Form.Item>
 					<Form.Item label="Yêu cầu (mỗi dòng một yêu cầu)">
 						<Input.TextArea

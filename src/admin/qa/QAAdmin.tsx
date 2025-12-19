@@ -100,6 +100,7 @@ const QAAdmin: React.FC = () => {
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
+      setLoading(true);
       const payload: Partial<FAQ> = {
         question: values.question,
         answer: values.answer,
@@ -125,10 +126,14 @@ const QAAdmin: React.FC = () => {
       loadFAQs();
       setIsModalOpen(false);
     } catch (e) {
-      console.error('Lỗi lưu FAQ:', e);
-      message.error(
-        `Lỗi lưu dữ liệu: ${e instanceof Error ? e.message : 'Lỗi không xác định'}`
-      );
+      if (e instanceof Error || (e && typeof e === 'object' && 'message' in e)) {
+        console.error('Lỗi lưu FAQ:', e);
+        message.error(
+          `Lỗi lưu dữ liệu: ${e instanceof Error ? e.message : (e as any).message || 'Lỗi không xác định'}`
+        );
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -358,13 +363,18 @@ const QAAdmin: React.FC = () => {
         open={isModalOpen}
         onOk={handleSave}
         onCancel={() => {
-          setIsModalOpen(false);
-          form.resetFields();
-          setEditing(null);
+          if (!loading) {
+            setIsModalOpen(false);
+            form.resetFields();
+            setEditing(null);
+          }
         }}
         okText="Lưu"
         cancelText="Hủy"
         width={900}
+        confirmLoading={loading}
+        okButtonProps={{ disabled: loading }}
+        cancelButtonProps={{ disabled: loading }}
       >
         <Form form={form} layout="vertical" autoComplete="off">
           <Form.Item

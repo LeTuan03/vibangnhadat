@@ -56,9 +56,10 @@ function NewsAdmin() {
             setEditingPost(null)
             // Reload to sync with Firebase
             await loadPosts()
-        } catch (error) {
+        } catch (error: any) {
             console.error('Lỗi lưu bài viết:', error)
-            message.error('Không thể lưu bài viết')
+            const errorMessage = error.message || 'Lỗi không xác định';
+            message.error(`Không thể lưu bài viết: ${errorMessage}`);
         }
     }
 
@@ -115,10 +116,10 @@ function NewsAdmin() {
                 post.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 (post.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())) || false)
-            
+
             const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory
             const matchesStatus = selectedStatus === 'all' || post.status === selectedStatus
-            
+
             return matchesSearch && matchesCategory && matchesStatus
         })
 

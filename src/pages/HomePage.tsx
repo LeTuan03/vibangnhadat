@@ -3,7 +3,7 @@ import Hero from '../components/Hero';
 import About from '../components/About';
 import Statistics from '../components/Statistics';
 import Services from '../components/Services';
-import ServiceAreas from '../components/ServiceAreas';
+// import ServiceAreas from '../components/ServiceAreas';
 // import VibanServices from '../components/VibanServices';
 // import FamilyLawQA from '../components/FamilyLawQA';
 import Gallery from '../components/Gallery';
@@ -36,7 +36,7 @@ const HomePage: React.FC = () => {
                 <About />
                 <Statistics />
                 <Services />
-                <ServiceAreas />
+                {/* <ServiceAreas /> */}
                 {/* <VibanServices /> */}
                 {/* <FamilyLawQA /> */}
                 <Gallery />

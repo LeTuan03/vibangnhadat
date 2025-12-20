@@ -201,8 +201,8 @@ const Header: React.FC = () => {
           <div className="header-logo" onClick={handleLogoClick}>
             <img src="/logo.png" alt="Thừa Phát Lại Logo" />
             <div>
-              <h1 className="logo-text">{companyInfo.fullName}</h1>
               <p className="logo-subtitle">Sở tư pháp thành phố Hà Nội</p>
+              <h1 className="logo-text">{companyInfo.fullName}</h1>
             </div>
           </div>
 

@@ -25,8 +25,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
         const { username, password } = values
 
         // Use environment variables or fallback for testing
-        const validUsername = import.meta.env.VITE_ADMIN_USERNAME || 'admin'
-        const validPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123'
+        const validUsername = import.meta.env.VITE_ADMIN_USERNAME || ''
+        const validPassword = import.meta.env.VITE_ADMIN_PASSWORD || ''
 
         if (username === validUsername && password === validPassword) {
             onLogin(username, password)

@@ -53,7 +53,7 @@ const FamilyLawDetailPage: React.FC = () => {
 
     useSEO({
         title: displayItem ? `${displayItem.question} | Luật Hôn nhân Hoàng Mai` : 'Tư vấn Luật Hôn nhân Gia đình',
-        description: displayItem?.shortDescription || 'Tư vấn pháp luật hôn nhân và gia đình uy tín tại Văn phòng Thừa phát lại Hoàng Mai.',
+        description: displayItem?.shortDescription || 'Tư vấn pháp luật hôn nhân và gia đình uy tín tại Văn phòng thi hành án dân Hoàng Mai.',
         keywords: `${displayItem?.question || ''}, luật hôn nhân gia đình, tư vấn ly hôn, quyền nuôi con, thừa phát lại hoàng mai`,
         ogType: 'article',
         ogTitle: displayItem?.question,
@@ -66,7 +66,7 @@ const FamilyLawDetailPage: React.FC = () => {
             'description': displayItem.shortDescription,
             'author': {
                 '@type': 'Organization',
-                'name': 'Văn phòng Thừa phát lại Hoàng Mai'
+                'name': 'Văn phòng thi hành án dân Hoàng Mai'
             },
             'breadcrumb': generateBreadcrumbStructuredData([
                 { name: 'Trang chủ', url: typeof window !== 'undefined' ? window.location.origin : '' },

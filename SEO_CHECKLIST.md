@@ -41,7 +41,7 @@
 ```bash
 # Tạo hình ảnh 1200x630px với:
 # - Logo công ty
-# - Tên: "Văn phòng Thừa phát lại Hoàng Mai"
+# - Tên: "Văn phòng thi hành án dân Hoàng Mai"
 # - Slogan
 # - Lưu vào: public/og-image.jpg
 ```

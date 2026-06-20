@@ -17,7 +17,7 @@ Website đã được tối ưu SEO toàn diện và sẵn sàng để Google in
 ### 1. Technical SEO (100%)
 
 #### Meta Tags
-- ✅ **Title Tag**: "Văn phòng Thừa phát lại Hoàng Mai | Lập vi bằng - Tống đạt - Thi hành án"
+- ✅ **Title Tag**: "Văn phòng thi hành án dân Hoàng Mai | Lập vi bằng - Tống đạt - Thi hành án"
 - ✅ **Meta Description**: Mô tả chi tiết dịch vụ
 - ✅ **Meta Keywords**: Từ khóa liên quan đến thừa phát lại
 - ✅ **Robots Meta**: `index, follow`
@@ -153,7 +153,7 @@ npm run check-seo
 1. Truy cập: https://business.google.com/
 2. Tạo business profile
 3. Điền thông tin:
-   - Tên: Văn phòng Thừa phát lại Hoàng Mai
+   - Tên: Văn phòng thi hành án dân Hoàng Mai
    - Địa chỉ: [Địa chỉ cụ thể]
    - Số điện thoại: [SĐT]
    - Website: https://thuaphatlaihoangmai.com

@@ -43,7 +43,7 @@ const VibanDetailPage: React.FC = () => {
 
   useSEO({
     title: viban ? `${viban.title} | Lập vi bằng Hoàng Mai` : 'Dịch vụ Lập vi bằng',
-    description: viban?.description || 'Dịch vụ lập vi bằng chuyên nghiệp, uy tín tại Văn phòng Thừa phát lại Hoàng Mai.',
+    description: viban?.description || 'Dịch vụ lập vi bằng chuyên nghiệp, uy tín tại Văn phòng thi hành án dân Hoàng Mai.',
     keywords: `${viban?.title || ''}, lập vi bằng hoàng mai, thừa phát lại hoàng mai, thủ tục lập vi bằng, phí lập vi bằng`,
     ogType: 'article',
     ogTitle: viban?.title,
@@ -56,7 +56,7 @@ const VibanDetailPage: React.FC = () => {
       'description': viban.description,
       'provider': {
         '@type': 'LocalBusiness',
-        'name': 'Văn phòng Thừa phát lại Hoàng Mai'
+        'name': 'Văn phòng thi hành án dân Hoàng Mai'
       },
       'breadcrumb': generateBreadcrumbStructuredData([
         { name: 'Trang chủ', url: typeof window !== 'undefined' ? window.location.origin : '' },

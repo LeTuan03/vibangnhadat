@@ -61,7 +61,7 @@ const ServiceAreaDetailPage: React.FC = () => {
             'description': area.description,
             'provider': {
                 '@type': 'LocalBusiness',
-                'name': 'Văn phòng thi hành án dân sựHoàng Mai'
+                'name': 'Văn phòng thi hành án dân sự Hoàng Mai'
             },
             'breadcrumb': generateBreadcrumbStructuredData([
                 { name: 'Trang chủ', url: typeof window !== 'undefined' ? window.location.origin : '' },

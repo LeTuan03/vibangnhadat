@@ -63,7 +63,7 @@ Website đang tham chiếu đến file `og-image.jpg` nhưng file này chưa t�
 2. Lưu file vào `public/og-image.jpg`
 3. Nội dung hình ảnh nên bao gồm:
    - Logo văn phòng
-   - Tên: "Văn phòng thi hành án dân sựHoàng Mai"
+   - Tên: "Văn phòng thi hành án dân sự Hoàng Mai"
    - Slogan hoặc dịch vụ chính
 
 ---
@@ -79,7 +79,7 @@ Thêm thông tin địa chỉ, số điện thoại, giờ làm việc:
 {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "name": "Văn phòng thi hành án dân sựHoàng Mai",
+  "name": "Văn phòng thi hành án dân sự Hoàng Mai",
   "image": "https://thuaphatlaihoangmai.com/logo.png",
   "@id": "https://thuaphatlaihoangmai.com",
   "url": "https://thuaphatlaihoangmai.com",

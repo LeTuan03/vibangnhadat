@@ -11,7 +11,7 @@ const BlogPage: React.FC = () => {
         canonical: typeof window !== 'undefined' ? `${window.location.origin}/blog` : '',
         ogType: 'website',
         ogTitle: 'Thư viện bài viết pháp lý - Thừa phát lại Hoàng Mai',
-        ogDescription: 'Đọc các bài viết pháp lý chi tiết từ Văn phòng thi hành án dân sựHoàng Mai',
+        ogDescription: 'Đọc các bài viết pháp lý chi tiết từ Văn phòng thi hành án dân sự Hoàng Mai',
         ogUrl: typeof window !== 'undefined' ? `${window.location.origin}/blog` : '',
     });
 

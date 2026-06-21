@@ -62,7 +62,7 @@ const DocumentDetailPage: React.FC = () => {
             'description': document.description,
             'author': {
                 '@type': 'Organization',
-                'name': 'Văn phòng thi hành án dân Hoàng Mai'
+                'name': 'Văn phòng thi hành án dân sựHoàng Mai'
             },
             'breadcrumb': generateBreadcrumbStructuredData([
                 { name: 'Trang chủ', url: typeof window !== 'undefined' ? window.location.origin : '' },

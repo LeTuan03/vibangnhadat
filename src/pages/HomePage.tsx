@@ -18,12 +18,12 @@ import { useSEO, generateOrganizationStructuredData } from '../hooks/useSEO';
 
 const HomePage: React.FC = () => {
     useSEO({
-        title: 'Văn phòng thi hành án dân Hoàng Mai | Lập vi bằng - Tống đạt - Thi hành án',
-        description: 'Văn phòng thi hành án dân Hoàng Mai chuyên nghiệp - Dịch vụ lập vi bằng, tống đạt văn bản, xác minh điều kiện thi hành án tại Hà Nội. Uy tín, nhanh chóng, đúng pháp luật.',
-        keywords: 'thừa phát lại hoàng mai, lập vi bằng hoàng mai, tống đạt văn bản hoàng mai, thi hành án hoàng mai, văn phòng thừa phát lại hà nội, dịch vụ thừa phát lại, Văn phòng thi hành án dân Hoàng Mai',
+        title: 'Văn phòng thi hành án dân sựHoàng Mai | Lập vi bằng - Tống đạt - Thi hành án',
+        description: 'Văn phòng thi hành án dân sựHoàng Mai chuyên nghiệp - Dịch vụ lập vi bằng, tống đạt văn bản, xác minh điều kiện thi hành án tại Hà Nội. Uy tín, nhanh chóng, đúng pháp luật.',
+        keywords: 'thừa phát lại hoàng mai, lập vi bằng hoàng mai, tống đạt văn bản hoàng mai, thi hành án hoàng mai, văn phòng thừa phát lại hà nội, dịch vụ thừa phát lại, Văn phòng thi hành án dân sựHoàng Mai',
         canonical: typeof window !== 'undefined' ? window.location.origin : '',
         ogType: 'website',
-        ogTitle: 'Văn phòng thi hành án dân Hoàng Mai | Lập vi bằng - Tống đạt - Thi hành án',
+        ogTitle: 'Văn phòng thi hành án dân sựHoàng Mai | Lập vi bằng - Tống đạt - Thi hành án',
         ogDescription: 'Dịch vụ thừa phát lại chuyên nghiệp tại Hoàng Mai, Hà Nội. Lập vi bằng, tống đạt văn bản, thi hành án uy tín.',
         ogImage: '/og-image.jpg',
         structuredData: generateOrganizationStructuredData(),
